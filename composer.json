@@ -1,0 +1,17 @@
+{
+    "name": "maulidi/ussd_project",
+    "autoload": {
+        "psr-4": {
+            "Maulidi\\UssdProject\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "philip maulidi"
+        }
+    ],
+    "require": {
+        "africastalking/africastalking": "^3.0",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
