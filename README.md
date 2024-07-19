@@ -7,7 +7,16 @@ Open-TechZ hackathon group
 **Project Name:** AgriAssist AI
 
 **Overview:**
-AgriAssist-AI is an innovative AI-driven agricultural advisory and system designed to empower farmers with advanced tools for optimizing their farming practices. Leveraging cutting-edge technologies in machine learning and computer vision, AgriVision AI provides real-time insights and recommendations to enhance crop health, soil quality, and overall farm productivity.
+AgriAssist-AI is an innovative AI-driven agricultural advisory and system designed to empower farmers with advanced tools for optimizing their farming practices. Making use of  cutting-edge technologies in machine learning and computer vision, AgriAssist-AI provides real-time insights and recommendations to enhance crop health, soil quality, and overall farm productivity.
+
+**Project Structure:**
+This repository is structured as follows:
+
+backend/: This directory contains the backend code of the agriAssist-AI platform, including the API endpoints, database models, and business logic implemented in Python using the Flask framework.
+frontend/: On this branch you will find the frontend code for the AgriAssist-AI platform, implemented using JavaScript, React, and Dart. 
+ussd/: This directory contains the trained Generative AI models used by Afrochat to enhance the platform's capabilities. The models are implemented using Python-based AI/ML libraries, and they play a crucial role in solving specific problems such as visual question answering (VQA).
+bot/: This directory contains the source code for the telegram bot to make it usable from within telegram groups or chat with the telegram bot.
+
 
 **Key Features:**
 1. **Leaf Scanning:**
@@ -50,5 +59,5 @@ AgriVision AI aims to revolutionize the agricultural sector by providing farmers
 - Agricultural extension officers providing support and advice to farmers.
 - Agribusinesses looking to leverage technology for improved farm management.
 
-**Vision:**
+**Goal:**
 To create a sustainable and prosperous agricultural ecosystem by harnessing the power of artificial intelligence and making advanced agricultural insights accessible to every farmer.
