@@ -14,13 +14,13 @@ This repository is structured as follows:
 
 backend/: This directory contains the backend code of the agriAssist-AI platform, including the API endpoints, database models, and business logic implemented in Python using the Flask framework.
 frontend/: On this branch you will find the frontend code for the AgriAssist-AI platform, implemented using JavaScript, React, and Dart. 
-ussd/: This directory contains the trained Generative AI models used by Afrochat to enhance the platform's capabilities. The models are implemented using Python-based AI/ML libraries, and they play a crucial role in solving specific problems such as visual question answering (VQA).
-bot/: This directory contains the source code for the telegram bot to make it usable from within telegram groups or chat with the telegram bot.
+model/: This directory contains the trained Generative AI models used by Afrochat to enhance the platform's capabilities. The models are implemented using Python-based AI/ML libraries, and they play a crucial role in solving specific problems such as visual question answering (VQA).
+datalibrary/: This directory contains the source data library for training AI and ML models
 
 
 **Key Features:**
 1. **Leaf Scanning:**
-   - Utilize advanced image processing and machine learning techniques to detect and diagnose leaf diseases.
+   - Utilize advanced AI image processing and machine learning techniques to detect and diagnose leaf diseases.
    - Provide farmers with actionable recommendations for treating and preventing crop diseases.
 
 2. **Soil Detection:**
@@ -39,20 +39,20 @@ bot/: This directory contains the source code for the telegram bot to make it us
    - Enable farmers to access key features and information via USSD, ensuring accessibility even without internet connectivity.
    - Offer a simple and intuitive interface for farmers to interact with the system using basic mobile phones.
 
-   6. **Personalized Advice:**
+6. **Personalized Advice:**
    - **Input:** Text-based input for describing issues and receiving advice.
-   - **Response:** Text-based AI-generated advice.
+   - **Response:** Text-based AI-generated advice based on the specific agriculture farming data that it has been trained.
 
 **Technical Implementation:**
 - **Frontend:** Developed using Flutter for cross-platform mobile application, ensuring a seamless user experience on both Android and iOS devices.
 - **Backend:** Built with NodeJs for high performance and scalability, supporting RESTful APIs for communication between frontend and backend.
-- **AI/ML:** Implemented using TensorFlow for developing and training models for leaf scanning and soil detection, and OpenCV for image processing.
+- **AI/ML:** Implemented using OpenCV and Tenarflow for developing and training models for leaf scanning and soil detection, and OpenCV for image processing.
 - **Database:** Firebase Firestore for real-time data storage and offline capabilities.
 - **Cloud Hosting:** Deployed on AWS for robust and scalable cloud infrastructure.
-- **USSD Integration:** Leveraging Twilio or Africa's Talking for USSD and SMS functionalities.
+- **USSD Integration:** Using Twilio or Africa's Talking for USSD and SMS functionalities.
 
 **Impact:**
-AgriVision AI aims to revolutionize the agricultural sector by providing farmers with the tools and insights they need to make data-driven decisions. By enhancing crop health, improving soil quality, and offering timely weather and market information, AgriVision AI empowers farmers to increase productivity, reduce costs, and ultimately achieve better yields and profitability.
+AgriAssist-AI aims to revolutionize the agricultural sector by providing farmers with the tools and insights they need to make data-driven decisions. By enhancing crop health, improving soil quality, and offering timely weather and market information, AgriVision AI empowers farmers to increase productivity, reduce costs, and ultimately achieve better yields and profitability.
 
 **Target Users:**
 - Small to medium-scale farmers seeking to optimize their farming practices.
