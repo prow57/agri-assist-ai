@@ -14,7 +14,7 @@ This repository is structured as follows:
 
 backend/: This directory contains the backend code of the agriAssist-AI platform, including the API endpoints, database models, and business logic implemented in Python using the Flask framework.
 frontend/: On this branch you will find the frontend code for the AgriAssist-AI platform, implemented using JavaScript, React, and Dart. 
-model/: This directory contains the trained Generative AI models used by Afrochat to enhance the platform's capabilities. The models are implemented using Python-based AI/ML libraries, and they play a crucial role in solving specific problems such as visual question answering (VQA).
+model-ai/: This directory contains the trained Generative AI models used by Afrochat to enhance the platform's capabilities. The models are implemented using Python-based AI/ML libraries, and they play a crucial role in solving specific problems such as visual question answering (VQA).
 datalibrary/: This directory contains the source data library for training AI and ML models
 
 
