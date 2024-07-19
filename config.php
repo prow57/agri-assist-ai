@@ -1,11 +1,16 @@
-// ~/ussd_project/config.php
+// /path/to/your/project/config.php
 require 'vendor/autoload.php';
 
 use AfricasTalking\SDK\AfricasTalking;
+use Dotenv\Dotenv;
 
-// Set your app credentials
-$username   = "Philip Maulidi";  
-$apiKey     = "atsk_6e14b37d42c12aa07aed26b80b0294f73590067209dd32a63591fd07d1f74cbdc712f079";  
+// Load environment variables from .env file
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+// Set your app credentials from environment variables
+$username   = $_ENV['AFRICASTALKING_USERNAME'];
+$apiKey     = $_ENV['AFRICASTALKING_API_KEY'];
 
 // Initialize the SDK
 $africasTalking = new AfricasTalking($username, $apiKey);
