@@ -16,11 +16,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // const ussd = africasTalking.USSD;
 
-// test request handler 
-
 app.get('/', function(req, res) {
-    res.send('test request is working')
-})
+    res.send('test request is working');
+});
 
 app.post('/ussd', (req, res) => {
     const { sessionId, serviceCode, phoneNumber, text } = req.body;
@@ -28,31 +26,29 @@ app.post('/ussd', (req, res) => {
     let response = '';
 
     if (text === '') {
-        response = `CON Welcome to AI-Driven Agricultural Advisory System\n1. Get Farming Advice\n2. Get Weather Forecast\n3. Market Prices`;
+        response = `CON Welcome to AI-Driven Agricultural Advisory System\n1. Scan Leaf\n2. Soil Detection\n3. Weather Forecast\n4. Market Prices\n5. Personalized Advice`;
     } else if (text === '1') {
-        response = `CON Select the type of advice you need\n1. Planting\n2. Irrigation\n3. Fertilization`;
+        response = `CON To scan a leaf, send an SMS with the leaf image to 12345.`;
     } else if (text === '2') {
-        response = `CON Select your region\n1. North\n2. Central\n3. South`;
+        response = `CON Describe your soil characteristics:\n1. Sandy\n2. Loamy\n3. Clay\n4. Peaty\n5. Silty\n6. Chalky`;
     } else if (text === '3') {
-        response = `CON Select the crop\n1. Maize\n2. Rice\n3. Tobacco`;
-    } else if (text === '1*1') {
-        response = `END Planting advice: ${getPlantingAdvice()}`;
-    } else if (text === '1*2') {
-        response = `END Irrigation advice: ${getIrrigationAdvice()}`;
-    } else if (text === '1*3') {
-        response = `END Fertilization advice: ${getFertilizationAdvice()}`;
-    } else if (text === '2*1') {
-        response = `END Weather forecast for the North: ${getWeatherForecast('North')}`;
-    } else if (text === '2*2') {
-        response = `END Weather forecast for the Central region: ${getWeatherForecast('Central')}`;
-    } else if (text === '2*3') {
-        response = `END Weather forecast for the South: ${getWeatherForecast('South')}`;
-    } else if (text === '3*1') {
-        response = `END Market price for Maize: ${getMarketPrice('Maize')}`;
-    } else if (text === '3*2') {
-        response = `END Market price for Rice: ${getMarketPrice('Rice')}`;
-    } else if (text === '3*3') {
-        response = `END Market price for Tobacco: ${getMarketPrice('Tobacco')}`;
+        response = `CON Select your region for weather forecast:\n1. North\n2. Central\n3. South`;
+    } else if (text === '4') {
+        response = `CON Select the crop for market prices:\n1. Maize\n2. Rice\n3. Tobacco`;
+    } else if (text === '5') {
+        response = `CON Describe your agricultural issue for personalized advice:`;
+    } else if (text.startsWith('2*')) {
+        const soilType = text.split('*')[1];
+        response = `END Soil detection advice for ${getSoilType(soilType)}`;
+    } else if (text.startsWith('3*')) {
+        const region = getRegion(text.split('*')[1]);
+        response = `END Weather forecast for the ${region}: ${getWeatherForecast(region)}`;
+    } else if (text.startsWith('4*')) {
+        const crop = getCrop(text.split('*')[1]);
+        response = `END Market price for ${crop}: ${getMarketPrice(crop)}`;
+    } else if (text.startsWith('5*')) {
+        const issue = text.split('*').slice(1).join('*');
+        response = `END Personalized advice: ${getPersonalizedAdvice(issue)}`;
     } else {
         response = `END Invalid selection.`;
     }
@@ -61,24 +57,46 @@ app.post('/ussd', (req, res) => {
     res.send(response);
 });
 
-function getPlantingAdvice() {
-    return "Use improved seed varieties and practice crop rotation.";
+function getSoilType(option) {
+    const types = {
+        '1': 'Sandy',
+        '2': 'Loamy',
+        '3': 'Clay',
+        '4': 'Peaty',
+        '5': 'Silty',
+        '6': 'Chalky'
+    };
+    return types[option] || 'Unknown soil type';
 }
 
-function getIrrigationAdvice() {
-    return "Irrigate your crops early in the morning or late in the evening.";
+function getRegion(option) {
+    const regions = {
+        '1': 'North',
+        '2': 'Central',
+        '3': 'South'
+    };
+    return regions[option] || 'Unknown region';
 }
 
-function getFertilizationAdvice() {
-    return "Apply organic fertilizers and avoid over-fertilization.";
+function getCrop(option) {
+    const crops = {
+        '1': 'Maize',
+        '2': 'Rice',
+        '3': 'Tobacco'
+    };
+    return crops[option] || 'Unknown crop';
 }
 
 function getWeatherForecast(region) {
-    return "Sunny with a chance of rain in the afternoon.";
+    return `Sunny with a chance of rain in the ${region} in the afternoon.`;
 }
 
 function getMarketPrice(crop) {
     return `The current price for ${crop} is MWK 200 per kg.`;
+}
+
+function getPersonalizedAdvice(issue) {
+    return `Based on your issue (${issue}), we recommend consulting a local agronomist.`;
 }
 
 app.listen(port, () => {
