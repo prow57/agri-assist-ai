@@ -1,10 +1,10 @@
 // firebase.js
 const admin = require('firebase-admin');
-const serviceAccount = require('./path/to/your/serviceAccountKey.json');
+const serviceAccount = require('./agriassist.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://<your-database-name>.firebaseio.com'
+  databaseURL: 'https://agriassist-ai-b6fa4-default-rtdb.firebaseio.com'
 });
 
 const db = admin.firestore();
