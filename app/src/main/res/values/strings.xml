@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Agriculture</string>
-    <string name="welcome_to_agriculture_ai_your_friendly_assitant">Welcome TO Agriculture Ai. Your Friendly Assitant.!</string>
+    <string name="welcome">Welcome to Agriculture AI. Your Friendly Assistant</string>
     <string name="landing_page">Landing page</string>
-    <string name="welcome">Welcome to Agriculture AI. Your Friendl Assistant.!</string>
+    <string name="scan">Scan Leaf</string>
+    <string name="weather">Weather Forecast</string>
+    <string name="advice">Personalized Advice</string>
+    <string name="soil">Soil Detection</string>
+    <string name="prices">Market Prices</string>
+    <string name="settings">Settings</string>
 </resources>

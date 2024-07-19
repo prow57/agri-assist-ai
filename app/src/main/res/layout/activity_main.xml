@@ -7,14 +7,79 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/landing_page"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <Button
+        android:id="@+id/scan"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_background"
+        android:text="@string/scan"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/soil"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/weather"
+        app:layout_constraintHorizontal_chainStyle="packed"/>
+
+    <Button
+        android:id="@+id/soil"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/button_background"
+        android:text="@string/soil"
+        app:layout_constraintBottom_toTopOf="@+id/weather"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/scan"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.476" />
+
+    <Button
+        android:id="@+id/weather"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_background"
+        android:text="@string/weather"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/price"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scan"
+        app:layout_constraintBottom_toTopOf="@+id/advice"
+        app:layout_constraintHorizontal_chainStyle="packed"/>
+
+    <Button
+        android:id="@+id/price"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_background"
+        android:text="@string/prices"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/weather"
+        app:layout_constraintTop_toBottomOf="@+id/soil"
+        app:layout_constraintBottom_toTopOf="@+id/advice"/>
+
+    <Button
+        android:id="@+id/advice"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_background"
+        android:text="@string/advice"
+        android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/weather"
+        app:layout_constraintBottom_toTopOf="@+id/settings"/>
+
+    <Button
+        android:id="@+id/settings"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_background"
+        android:text="@string/settings"
+        android:layout_margin="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/advice"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
