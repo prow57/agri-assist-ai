@@ -14,6 +14,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon:
+              const Icon(Icons.person, color: Color.fromARGB(255, 10, 10, 10)),
+          onPressed: () {
+            // Define your action here
+          },
+        ),
         title: const Text('OpenTechZ App'),
       ),
       body: Padding(
