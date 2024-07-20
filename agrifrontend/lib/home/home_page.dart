@@ -1,4 +1,5 @@
 // lib/home_page.dart
+import 'package:agrifrontend/AI%20pages/pesrnalized_advice_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -30,13 +31,36 @@ class _HomePageState extends State<HomePage> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
-                children: const [
-                  CustomButton(icon: Icons.search, label: 'Scan Leaf'),
-                  CustomButton(icon: Icons.landscape, label: 'Soil Detection'),
-                  CustomButton(icon: Icons.cloud, label: 'Weather Forecast'),
-                  CustomButton(icon: Icons.attach_money, label: 'Market Prices'),
-                  CustomButton(icon: Icons.person, label: 'Personalized Advice'),
-                  CustomButton(icon: Icons.settings, label: 'Settings'),
+                children: [
+                  CustomButton(
+                      icon: Icons.search, label: 'Scan Leaf', onPressed: () {}),
+                  CustomButton(
+                      icon: Icons.landscape,
+                      label: 'Soil Detection',
+                      onPressed: () {}),
+                  CustomButton(
+                      icon: Icons.cloud,
+                      label: 'Weather Forecast',
+                      onPressed: () {}),
+                  CustomButton(
+                      icon: Icons.attach_money,
+                      label: 'Market Prices',
+                      onPressed: () {}),
+                  CustomButton(
+                      icon: Icons.person,
+                      label: 'Personalized Advice',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const PersonalizedAdvicePage()),
+                        );
+                      }),
+                  CustomButton(
+                      icon: Icons.settings,
+                      label: 'Settings',
+                      onPressed: () {}),
                 ],
               ),
             ),
@@ -66,17 +90,19 @@ class _HomePageState extends State<HomePage> {
 class CustomButton extends StatelessWidget {
   final IconData icon;
   final String label;
+  final VoidCallback onPressed;
 
   const CustomButton({
     super.key,
     required this.icon,
     required this.label,
+    required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.orange,
         shape: RoundedRectangleBorder(
