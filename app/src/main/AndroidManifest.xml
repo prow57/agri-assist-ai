@@ -31,6 +31,20 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+        <activity
+            android:name=".PersonalizeAdviceActivity" />
+        <activity
+            android:name=".MarketPriceActivity" />
+        <activity
+            android:name=".WeatherForecastActivity"/>
+        <activity
+            android:name=".SoilDetectionActivity"/>
+        <activity
+            android:name=".SettingsActivity"/>
+
+
+
+
     </application>
 
 </manifest>
