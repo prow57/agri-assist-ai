@@ -7,8 +7,7 @@ import openai
 # Load the custom model wrapper
 leaf_model = joblib.load('leaf_disease_model.pkl')
 
-# Define the API key for OpenAI GPT
-openai.api_key = 'sk-proj-jQJEFly7TrU3h4OuAMxhT3BlbkFJAG8Wx0qEen7HG7EdX5gv'
+
 
 def generate_description_and_suggestions(disease_name):
     prompt = f"The detected disease is {disease_name}. Provide a detailed description of this disease and actionable suggestions for treatment."
