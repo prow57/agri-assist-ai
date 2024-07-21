@@ -27,3 +27,9 @@ Thumbs.db
 # Built files
 dist/
 build/
+
+dataset
+
+inference.py
+
+python-scripts/inference.py

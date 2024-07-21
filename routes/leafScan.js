@@ -1,4 +1,3 @@
-// routes/leafScan.js
 const express = require('express');
 const multer = require('multer');
 const { analyzeLeaf } = require('../services/leafScanService');

@@ -1,4 +1,3 @@
-// routes/realtimeData.js
 const express = require('express');
 const db = require('../firebase');
 const router = express.Router();

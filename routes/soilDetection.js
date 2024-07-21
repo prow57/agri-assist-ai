@@ -1,4 +1,3 @@
-// routes/soilDetection.js
 const express = require('express');
 const multer = require('multer');
 const { analyzeSoil } = require('../services/soilDetectionService');

@@ -1,0 +1,7 @@
+numpy
+matplotlib
+tensorflow
+joblib
+openai
+Flask
+gunicorn
