@@ -14,22 +14,9 @@ from crewai_tools import SerperDevTool,  ScrapeWebsiteTool, WebsiteSearchTool
 
 from pydantic import BaseModel, Field
 
-from agents import CustomAgents
-
-from langchain_groq import ChatGroq
-# openai_api_key =os.getenv('OPENAI_API_KEY')
-
-# os.environ["OPENAI_MODEL_NAME"] = 'gpt-3.5-turbo'
-# get_serper_api_key = os.environ["SERPER_API_KEY"]
-
-# Initialize the tools
 search_tool = SerperDevTool()
 scrape_tool = ScrapeWebsiteTool()
 
-mixtral_8x7b = ChatGroq(
-            api_key=os.getenv("GROQ_API_KEY"),
-            model=os.getenv("GROQ_API_KEY"),
-        )
 
 leaf_image_analysis_agent = Agent(
     role="Leaf Image Analysis Agent",
@@ -40,7 +27,6 @@ leaf_image_analysis_agent = Agent(
         "The agent's algorithms are designed to provide precise and reliable information to ensure farmers can trust the diagnosis."
     ),
     allow_delegation=False,
-    llm=mixtral_8x7b,
     verbose=True
 )
 
@@ -53,7 +39,6 @@ disease_research_agent = Agent(
     ),
     tools=[search_tool, scrape_tool],
     allow_delegation=False,
-    llm=mixtral_8x7b,
     verbose=True
 )
 information_extraction_agent = Agent(
@@ -65,7 +50,6 @@ information_extraction_agent = Agent(
     ),
     allow_delegation=False,
     tools=[scrape_tool],
-    llm=mixtral_8x7b,
     verbose=True
 )
 guidance_generation_agent = Agent(
@@ -75,7 +59,6 @@ guidance_generation_agent = Agent(
         "This agent focuses on providing precise ingredient measurements and step-by-step instructions to help farmers effectively treat their crops."
     ),
     allow_delegation=False,
-    llm=mixtral_8x7b,
     verbose=True
 )
 
