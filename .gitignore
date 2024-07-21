@@ -31,3 +31,5 @@ build/
 dataset
 
 inference.py
+
+python-scripts/inference.py
