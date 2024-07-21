@@ -4,13 +4,20 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import openai
 import sys
+# python-scripts/inference.py
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+
 
 # Load the trained model
 model = load_model('leaf_disease_model_2024-07-21_12-48-45.h5')
 
 # Define the API key for OpenAI GPT
-
-
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def generate_description_and_suggestions(disease_name):
     prompt = f"The detected disease is {disease_name}. Provide a detailed description of this disease and actionable suggestions for treatment."
