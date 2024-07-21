@@ -14,53 +14,49 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <TextView
-        android:id="@+id/settings_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/settings"
-        android:textSize="24sp"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintVertical_bias="0.1" />
 
-    <!-- Example Settings Options -->
+
     <LinearLayout
         android:id="@+id/settings_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/settings_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0.5"
-        android:layout_marginTop="32dp">
-
-        <Button
-            android:id="@+id/setting_option_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_option_1"
-            android:background="@drawable/button_background"
-            android:textColor="@color/white"
-            android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/setting_option_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/setting_option_2"
-            android:background="@drawable/button_background"
-            android:textColor="@color/white"
-            android:layout_marginTop="8dp" />
+        android:layout_marginTop="32dp"
+        tools:ignore="MissingConstraints">
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/setting_option_2"
+        android:layout_width="381dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="136dp"
+        android:background="@drawable/button_background"
+        android:text="@string/setting_option_2"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.433"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/setting_option_1"
+        android:layout_width="386dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="308dp"
+        android:background="@drawable/button_background"
+        android:text="@string/setting_option_1"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/setting_option_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

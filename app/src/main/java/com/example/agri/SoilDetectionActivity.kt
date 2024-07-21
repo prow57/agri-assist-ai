@@ -10,16 +10,16 @@ class SoilDetectionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_soil_detection)
 
         // Set up the toolbar with a back arrow
-//        val toolbar: Toolbar = findViewById(R.id.toolbar)
-//        setSupportActionBar(toolbar)
-//
-//        val actionBar = supportActionBar
-//        actionBar?.setDisplayHomeAsUpEnabled(true)
-//        actionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow) // Ensure this icon exists
-//        actionBar?.title = ""
-//
-//        toolbar.setNavigationOnClickListener {
-//            onBackPressed()
-//        }
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        val actionBar = supportActionBar
+        actionBar?.title = getString(R.string.soil) // Set title here
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+        actionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
+
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
     }
 }

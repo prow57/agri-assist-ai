@@ -32,15 +32,20 @@
             android:name=".MainActivity"
             android:exported="true" />
         <activity
-            android:name=".PersonalizeAdviceActivity" />
+            android:name=".PersonalizeAdviceActivity"
+            android:theme="@style/Theme.Agriculture"/>
         <activity
-            android:name=".MarketPriceActivity" />
+            android:name=".MarketPriceActivity"
+            android:theme="@style/Theme.Agriculture"/>
         <activity
-            android:name=".WeatherForecastActivity"/>
+            android:name=".WeatherForecastActivity"
+            android:theme="@style/Theme.Agriculture"/>
         <activity
-            android:name=".SoilDetectionActivity"/>
+            android:name=".SoilDetectionActivity"
+            android:theme="@style/Theme.Agriculture"/>
         <activity
-            android:name=".SettingsActivity"/>
+            android:name=".SettingsActivity"
+            android:theme="@style/Theme.Agriculture"/>
 
 
 
