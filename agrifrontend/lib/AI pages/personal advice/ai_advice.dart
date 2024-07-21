@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AiAdvice extends StatefulWidget {
   const AiAdvice({super.key});
@@ -10,18 +12,58 @@ class AiAdvice extends StatefulWidget {
 class _AiAdviceState extends State<AiAdvice> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
+  bool _isLoading = false;
 
-  void _sendMessage() {
+  Future<String> _getAiResponse(String message) async {
+    final url = Uri.parse('https://api.openai.com/v1/engines/davinci-codex/completions');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer YOUR_API_KEY_HERE', // Replace with your actual API key
+      },
+      body: json.encode({
+        'prompt': 'You are an agriculture expert. Answer the following question with agriculture-focused advice: $message',
+        'max_tokens': 150,
+        'temperature': 0.7,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['choices'][0]['text'].trim();
+    } else {
+      throw Exception('Failed to load AI response');
+    }
+  }
+
+  void _sendMessage() async {
     if (_controller.text.isEmpty) return;
 
     setState(() {
       _messages.add({'sender': 'user', 'text': _controller.text});
-      _messages.add({
-        'sender': 'ai',
-        'text': 'This is a response from AI.'
-      }); // Dummy AI response
-      _controller.clear();
+      _isLoading = true;
     });
+
+    try {
+      final aiResponse = await _getAiResponse(_controller.text);
+      setState(() {
+        _messages.add({'sender': 'ai', 'text': aiResponse});
+      });
+    } catch (error) {
+      setState(() {
+        _messages.add({
+          'sender': 'ai',
+          'text': 'Failed to get response from AI. Please try again later.'
+        });
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+    _controller.clear();
   }
 
   @override
@@ -57,8 +99,7 @@ class _AiAdviceState extends State<AiAdvice> {
                 final message = _messages[index];
                 final isUser = message['sender'] == 'user';
                 return Align(
-                  alignment:
-                      isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 5.0),
                     padding: const EdgeInsets.all(12.0),
@@ -69,13 +110,19 @@ class _AiAdviceState extends State<AiAdvice> {
                     child: Text(
                       message['text']!,
                       style: TextStyle(
-                          color: isUser ? Colors.white : Colors.black),
+                        color: isUser ? Colors.white : Colors.black,
+                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
+          if (_isLoading)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -89,19 +136,9 @@ class _AiAdviceState extends State<AiAdvice> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8.0),
-                ElevatedButton(
+                IconButton(
+                  icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                  child: const Text(
-                    'Send',
-                    style: TextStyle(color: Colors.white),
-                  ),
                 ),
               ],
             ),
