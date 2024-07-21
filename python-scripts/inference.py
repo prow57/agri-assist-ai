@@ -9,7 +9,7 @@ import sys
 model = load_model('leaf_disease_model_2024-07-21_12-48-45.h5')
 
 # Define the API key for OpenAI GPT
-openai.api_key = 'sk-proj-jQJEFly7TrU3h4OuAMxhT3BlbkFJAG8Wx0qEen7HG7EdX5gv'
+
 
 
 def generate_description_and_suggestions(disease_name):
