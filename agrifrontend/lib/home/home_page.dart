@@ -1,5 +1,7 @@
 // lib/home_page.dart
-import 'package:agrifrontend/AI%20pages/pesrnalized_advice_page.dart';
+import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/pesrnalized_advice_page.dart';
+
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -40,7 +42,15 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSpacing: 16.0,
                 children: [
                   CustomButton(
-                      icon: Icons.search, label: 'Scan Leaf', onPressed: () {}),
+                      icon: Icons.search,
+                      label: 'Scan Leaf',
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const LeafDiagnosisPage()));
+                      }),
                   CustomButton(
                       icon: Icons.landscape,
                       label: 'Soil Detection',
