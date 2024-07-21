@@ -1,8 +1,28 @@
-
 import 'package:flutter/material.dart';
 
-class AiAdvice extends StatelessWidget {
+class AiAdvice extends StatefulWidget {
   const AiAdvice({super.key});
+
+  @override
+  _AiAdviceState createState() => _AiAdviceState();
+}
+
+class _AiAdviceState extends State<AiAdvice> {
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, String>> _messages = [];
+
+  void _sendMessage() {
+    if (_controller.text.isEmpty) return;
+
+    setState(() {
+      _messages.add({'sender': 'user', 'text': _controller.text});
+      _messages.add({
+        'sender': 'ai',
+        'text': 'This is a response from AI.'
+      }); // Dummy AI response
+      _controller.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,107 +47,66 @@ class AiAdvice extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'What crop are you growing?',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10.0),
-              const TextField(
-                style:
-                    TextStyle(color: Colors.white), // Set text color to white
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Color.fromARGB(255, 244, 184, 94),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              const Text(
-                'What are your farming practices?',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10.0),
-              const TextField(
-                style:
-                    TextStyle(color: Colors.white), // Set text color to white
-                maxLines: 3,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Color.fromARGB(255, 244, 184, 94),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              const Text(
-                'What issues are you facing?',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10.0),
-              const TextField(
-                style:
-                    TextStyle(color: Colors.white), // Set text color to white
-                maxLines: 3,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Color.fromARGB(255, 244, 184, 94),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              const Text(
-                'Advice',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10.0),
-              const Text(
-                'Irrigate when the soil is dry, but not too dry. Over-irrigation can lead to root rot.',
-                style: TextStyle(fontSize: 16.0),
-              ),
-              const SizedBox(height: 20.0), // Added space for the buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                final isUser = message['sender'] == 'user';
+                return Align(
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 5.0),
+                    padding: const EdgeInsets.all(12.0),
+                    decoration: BoxDecoration(
+                      color: isUser ? Colors.blue : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: const Text(
-                      'Back',
+                    child: Text(
+                      message['text']!,
                       style: TextStyle(
-                          color: Colors.white), // Set text color to white
+                          color: isUser ? Colors.white : Colors.black),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Submit Query',
-                      style: TextStyle(
-                          color: Colors.white), // Set text color to white
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                );
+              },
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: 'Type your message...',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8.0),
+                ElevatedButton(
+                  onPressed: _sendMessage,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'Send',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
