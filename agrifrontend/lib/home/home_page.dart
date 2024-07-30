@@ -1,6 +1,7 @@
 // lib/home_page.dart
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/pesrnalized_advice_page.dart';
+import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 
 import 'package:flutter/material.dart';
 
@@ -54,7 +55,13 @@ class _HomePageState extends State<HomePage> {
                   CustomButton(
                       icon: Icons.landscape,
                       label: 'Soil Detection',
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const SoilDiagnosisPage()));
+                      }),
                   CustomButton(
                       icon: Icons.cloud,
                       label: 'Weather Forecast',

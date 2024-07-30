@@ -39,7 +39,7 @@ class PersonalizedAdvicePage extends StatelessWidget {
             ),
             const SizedBox(height: 10.0),
             Container(
-              height: 200.0, // Set a fixed height for the horizontal ListView
+              height: 200.0, 
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [

@@ -15,15 +15,20 @@ class _AiAdviceState extends State<AiAdvice> {
   bool _isLoading = false;
 
   Future<String> _getAiResponse(String message) async {
-    final url = Uri.parse('https://api.openai.com/v1/engines/davinci-codex/completions');
+    final url = Uri.parse('https://api.openai.com/v1/chat/completions');
     final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer YOUR_API_KEY_HERE', // Replace with your actual API key
+        'Authorization':
+            'Bearer sk-proj-rztlFl3a0hgph3nmGUNJT3BlbkFJBtN6MYL29jguuSnqb5EG',
       },
       body: json.encode({
-        'prompt': 'You are an agriculture expert. Answer the following question with agriculture-focused advice: $message',
+        'model': 'gpt-3.5',
+        'messages': [
+          {'role': 'system', 'content': 'You are an agriculture expert.'},
+          {'role': 'user', 'content': message},
+        ],
         'max_tokens': 150,
         'temperature': 0.7,
       }),
@@ -31,7 +36,7 @@ class _AiAdviceState extends State<AiAdvice> {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      return data['choices'][0]['text'].trim();
+      return data['choices'][0]['message']['content'].trim();
     } else {
       throw Exception('Failed to load AI response');
     }
@@ -99,7 +104,8 @@ class _AiAdviceState extends State<AiAdvice> {
                 final message = _messages[index];
                 final isUser = message['sender'] == 'user';
                 return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 5.0),
                     padding: const EdgeInsets.all(12.0),
