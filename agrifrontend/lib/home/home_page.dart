@@ -2,7 +2,8 @@
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
-import 'package:agrifrontend/homepages/weather_forecasting.dart';
+import 'package:agrifrontend/homepages/market/market_place.dart';
+import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
 
 import 'package:flutter/material.dart';
 
@@ -76,7 +77,12 @@ class _HomePageState extends State<HomePage> {
                   CustomButton(
                       icon: Icons.attach_money,
                       label: 'Market Prices',
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MarketPlacePage()));
+                      }),
                   CustomButton(
                       icon: Icons.person,
                       label: 'Personalized AI',
