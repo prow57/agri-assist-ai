@@ -1,7 +1,7 @@
 // lib/home_page.dart
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
-import 'package:agrifrontend/AI%20pages/personal%20advice/pesrnalized_advice_page.dart';
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 
 import 'package:flutter/material.dart';
 
@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Greetings! Welcome to Agri AI.',
+              'Greetings! Welcome to AgriAssist-AI.',
               style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20.0),
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {}),
                   CustomButton(
                       icon: Icons.person,
-                      label: 'Personalized Advice',
+                      label: 'Personalized AI',
                       onPressed: () {
                         Navigator.push(
                           context,
