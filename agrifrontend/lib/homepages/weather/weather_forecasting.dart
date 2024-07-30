@@ -8,7 +8,7 @@ class WeatherForecastPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Weather Forecast'),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.green,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -214,7 +214,7 @@ class WeatherCard extends StatelessWidget {
                 Icon(
                   icon,
                   size: 40.0,
-                  color: Colors.blueAccent,
+                  color: Colors.green,
                 ),
                 const SizedBox(width: 20.0),
                 Column(

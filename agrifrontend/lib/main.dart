@@ -15,10 +15,9 @@ class MyApp extends StatelessWidget {
       title: 'Agri-assist-AI',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.orange, 
-        ),
+        primarySwatch: Colors.green,
+      ),
       home: const HomePage(),
     );
   }
 }
-

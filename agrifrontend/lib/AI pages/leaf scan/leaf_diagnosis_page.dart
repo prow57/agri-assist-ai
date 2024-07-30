@@ -18,7 +18,7 @@ class LeafDiagnosisPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Leaf Diagnosis'),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.green,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -74,7 +74,7 @@ class LeafDiagnosisPage extends StatelessWidget {
                 // Handle submit action
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.green,
                 padding: const EdgeInsets.symmetric(
                     horizontal: 40.0, vertical: 15.0),
               ),
