@@ -1,3 +1,4 @@
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:flutter/material.dart';
 import 'ai_advice.dart';
 
@@ -39,7 +40,7 @@ class PersonalizedAdvicePage extends StatelessWidget {
             ),
             const SizedBox(height: 10.0),
             Container(
-              height: 200.0, 
+              height: 200.0,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
@@ -61,12 +62,6 @@ class PersonalizedAdvicePage extends StatelessWidget {
                     'Start Lesson',
                     'assets/weeds.jpg',
                   ),
-                  _buildCourseCard(
-                    context,
-                    'Weeds',
-                    'Start Lesson',
-                    'assets/weeds.jpg',
-                  ),
                 ],
               ),
             ),
@@ -74,9 +69,20 @@ class PersonalizedAdvicePage extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Define your action here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AllCoursesPage(),
+                    ),
+                  );
                 },
-                child: const Text('View all courses'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green, // Background color
+                ),
+                child: const Text(
+                  'View all courses',
+                  style: TextStyle(color: Colors.white), // Text color
+                ),
               ),
             ),
           ],
