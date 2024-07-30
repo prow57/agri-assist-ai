@@ -18,7 +18,7 @@ class SoilDiagnosisPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Soil Testing'),
-        backgroundColor: Colors.orange[100],
+        backgroundColor: Colors.green,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -36,24 +36,21 @@ class SoilDiagnosisPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon:
-                      const Icon(Icons.photo, size: 50.0, color: Colors.orange),
+                  icon: const Icon(Icons.photo, size: 50.0),
                   onPressed: () {
                     _pickImage(ImageSource.gallery);
                   },
                 ),
                 const SizedBox(width: 30.0),
                 IconButton(
-                  icon: const Icon(Icons.camera_alt,
-                      size: 50.0, color: Colors.orange),
+                  icon: const Icon(Icons.camera_alt, size: 50.0),
                   onPressed: () {
                     _pickImage(ImageSource.camera);
                   },
                 ),
                 const SizedBox(width: 30.0),
                 IconButton(
-                  icon: const Icon(Icons.refresh,
-                      size: 50.0, color: Colors.orange),
+                  icon: const Icon(Icons.refresh, size: 50.0),
                   onPressed: () {
                     // Handle refresh
                   },
@@ -66,13 +63,13 @@ class SoilDiagnosisPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
-                color: Colors.orange[100],
+                color: Colors.green[100],
               ),
               child: TextField(
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   labelText: 'Color',
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.orange),
+                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.green),
                 ),
               ),
             ),
@@ -81,13 +78,13 @@ class SoilDiagnosisPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
-                color: Colors.orange[100],
+                color: Colors.green[100],
               ),
               child: TextField(
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   labelText: 'Texture',
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.orange),
+                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.green),
                 ),
               ),
             ),
@@ -96,13 +93,13 @@ class SoilDiagnosisPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
-                color: Colors.orange[100],
+                color: Colors.green[100],
               ),
               child: TextField(
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   labelText: 'Moisture',
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.orange),
+                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.green),
                 ),
               ),
             ),
@@ -112,7 +109,7 @@ class SoilDiagnosisPage extends StatelessWidget {
                 // Handle submit action
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.green,
                 padding: const EdgeInsets.symmetric(
                     horizontal: 40.0, vertical: 15.0),
               ),

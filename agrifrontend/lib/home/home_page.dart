@@ -1,10 +1,9 @@
 // lib/home_page.dart
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
-import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 import 'package:agrifrontend/homepages/market/market_place.dart';
 import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
-
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,13 +14,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 1) {
+        _showChat(context);
+      }
+    });
+  }
+
+  void _showChat(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => const ChatPage(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon:
-              const Icon(Icons.person, color: Color.fromARGB(255, 10, 10, 10)),
+          icon: const Icon(Icons.person, color: Colors.green),
           onPressed: () {
             // Define your action here
           },
@@ -105,18 +121,20 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: '',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.help),
-            label: '',
+            label: 'Help',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            label: '',
+            label: 'Notifications',
           ),
         ],
       ),
@@ -141,7 +159,7 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.green,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
@@ -157,6 +175,46 @@ class CustomButton extends StatelessWidget {
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ChatPage extends StatelessWidget {
+  const ChatPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Chat with AgriBot',
+            style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10.0),
+          Expanded(
+            child: ListView(
+              children: const [
+                Text('Welcome! How can I assist you today?'),
+                // Add more chat bubbles here
+              ],
+            ),
+          ),
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Type your message...',
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.send),
+                onPressed: () {
+                  // Handle send action
+                },
+              ),
             ),
           ),
         ],
