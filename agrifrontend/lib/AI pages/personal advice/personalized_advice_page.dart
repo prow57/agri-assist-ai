@@ -119,12 +119,12 @@ class PersonalizedAdvicePage extends StatelessWidget {
           margin: EdgeInsets.all(4),
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.orange.shade100,
+            color: Colors.green.shade100,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
-              Icon(icon, size: 40, color: Colors.orange),
+              Icon(icon, size: 40, color: Colors.green),
               const SizedBox(height: 8),
               Text(title,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
