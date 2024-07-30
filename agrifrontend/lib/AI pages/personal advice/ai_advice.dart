@@ -21,23 +21,7 @@ class _AiAdviceState extends State<AiAdvice> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('https://api.openai.com/v1/engines/davinci-codex/completions');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization':
-            'Bearer sk-proj-rztlFl3a0hgph3nmGUNJT3BlbkFJBtN6MYL29jguuSnqb5EG',
-      },
-      body: json.encode({
-        'prompt': 'You are an agriculture expert. Given the following details, provide agriculture-focused advice: '
-                  'Crop: ${_cropController.text}, '
-                  'Practices: ${_practicesController.text}, '
-                  'Issues: ${_issuesController.text}',
-        'max_tokens': 150,
-        'temperature': 0.7,
-      }),
-    );
+    
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -60,7 +44,7 @@ class _AiAdviceState extends State<AiAdvice> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('AI Advice'),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.green,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
