@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv() 
 import os
 
-from crewai import Agent, Task, Crew
+from crewai import Agent, Task, Crew, Process
 
 from IPython.display import Markdown
 
@@ -14,9 +14,21 @@ from crewai_tools import SerperDevTool,  ScrapeWebsiteTool, WebsiteSearchTool
 
 from pydantic import BaseModel, Field
 
+from langchain_core.prompts import ChatPromptTemplate
+
+from langchain_groq import ChatGroq
+
 search_tool = SerperDevTool()
 scrape_tool = ScrapeWebsiteTool()
+groq_api_key = os.getenv("GROQ_API_KEY")
+groq_api_base = os.getenv("GROQ_API_BASE")
+groq_model_name = os.getenv("GROQ_MODEL_NAME")
 
+chat = ChatGroq(
+temperature=0,
+groq_api_key=groq_api_key,
+model_name=groq_model_name
+)
 
 leaf_image_analysis_agent = Agent(
     role="Leaf Image Analysis Agent",
@@ -27,7 +39,9 @@ leaf_image_analysis_agent = Agent(
         "The agent's algorithms are designed to provide precise and reliable information to ensure farmers can trust the diagnosis."
     ),
     allow_delegation=False,
-    verbose=True
+    verbose=True,
+    llm=chat
+
 )
 
 disease_research_agent = Agent(
@@ -39,7 +53,8 @@ disease_research_agent = Agent(
     ),
     tools=[search_tool, scrape_tool],
     allow_delegation=False,
-    verbose=True
+    verbose=True,
+    llm=chat
 )
 information_extraction_agent = Agent(
     role="Information Extraction Agent",
@@ -50,7 +65,8 @@ information_extraction_agent = Agent(
     ),
     allow_delegation=False,
     tools=[scrape_tool],
-    verbose=True
+    verbose=True,
+    llm=chat
 )
 guidance_generation_agent = Agent(
     role="Guidance Generation Agent",
@@ -59,11 +75,12 @@ guidance_generation_agent = Agent(
         "This agent focuses on providing precise ingredient measurements and step-by-step instructions to help farmers effectively treat their crops."
     ),
     allow_delegation=False,
-    verbose=True
+    verbose=True,
+    llm=chat
 )
 
 # Defining the agents
-# Define a Pydantic model for venue details 
+# Define a Pydantic model for venue details
 # (demonstrating Output as Pydantic)
 # class VenueDetails(BaseModel):
 #     age: int = Field(default='twelve',description='Age of the user',examples=['marcelo@mail.com'])
@@ -115,7 +132,7 @@ leaf_image_analysis_task = Task(
     ),
     tools=[],  # Specify any tools if needed
     output_json=LeafImageAnalysisOutput,
-    output_file="leaf_image_analysis_output.json", 
+    output_file="leaf_image_analysis_output.json",
     agent=leaf_image_analysis_agent,
 )
 
@@ -127,7 +144,7 @@ disease_research_task = Task(
     expected_output="A JSON object with a list of relevant websites.",
     tools=[],  # Specify any tools if needed
     output_json=DiseaseResearchOutput,
-    output_file="disease_research_output.json", 
+    output_file="disease_research_output.json",
     agent=disease_research_agent,
 )
 
@@ -139,7 +156,7 @@ information_extraction_task = Task(
     expected_output="A JSON object with general information and the recommanded treatement of the diagnosed disease.",
     tools=[],  # Specify any tools if needed
     output_json=InformationExtractionOutput,
-    output_file="information_extraction_output.json", 
+    output_file="information_extraction_output.json",
     agent=information_extraction_agent,
 )
 
@@ -150,7 +167,7 @@ guidance_generation_task = Task(
     expected_output="A JSON object with the treatment steps and ingredients.",
     tools=[],  # Specify any tools if needed
     output_json=GuidanceGenerationOutput,
-    output_file="guidance_generation_output.json", 
+    output_file="guidance_generation_output.json",
     agent=guidance_generation_agent,
 )
 # Defining the crew
@@ -158,8 +175,19 @@ guidance_generation_task = Task(
 crew = Crew(
     agents=[leaf_image_analysis_agent, disease_research_agent, information_extraction_agent, guidance_generation_agent],
     tasks=[leaf_image_analysis_task, disease_research_task, information_extraction_task, guidance_generation_task],
-    verbose=2,
-    memory=True
+    process=Process.sequential,
+    memory=True,
+    verbose=True,
+    embedder={
+      "provider": "azure_openai",
+      "config": {
+          "model": "text-embedding-ada-002",
+          "deployment_name": "agri_assistant_ai",
+          "api_key": os.getenv("AZURE_OPENAI_KEY"),
+          "api_base": os.getenv("AZURE_OPENAI_ENDPOINT"),
+          "endpoint": os.getenv("AZURE_OPENAI_ENDPOINT")
+      }
+  }
 )
 
 # Example input and kickoff
