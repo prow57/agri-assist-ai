@@ -93,6 +93,16 @@ class MarketPlacePage extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MarketLocationPage()),
+          );
+        },
+        child: Icon(Icons.location_on),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 }
@@ -123,4 +133,19 @@ class ChartData {
   ChartData(this.x, this.y);
   final double x;
   final double y;
+}
+
+class MarketLocationPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Market Locations'),
+        backgroundColor: Colors.green,
+      ),
+      body: Center(
+        child: const Text('Map of Market Locations Here'),
+      ),
+    );
+  }
 }
