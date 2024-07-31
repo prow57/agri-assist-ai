@@ -1,17 +1,15 @@
 {
   "treatment_steps": [
-    "Remove infected tissues early to prevent the spread of the disease.",
-    "Prune your tomatoes to improve air circulation and reduce humidity.",
-    "Mulch around the plants to retain moisture and suppress weeds.",
-    "Irrigate from below to avoid wetting the leaves and stems.",
-    "Maintain plant vigor by providing adequate nutrients and water.",
-    "Rotate where you grow tomatoes and related crops to break the disease cycle."
+    "Remove lower leaves and stems that are close to the soil surface to prevent soil splash and reduce humidity.",
+    "Prune infected leaves and stems, and dispose of them by burning or burying to prevent the spread of the disease.",
+    "Apply a fungicide specifically designed to target Alternaria solani, following the product's instructions for application rates and timing.",
+    "Improve air circulation and sunlight penetration by spacing plants and orienting rows to allow for good air movement.",
+    "Use drip tape instead of sprinkler irrigation to reduce moisture on the leaves and stems.",
+    "Keep foliage dry during or after a rain or morning fog to minimize the level of infection."
   ],
   "ingredients": {
-    "Copper-based fungicide": "2-3 tablespoons per gallon of water",
-    "Chlorothalonil": "1-2 tablespoons per gallon of water",
-    "Mancozeb": "1-2 tablespoons per gallon of water",
-    "Neem oil": "2-4 tablespoons per gallon of water",
-    "Organic mulch (e.g., straw or wood chips)": "2-3 inches thick"
+    "Fungicide (e.g. chlorothalonil or copper-based products)": "2-3 tablespoons per gallon of water",
+    "Water": "as needed",
+    "Mulch (e.g. straw or wood chips)": "2-3 inches thick, as needed"
   }
 }
