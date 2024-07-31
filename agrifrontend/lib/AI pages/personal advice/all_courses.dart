@@ -43,6 +43,7 @@ class AllCoursesPage extends StatelessWidget {
         subtitle: const Text('Start Lesson'),
         onTap: () {
           // Handle course item tap
+          // For example, navigate to a detailed course page
         },
       ),
     );
@@ -50,6 +51,7 @@ class AllCoursesPage extends StatelessWidget {
 
   Widget _buildCourseListItem(String title, String author, String imagePath) {
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         leading:
             Image.asset(imagePath, width: 50, height: 50, fit: BoxFit.cover),
@@ -57,6 +59,7 @@ class AllCoursesPage extends StatelessWidget {
         subtitle: Text('By $author'),
         onTap: () {
           // Handle course item tap
+          // For example, navigate to a detailed course page
         },
       ),
     );

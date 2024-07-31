@@ -6,7 +6,10 @@ class MarketLocationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Market Locations'),
+        title: const Text(
+          'Market Locations',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green,
       ),
       body: GoogleMap(

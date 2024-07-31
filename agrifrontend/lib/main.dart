@@ -1,23 +1,27 @@
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'theme_notifier.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Provider.of<ThemeNotifier>(context).isDarkMode;
+
     return MaterialApp(
-      title: 'Agri-assist-AI',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
+      title: 'OpenTechZ App',
+      theme: isDarkMode ? ThemeData.dark() : ThemeData.light(),
       home: const HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

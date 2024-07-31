@@ -9,10 +9,14 @@ class PersonalizedAdvicePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agriculture Assistant'),
+        title: const Text(
+          'Agriculture Assistant',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.green,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.search,color: Colors.white),
             onPressed: () {
               // Define your action here
             },
@@ -77,11 +81,11 @@ class PersonalizedAdvicePage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green, // Background color
+                  backgroundColor: Colors.green,
                 ),
                 child: const Text(
                   'View all courses',
-                  style: TextStyle(color: Colors.white), // Text color
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
@@ -103,6 +107,9 @@ class PersonalizedAdvicePage extends StatelessWidget {
             label: 'Profile',
           ),
         ],
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
       ),
     );
   }
@@ -122,8 +129,8 @@ class PersonalizedAdvicePage extends StatelessWidget {
           }
         },
         child: Container(
-          margin: EdgeInsets.all(4),
-          padding: EdgeInsets.all(16),
+          margin: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.green.shade100,
             borderRadius: BorderRadius.circular(12),
@@ -133,9 +140,10 @@ class PersonalizedAdvicePage extends StatelessWidget {
               Icon(icon, size: 40, color: Colors.green),
               const SizedBox(height: 8),
               Text(title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
-              Text(subtitle, style: TextStyle(fontSize: 12)),
+              Text(subtitle, style: const TextStyle(fontSize: 12)),
             ],
           ),
         ),
@@ -147,7 +155,7 @@ class PersonalizedAdvicePage extends StatelessWidget {
       BuildContext context, String title, String buttonText, String imagePath) {
     return Container(
       width: 150,
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         image: DecorationImage(
@@ -156,13 +164,13 @@ class PersonalizedAdvicePage extends StatelessWidget {
         ),
       ),
       child: Container(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             colors: [
               Colors.black.withOpacity(0.8),
-              Colors.black.withOpacity(0.3)
+              Colors.black.withOpacity(0.3),
             ],
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
@@ -173,15 +181,21 @@ class PersonalizedAdvicePage extends StatelessWidget {
           children: [
             Text(
               title,
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             ElevatedButton(
               onPressed: () {
                 // Define your action here
               },
-              child: Text(buttonText),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: Text(
+                buttonText,
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),
