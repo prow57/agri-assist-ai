@@ -17,10 +17,13 @@ class SoilDiagnosisPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Soil Testing'),
+        title: const Text(
+          'Soil Testing',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -36,21 +39,24 @@ class SoilDiagnosisPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.photo, size: 50.0),
+                  icon:
+                      const Icon(Icons.photo, size: 50.0, color: Colors.green),
                   onPressed: () {
                     _pickImage(ImageSource.gallery);
                   },
                 ),
                 const SizedBox(width: 30.0),
                 IconButton(
-                  icon: const Icon(Icons.camera_alt, size: 50.0),
+                  icon: const Icon(Icons.camera_alt,
+                      size: 50.0, color: Colors.green),
                   onPressed: () {
                     _pickImage(ImageSource.camera);
                   },
                 ),
                 const SizedBox(width: 30.0),
                 IconButton(
-                  icon: const Icon(Icons.refresh, size: 50.0),
+                  icon: const Icon(Icons.refresh,
+                      size: 50.0, color: Colors.green),
                   onPressed: () {
                     // Handle refresh
                   },
@@ -58,51 +64,10 @@ class SoilDiagnosisPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20.0),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.green[100],
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: 'Color',
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.green),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.green[100],
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: 'Texture',
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.green),
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.green[100],
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  labelText: 'Moisture',
-                  suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.green),
-                ),
-              ),
-            ),
+            _buildInputField(label: 'Color', hintText: 'Select soil color'),
+            _buildInputField(label: 'Texture', hintText: 'Select soil texture'),
+            _buildInputField(
+                label: 'Moisture', hintText: 'Select soil moisture level'),
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
@@ -112,10 +77,35 @@ class SoilDiagnosisPage extends StatelessWidget {
                 backgroundColor: Colors.green,
                 padding: const EdgeInsets.symmetric(
                     horizontal: 40.0, vertical: 15.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
               ),
-              child: const Text('Submit'),
+              child: const Text(
+                'Submit',
+                style: TextStyle(fontSize: 18.0, color: Colors.white),
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField({required String label, required String hintText}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        color: Colors.green[100],
+      ),
+      child: TextField(
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          labelText: label,
+          hintText: hintText,
+          suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.green),
         ),
       ),
     );
