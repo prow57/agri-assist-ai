@@ -1,13 +1,14 @@
 {
   "crop_type": "Tomato",
   "disease_name": "Early Blight",
-  "description": "Early Blight is a fungal disease that affects tomatoes, characterized by the presence of dark concentric circles on the leaves and yellowing around the spots. It can lead to significant damage to the plant if not treated promptly.",
-  "level_of_risk": "Moderate",
-  "percentage": 40,
-  "estimated_size": "Small",
-  "stage": "Early",
+  "description": "Early Blight is a fungal disease caused by Alternaria solani. It is characterized by the appearance of yellowing leaves with dark spots, which eventually turn brown and necrotic. The disease can cause significant yield loss if left untreated.",
+  "level_of_risk": "Medium",
+  "percentage": 80,
+  "estimated_size": "Approximately 10% of the leaf area is affected",
+  "stage": "Initial",
   "symptoms": [
-    "Dark concentric circles on the leaves",
-    "yellowing around the spots"
+    "Yellowing leaves with dark spots",
+    "Brown and necrotic lesions",
+    "Leaf curling and distortion"
   ]
 }

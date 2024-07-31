@@ -1,6 +1,20 @@
 {
   "general_information": [
-    "Early Blight is a disease that causes dark concentric circles on the leaves and yellowing around the spots. Spores can be spread by wind, people, animals, and contaminated tools. Prevention methods include inspecting transplants, disinfecting tools, choosing tolerant/resistant plants, keeping plants growing vigorously, irrigating from below, using mulch, pruning tomatoes, removing infected tissues early, and practicing crop rotation."
+    "Early blight of tomato is caused primarily by the fungus Alternaria linariae (=A. tomatophila; formerly known as A. solani), although other species of Alternaria may be isolated from lesions.",
+    "Early blight is a fungal pathogen of tomatoes. It also affects plants like peppers, potatoes, eggplants, and other members of the nightshade family.",
+    "Early blight begins on lower, older leaves in midsummer when temperatures warm. Watch for these signs when walking in your garden: Small dark spots may appear on older leaves near the soil. Spots are brown and round and may develop concentric rings."
   ],
-  "recommanded_treatement": null
+  "recommended_treatment": [
+    "Maintain plant vigor. Maintaining adequate fertilization and improving host vigor can reduce susceptibility to early blight.",
+    "Remove volunteer weeds. Removing volunteer tomatoes can reduce disease as they can serve as an inoculum source.",
+    "Rotate every 2-3 years. Rotating away from tomato can reduce inoculum density in a field.",
+    "Apply fungicides preventatively.",
+    "Plant tolerant varieties. There is no resistance to early blight, however, some varieties are more tolerant to the disease: 'Mountain Magic', 'Mountain Fresh Plus F1', 'Bush Celebrity Hybrid', 'Big Beef Hybrid', 'Celebrity Hybrid', 'Rutgers', 'Juliet F1', 'Tommy Toe', 'Old Brooks', or 'Cabernet F1'.",
+    "Keep your plants growing vigorously. Fertile, rich soil and lots of sunlight can go a long way to helping tomatoes (and potatoes, peppers, and eggplants) keep marching when early blight starts to show up.",
+    "Compost will help your tomatoes to thrive, without the lack of fruiting that too much artificial fertilizer can cause.",
+    "Irrigate from below. If you irrigate your garden, try to avoid overhead systems for your tomatoes. Alternaria thrive in wet, humid conditions. The combination of damp foliage and soil splash from overhead sprinklers can worsen a fungus problem.",
+    "Mulch, mulch, mulch. Mulch is your friend. From weed suppression to soil protection and eventual breakdown into the soil’s organic matter, mulch is hard to beat. In the case of early blight, mulching reduces soil splash from rain or irrigation. It provides a barrier to fungus movement from the soil to the lower leaves.",
+    "Prune your tomatoes. Keeping the lower leaves from touching the soil, and promoting airflow through the plant, especially near the ground, can significantly reduce the likelihood of many tomato diseases becoming established. Remove those bottom leaves that aren’t doing much, and let in some fresh air.",
+    "Remove infected tissues early. Leaves showing signs of early blight should be pruned off and disposed of. Bury them deeply or burn them. Slowing the progression of the fungi can provide the plant an edge to keep growing up top and have time to give a batch of tasty tomatoes."
+  ]
 }

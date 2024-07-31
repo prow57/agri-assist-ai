@@ -1,10 +1,21 @@
 {
   "treatment_steps": [
-    "Step 1: Start by inspecting your tomato plants for any signs of Early Blight, such as dark concentric circles on the leaves and yellowing around the spots.",
-    "Step 2: If Early Blight is detected, remove and dispose of any infected tissues early to prevent the spread of the disease.",
-    "Step 3: Apply a fungicide specifically formulated to treat Early Blight on tomato plants. Follow the manufacturer's instructions for application.",
-    "Step 4: Implement prevention methods such as disinfecting tools, choosing tolerant/resistant plants, keeping plants growing vigorously, irrigating from below, using mulch, pruning tomatoes, and practicing crop rotation to reduce the risk of future infections.",
-    "Step 5: Monitor your tomato plants regularly for any new signs of Early Blight and repeat the treatment process if necessary."
+    "Maintain plant vigor by ensuring adequate fertilization and improving host vigor to reduce susceptibility to early blight.",
+    "Remove volunteer weeds, including volunteer tomatoes, to reduce disease inoculum sources.",
+    "Rotate crops every 2-3 years to reduce inoculum density in the field.",
+    "Apply fungicides preventatively to prevent the spread of early blight.",
+    "Plant tolerant varieties, such as 'Mountain Magic', 'Mountain Fresh Plus F1', 'Bush Celebrity Hybrid', 'Big Beef Hybrid', 'Celebrity Hybrid', 'Rutgers', 'Juliet F1', 'Tommy Toe', 'Old Brooks', or 'Cabernet F1'.",
+    "Keep plants growing vigorously by providing fertile, rich soil and plenty of sunlight.",
+    "Use compost to promote healthy plant growth and fruiting.",
+    "Irrigate from below to avoid overhead systems that can exacerbate fungal growth.",
+    "Mulch around plants to reduce soil splash and provide a barrier to fungus movement.",
+    "Prune tomatoes to promote airflow and remove lower leaves that are in contact with the soil.",
+    "Remove infected tissues early to slow the progression of the fungi and prevent further infection."
   ],
-  "ingredients": null
+  "ingredients": {
+    "Fungicides": "Apply according to product label instructions",
+    "Compost": "Apply 2-3 inches of compost around plants",
+    "Mulch": "Apply 2-3 inches of organic mulch around plants",
+    "Fertilizer": "Apply according to product label instructions to maintain adequate fertilization"
+  }
 }

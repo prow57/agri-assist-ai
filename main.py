@@ -94,12 +94,12 @@ guidance_generation_agent = Agent(
 
 class LeafImageAnalysisOutput(BaseModel):
     crop_type: str = Field(description='Type of the crop')
-    disease_name: str = Field(description='Name of the detected disease')
+    disease_name: str = Field(description='Name of the detected disease None if the crop is healthy')
     description: str = Field(description='detailed description of the disease')
     level_of_risk: str = Field(description='Level of risk')
     percentage: int = Field(description='Percentage of heath of the spot:100% very health')
     estimated_size: str = Field(description='Estimated size of the crop height')
-    stage: str = Field(description='Disease stage')
+    stage: str = Field(description='Disease stage None if the crop is healthy')
     symptoms: list[str] | None = Field(description='Symptoms observed')
 
 class DiseaseResearchOutput(BaseModel):
