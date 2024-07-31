@@ -163,6 +163,8 @@ class CustomButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
+        elevation: 5,
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
