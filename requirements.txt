@@ -1,9 +1,9 @@
-crewai==0.28.8
-crewai_tools==0.1.6
-langchain_community==0.0.29
-ipython==8.26.0
-langchain-groq==0.1.6
-google_generativeai==0.7.2
+crewai
+crewai_tools
+langchain_community
+ipython
+langchain-groq
+google_generativeai
 langchain_google_genai
 fastapi
 uvicorn
