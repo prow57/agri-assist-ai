@@ -9,6 +9,46 @@ Open-TechZ Hackathon Group
 **Overview:**
 AgriAssist-AI is an innovative AI-driven agricultural advisory system designed to empower farmers with advanced tools for optimizing their farming practices. Leveraging cutting-edge technologies in machine learning and computer vision, AgriAssist AI provides real-time insights and recommendations to enhance crop health, soil quality, and overall farm productivity.
 
+**Getting the AI Model Locally:**
+
+To get the AgriAssist AI model running locally, follow these steps:
+
+1. **Clone the Project:**
+   ```bash
+   git clone https://github.com/prow57/agri-assist-ai.git
+   ```
+2. **Navigate to the Project Directory:**
+   ```bash
+   cd agri-assist-ai
+   ```
+3. **Install Python Virtual Environment:**
+   ```bash
+   python3 -m venv venv
+   ```
+4. **Activate the Virtual Environment:**
+   - On Windows:
+     ```bash
+     venv\Scripts\activate
+     ```
+   - On macOS/Linux:
+     ```bash
+     source venv/bin/activate
+     ```
+5. **Install the Required Dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+6. **Setup Environment Variables:**
+   ```bash
+   cp .env.example .env
+   ```
+   - Fill in the environment variables in the `.env` file.
+
+7. **Run the Application:**
+   ```bash
+   uvicorn api:app --reload
+   ```
+
 **Key Features:**
 1. **Leaf Scanning:**
    - Utilize advanced image processing and machine learning techniques to detect and diagnose leaf diseases.
@@ -52,43 +92,3 @@ AgriAssist AI aims to revolutionize the agricultural sector by providing farmers
 
 **Vision:**
 To create a sustainable and prosperous agricultural ecosystem by harnessing the power of artificial intelligence and making advanced agricultural insights accessible to every farmer.
-
-## Getting the AI Model Locally
-
-To get the AgriAssist AI model running locally, follow these steps:
-
-1. **Clone the Project:**
-   ```bash
-   git clone https://github.com/prow57/agri-assist-ai.git
-   ```
-2. **Navigate to the Project Directory:**
-   ```bash
-   cd agri-assist-ai
-   ```
-3. **Install Python Virtual Environment:**
-   ```bash
-   python3 -m venv venv
-   ```
-4. **Activate the Virtual Environment:**
-   - On Windows:
-     ```bash
-     venv\Scripts\activate
-     ```
-   - On macOS/Linux:
-     ```bash
-     source venv/bin/activate
-     ```
-5. **Install the Required Dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-6. **Setup Environment Variables:**
-   ```bash
-   cp .env.example .env
-   ```
-   - Fill in the environment variables in the `.env` file.
-
-7. **Run the Application:**
-   ```bash
-   uvicorn api:app --reload
-   ```
