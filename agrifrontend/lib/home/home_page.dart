@@ -1,10 +1,10 @@
-// lib/home_page.dart
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 import 'package:agrifrontend/homepages/market/market_place.dart';
 import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
 import 'package:flutter/material.dart';
+import 'settings_page.dart'; // Import the settings page
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,22 +14,44 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 0; // Add this property to track the selected index
+
+  // Placeholder method for _showChat
+  void _showChat(BuildContext context) {
+    // Define your chat action here, e.g., open a chat page or show a dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Chat Feature'),
+          content: const Text(
+              'This is where the chat functionality will be implemented.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       if (index == 1) {
         _showChat(context);
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const PersonalizedAdvicePage()),
+        );
       }
     });
-  }
-
-  void _showChat(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => const ChatPage(),
-    );
   }
 
   @override
@@ -113,7 +135,13 @@ class _HomePageState extends State<HomePage> {
                   CustomButton(
                       icon: Icons.settings,
                       label: 'Settings',
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsPage()),
+                        );
+                      }),
                 ],
               ),
             ),
@@ -123,6 +151,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -133,8 +163,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Help',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
+            icon: Icon(Icons.book),
+            label: 'Courses',
           ),
         ],
       ),
@@ -177,46 +207,6 @@ class CustomButton extends StatelessWidget {
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18.0,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ChatPage extends StatelessWidget {
-  const ChatPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Chat with AgriBot',
-            style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10.0),
-          Expanded(
-            child: ListView(
-              children: const [
-                Text('Welcome! How can I assist you today?'),
-                // Add more chat bubbles here
-              ],
-            ),
-          ),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Type your message...',
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () {
-                  // Handle send action
-                },
-              ),
             ),
           ),
         ],

@@ -21,7 +21,8 @@ class _AiAdviceState extends State<AiAdvice> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('https://api.openai.com/v1/engines/davinci-codex/completions');
+    final url = Uri.parse(
+        'https://api.openai.com/v1/engines/davinci-codex/completions');
     final response = await http.post(
       url,
       headers: {
@@ -30,10 +31,11 @@ class _AiAdviceState extends State<AiAdvice> {
             'Bearer sk-proj-rztlFl3a0hgph3nmGUNJT3BlbkFJBtN6MYL29jguuSnqb5EG',
       },
       body: json.encode({
-        'prompt': 'You are an agriculture expert. Given the following details, provide agriculture-focused advice: '
-                  'Crop: ${_cropController.text}, '
-                  'Practices: ${_practicesController.text}, '
-                  'Issues: ${_issuesController.text}',
+        'prompt':
+            'You are an agriculture expert. Given the following details, provide agriculture-focused advice: '
+                'Crop: ${_cropController.text}, '
+                'Practices: ${_practicesController.text}, '
+                'Issues: ${_issuesController.text}',
         'max_tokens': 150,
         'temperature': 0.7,
       }),
@@ -59,10 +61,13 @@ class _AiAdviceState extends State<AiAdvice> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Advice'),
+        title: const Text(
+          'AI Advice',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -131,7 +136,9 @@ class _AiAdviceState extends State<AiAdvice> {
                 ),
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : Text(_advice.isNotEmpty ? _advice : 'Enter details to get advice'),
+                    : Text(_advice.isNotEmpty
+                        ? _advice
+                        : 'Enter details to get advice'),
               ),
               const SizedBox(height: 16.0),
               Row(

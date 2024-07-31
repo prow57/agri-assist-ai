@@ -6,10 +6,16 @@ class MarketPlacePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Market Place'),
+        title: const Text(
+          'Market Place',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -30,8 +36,10 @@ class MarketPlacePage extends StatelessWidget {
                 height: 200.0,
                 child: SfCartesianChart(
                   primaryXAxis: CategoryAxis(),
+                  legend: Legend(isVisible: true),
                   series: <LineSeries>[
                     LineSeries<ChartData, double>(
+                      name: 'Supply',
                       dataSource: [
                         ChartData(1, 3),
                         ChartData(2, 4),
@@ -44,6 +52,7 @@ class MarketPlacePage extends StatelessWidget {
                       color: Colors.green,
                     ),
                     LineSeries<ChartData, double>(
+                      name: 'Demand',
                       dataSource: [
                         ChartData(1, 2),
                         ChartData(2, 3),
@@ -100,7 +109,10 @@ class MarketPlacePage extends StatelessWidget {
             MaterialPageRoute(builder: (context) => MarketLocationPage()),
           );
         },
-        child: Icon(Icons.location_on),
+        child: const Icon(
+          Icons.location_on,
+          color: Colors.white,
+        ),
         backgroundColor: Colors.green,
       ),
     );
@@ -122,8 +134,14 @@ class CommodityTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
-        title: Text(name),
-        trailing: Text(price),
+        title: Text(
+          name,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        trailing: Text(
+          price,
+          style: const TextStyle(color: Colors.green),
+        ),
       ),
     );
   }
@@ -143,8 +161,8 @@ class MarketLocationPage extends StatelessWidget {
         title: const Text('Market Locations'),
         backgroundColor: Colors.green,
       ),
-      body: Center(
-        child: const Text('Map of Market Locations Here'),
+      body: const Center(
+        child: Text('Map of Market Locations Here'),
       ),
     );
   }
