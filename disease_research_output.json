@@ -1,6 +1,24 @@
 {
   "relevant_websites": [
-    "https://content.ces.ncsu.edu/early-blight-of-tomato",
+    "https://extension.umn.edu/disease-management/early-blight-tomato-and-potato",
+    "https://www.gardentech.com/blog/pest-id-and-prevention/fight-blight-on-your-tomatoes",
     "https://www.almanac.com/pest/early-blight"
+  ],
+  "general_information": [
+    "Early blight is a fungal disease caused by Alternaria solani, characterized by yellowing leaves with dark spots, often with a target-like appearance.",
+    "It can lead to defoliation and reduced fruit production.",
+    "Early blight can be caused by two closely related species: Alternaria tomatophila and Alternaria solani.",
+    "Both pathogens can infect tomatoes, potatoes, peppers, and several weeds in the Solanaceae family.",
+    "Disease develops at moderate to warm temperatures; 82 to 86 F is its optimum temperature range.",
+    "The pathogen is most likely to spread with wet weather or heavy dew, or when relative humidity is 90% or greater."
+  ],
+  "recommended_treatments": [
+    "Use resistant varieties.",
+    "Maintain plant vigor.",
+    "Irrigate from below.",
+    "Mulch, mulch, mulch.",
+    "Prune your tomatoes.",
+    "Remove infected tissues early.",
+    "Rotate where you grow tomatoes and related crops."
   ]
 }

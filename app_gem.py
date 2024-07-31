@@ -55,26 +55,15 @@ leaf_image_analysis_agent = Agent(
 )
 
 disease_research_agent = Agent(
-    role="Disease Research Agent",
-    goal="Search the internet using Retrieval-Augmented Generation (RAG) techniques to find the most relevant websites that discuss solutions for the identified disease.",
+    role="Disease Research and Information Extraction Agent",
+    goal="Search the internet using RAG techniques to find the most relevant websites discussing solutions for the identified disease, and extract detailed guidance and recommendations from those websites.",
     backstory=(
-        "Equipped with natural language processing capabilities, this agent performs in-depth internet searches to gather the latest and most relevant information. "
-        "It filters out unreliable sources and focuses on scientific articles, agricultural forums, and trusted websites to ensure that the information provided is accurate and useful."
+        "This agent combines the roles of performing in-depth internet searches and extracting relevant information. "
+        "It filters out unreliable sources, focusing on scientific articles, agricultural forums, and trusted websites, "
+        "and then processes the data to provide clear and actionable recommendations."
     ),
     tools=[search_tool, scrape_tool],
     allow_delegation=False,
-    verbose=True,
-    llm=chat
-)
-information_extraction_agent = Agent(
-    role="Information Extraction Agent",
-    goal="Extract detailed guidance and recommendations from the list of websites provided by the Disease Research Agent.",
-    backstory=(
-        "This agent uses web scraping techniques to extract relevant information from the selected websites. "
-        "It processes and organizes the data into a user-friendly format, ensuring that the recommendations are clear and actionable."
-    ),
-    allow_delegation=False,
-    tools=[scrape_tool],
     verbose=True,
     llm=chat
 )
@@ -89,34 +78,32 @@ guidance_generation_agent = Agent(
     llm=chat
 )
 
-#
-# class LeafImageAnalysisOutput(BaseModel):
-#     crop_type: str = Field(description='Type of the crop')
-#     disease_name: str = Field(description='Name of the detected disease None if the crop is healthy')
-#     description: str = Field(description='detailed description of the disease')
-#     level_of_risk: str = Field(description='Level of risk')
-#     percentage: int = Field(description='Percentage of heath of the spot:100% very health')
-#     estimated_size: str = Field(description='Estimated size of the crop height')
-#     stage: str = Field(description='Disease stage None if the crop is healthy')
-#     symptoms: list[str] | None = Field(description='Symptoms observed')
-#
-# class DiseaseResearchOutput(BaseModel):
-#     relevant_websites: list[str] | None  = Field(description='List of relevant websites for disease solutions')
-#
-# class InformationExtractionOutput(BaseModel):
-#     general_information: list[str] | None  = Field(description='general informatiosn about the diagnosed disease.')
-#     recommanded_treatement: list[str] | None = Field(description='recommanded treatements of the diagnosed disease.')
-#
-# class GuidanceGenerationOutput(BaseModel):
-#     treatment_steps: list[str] | None  = Field(description='Steps to treatment plan of the disease')
-#     ingredients: dict[str, str] | None = Field(description='Ingredients used in the treatment and their quantities')
-#
-# class CumulativeOutput(BaseModel):
-#     leaf_analysis: LeafImageAnalysisOutput = Field(default=None, description='Results from leaf image analysis')
-#     disease_research: DiseaseResearchOutput = Field(default=None, description='Results from disease research')
-#     information_extraction: InformationExtractionOutput = Field(default=None, description='Extracted information and guidance')
-#     guidance_generation: GuidanceGenerationOutput = Field(default=None, description='Generated guidance and ingredients')
-# # Define the agents
+
+class LeafImageAnalysisOutput(BaseModel):
+    crop_type: str | None = Field(description='Type of the crop')
+    disease_name: str | None= Field(description='Name of the detected disease None if the crop is healthy')
+    description: str| None  = Field(description='detailed description of the disease')
+    level_of_risk: str | None = Field(description='Level of risk')
+    percentage: int | None= Field(description='Percentage of heath of the spot:100% very health')
+    estimated_size: str | None = Field(description='Estimated size of the crop height')
+    stage: str | None = Field(description='Disease stage None if the crop is healthy')
+    symptoms: list[str] | None = Field(description='List of symptoms observed')
+
+
+class DiseaseResearchOutput(BaseModel):
+    relevant_websites: list[str] | None = Field(description='List of relevant websites for disease solutions')
+    general_information: list[str] | None = Field(description='General information about the diagnosed disease.')
+    recommended_treatments: list[str] | None = Field(description='Recommended treatments for the diagnosed disease.')
+
+class GuidanceGenerationOutput(BaseModel):
+    treatment_steps: list[str] | None  = Field(description='Steps to treatment plan of the disease')
+    ingredients: dict[str, str] | None = Field(description='Ingredients used in the treatment and their quantities')
+
+class CumulativeOutput(BaseModel):
+    leaf_analysis: LeafImageAnalysisOutput = Field(default=None, description='Results from leaf image analysis')
+    disease_research: DiseaseResearchOutput = Field(default=None, description='Results from disease research')
+    guidance_generation: GuidanceGenerationOutput = Field(default=None, description='Generated guidance and ingredients')
+# Define the agents
 
 
 leaf_image_analysis_task = Task(
@@ -141,6 +128,8 @@ leaf_image_analysis_task = Task(
               "<string>"                           // Symptom 2
             ]
             }
+            do not give any additional text like feedbacks or comments
+            Provide concise answers, focus on factual information.
         """
 
     ),
@@ -149,50 +138,37 @@ leaf_image_analysis_task = Task(
     output_file="leaf_image_analysis_output.json",
     agent=leaf_image_analysis_agent,
 )
-
 disease_research_task = Task(
     description=(
         "1. Perform an internet search to find the most relevant websites that discuss solutions for the identified disease.\n"
-        "2. Filter out unreliable sources and focus on scientific articles, agricultural forums, and trusted websites."
+        "2. Filter out unreliable sources and focus on scientific articles, agricultural forums, and trusted websites.\n"
+        "3. Scrape the list of websites.\n"
+        "4. Extract the most relevant information and recommended treatments for the diagnosed disease."
     ),
-    expected_output="""A JSON object with a list of relevant websites.
+    expected_output="""A JSON object with a list of relevant websites, general information, and recommended treatments for the diagnosed disease.
             structure:
             {
                 "relevant_websites": [
                   "<string>",                          // URL to relevant website 1
                   "<string>"                           // URL to relevant website 2
+                ],
+                "general_information": [
+                  "<string>",                          // General information 1
+                  "<string>"                           // General information 2
+                ],
+                "recommended_treatments": [
+                  "<string>",                          // Recommended treatment 1
+                  "<string>"                           // Recommended treatment 2
                 ]
             }
+            do not give any additional text like feedbacks or comments
+            Provide concise answers, focus on factual information.
 
     """,
     tools=[],  # Specify any tools if needed
 #     output_json=DiseaseResearchOutput,
     output_file="disease_research_output.json",
     agent=disease_research_agent,
-)
-
-information_extraction_task = Task(
-    description=(
-        "1. Scrape the list of websites provided by the Disease Research Agent.\n"
-        "2. Extract the most relevant information and how to treat the diagnosed disease."
-    ),
-    expected_output="""A JSON object with general information and the recommanded treatement of the diagnosed disease.
-                    structure:
-                    {
-                        "general_information": [
-                          "<string>",                          // General information 1
-                          "<string>"                           // General information 2
-                        ],
-                        "recommended_treatement": [
-                          "<string>",                          // Recommended treatment 1
-                          "<string>"                           // Recommended treatment 2
-                        ]
-                    }
-                    """,
-    tools=[],  # Specify any tools if needed
-#     output_json=InformationExtractionOutput,
-    output_file="information_extraction_output.json",
-    agent=information_extraction_agent,
 )
 
 guidance_generation_task = Task(
@@ -211,6 +187,8 @@ guidance_generation_task = Task(
                    "<string>": "<string>"               // Ingredient name and quantity
                  }
                 }
+            do not give any additional text like feedbacks or comments
+            Provide concise answers, focus on factual information.
     """,
     tools=[],  # Specify any tools if needed
 #     output_json=GuidanceGenerationOutput,
@@ -224,8 +202,8 @@ guidance_generation_task = Task(
 
 # Create a Single Crew
 email_crew = Crew(
-    agents=[leaf_image_analysis_agent, disease_research_agent, information_extraction_agent, guidance_generation_agent],
-    tasks=[leaf_image_analysis_task, disease_research_task, information_extraction_task, guidance_generation_task],
+    agents=[leaf_image_analysis_agent, disease_research_agent, guidance_generation_agent],
+    tasks=[leaf_image_analysis_task, disease_research_task, guidance_generation_task],
     process=Process.sequential,
 #     memory=True,
     verbose=True,
