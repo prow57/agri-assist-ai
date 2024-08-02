@@ -130,7 +130,7 @@ class _HomeState extends State<Home> {
               ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                 child: Image.asset(
-                  'assets/profile.png',
+                  '../../../../assets/profile.png',
                   width: 40,
                   height: 40,
                 ),
@@ -140,7 +140,7 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/pin.png',
+                    '../../../../assets/pin.png',
                     width: 20,
                   ),
                   const SizedBox(
@@ -213,7 +213,7 @@ class _HomeState extends State<Home> {
                     child: imageUrl == ''
                         ? const Text('')
                         : Image.asset(
-                            'assets/' + imageUrl + '.png',
+                            '../../../../assets/' + imageUrl + '.png',
                             width: 150,
                           ),
                   ),
@@ -271,18 +271,18 @@ class _HomeState extends State<Home> {
                     text: 'Wind Speed',
                     value: windSpeed,
                     unit: 'km/h',
-                    imageUrl: 'assets/windspeed.png',
+                    imageUrl: '../../../../assets/windspeed.png',
                   ),
                   weatherItem(
                       text: 'Humidity',
                       value: humidity,
                       unit: '',
-                      imageUrl: 'assets/humidity.png'),
+                      imageUrl: '../../../../assets/humidity.png'),
                   weatherItem(
                     text: 'Wind Speed',
                     value: maxTemp,
                     unit: 'C',
-                    imageUrl: 'assets/max-temp.png',
+                    imageUrl: '../../../../assets/max-temp.png',
                   ),
                 ],
               ),
@@ -373,7 +373,7 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                               Image.asset(
-                                'assets/' + weatherUrl + '.png',
+                                '../../../../assets/' + weatherUrl + '.png',
                                 width: 30,
                               ),
                               Text(

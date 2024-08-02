@@ -57,7 +57,7 @@ class _WelcomeState extends State<Welcome> {
                       cities[index].isSelected =! cities[index].isSelected;
                     });
                   },
-                    child: Image.asset(cities[index].isSelected == true ? 'assets/checked.png' : 'assets/unchecked.png', width: 30,)),
+                    child: Image.asset(cities[index].isSelected == true ? '../../../../assets/checked.png' : 'assets/unchecked.png', width: 30,)),
                 const SizedBox( width: 10,),
                 Text(cities[index].city, style: TextStyle(
                   fontSize: 16,

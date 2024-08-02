@@ -23,7 +23,7 @@ class GetStarted extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
 
             children: [
-              Image.asset('assets/get-started.png'),
+              Image.asset('../../../../assets/get-started.png'),
               const SizedBox(height: 30,),
               GestureDetector(
                 onTap: (){
