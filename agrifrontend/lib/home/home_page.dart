@@ -133,8 +133,8 @@ class _HomePageState extends State<HomePage> {
                         );
                       }),
                   CustomButton(
-                      icon: Icons.settings,
-                      label: 'Settings',
+                      icon: Icons.chat_bubble,
+                      label: 'AI chat',
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -159,8 +159,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.help),
-            label: 'Help',
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book),
