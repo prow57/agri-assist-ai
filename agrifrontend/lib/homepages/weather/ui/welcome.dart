@@ -57,7 +57,7 @@ class _WelcomeState extends State<Welcome> {
                       cities[index].isSelected =! cities[index].isSelected;
                     });
                   },
-                    child: Image.asset(cities[index].isSelected == true ? '../../../../assets/checked.png' : 'assets/unchecked.png', width: 30,)),
+                    child: Image.asset(cities[index].isSelected == true ? 'assets/checked.png' : 'assets/unchecked.png', width: 30,)),
                 const SizedBox( width: 10,),
                 Text(cities[index].city, style: TextStyle(
                   fontSize: 16,
@@ -68,13 +68,22 @@ class _WelcomeState extends State<Welcome> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: myConstants.secondaryColor,
-        child: const Icon(Icons.pin_drop),
-        onPressed: (){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home()));
-        },
-      ),
+
+floatingActionButton: FloatingActionButton(
+  backgroundColor: myConstants.secondaryColor,
+  child: const Icon(Icons.pin_drop),
+  onPressed: () {
+    // Assuming you have a method to get selected cities
+  Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => Home(selectedCities: selectedCities), // Pass selectedCities here
+  ),
+);
+
+  },
+),
+
     );
   }
 }
