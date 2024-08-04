@@ -1,13 +1,11 @@
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:agrifrontend/homepages/market/market_place.dart';
-import 'package:agrifrontend/homepages/weather/ui/home.dart';
-import 'package:agrifrontend/homepages/weather/ui/weather_home.dart';
 import 'package:agrifrontend/homepages/weather/ui/welcome.dart';
-import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
 import 'package:flutter/material.dart';
-import 'settings_page.dart'; // Import the settings page
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,39 +17,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0; // Add this property to track the selected index
 
-  // Placeholder method for _showChat
-  void _showChat(BuildContext context) {
-    // Define your chat action here, e.g., open a chat page or show a dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Chat Feature'),
-          content: const Text(
-              'This is where the chat functionality will be implemented.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       if (index == 1) {
-        _showChat(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SettingsPage(),
+          ),
+        );
       } else if (index == 2) {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const PersonalizedAdvicePage()),
+            builder: (context) => const PersonalizedAdvicePage(),
+          ),
         );
       }
     });
@@ -112,8 +93,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const Welcome()));
+                                builder: (context) => const Welcome()));
                       }),
                   CustomButton(
                       icon: Icons.attach_money,
@@ -142,7 +122,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SettingsPage()),
+                              builder: (context) => const ChatPage()),
                         );
                       }),
                 ],
