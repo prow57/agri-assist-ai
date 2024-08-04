@@ -4,7 +4,7 @@ require('dotenv').config();
 const scanCrop = async (imageData) => {
   try {
     const response = await axios.post(
-      'https://api.plant.id/v2/identify',
+      'https://plant.id/api/v3',
       {
         api_key: process.env.PLANT_ID_API_KEY,
         images: [imageData],
