@@ -21,14 +21,34 @@ class _WelcomeState extends State<Welcome> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: myConstants.secondaryColor,
-        title: Text(selectedCities.length.toString() + ' selected'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous page
+          },
+        ),
+        
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: Center(
+              child: Text(
+                '${selectedCities.length} selected',
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: ListView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: cities.length,
-        itemBuilder: (BuildContext context, int index){
+        itemBuilder: (BuildContext context, int index) {
           return Container(
             margin: const EdgeInsets.only(left: 10, top: 20, right: 10),
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -47,43 +67,46 @@ class _WelcomeState extends State<Welcome> {
                   blurRadius: 7,
                   offset: const Offset(0, 3),
                 )
-              ]
+              ],
             ),
             child: Row(
               children: [
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     setState(() {
-                      cities[index].isSelected =! cities[index].isSelected;
+                      cities[index].isSelected = !cities[index].isSelected;
                     });
                   },
-                    child: Image.asset(cities[index].isSelected == true ? 'assets/checked.png' : 'assets/unchecked.png', width: 30,)),
-                const SizedBox( width: 10,),
-                Text(cities[index].city, style: TextStyle(
-                  fontSize: 16,
-                  color: cities[index].isSelected == true ? myConstants.primaryColor : Colors.black54,
-                ),)
+                  child: Image.asset(
+                    cities[index].isSelected == true ? 'assets/checked.png' : 'assets/unchecked.png',
+                    width: 30,
+                  ),
+                ),
+                const SizedBox(width: 10,),
+                Text(
+                  cities[index].city,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: cities[index].isSelected == true ? myConstants.primaryColor : Colors.black54,
+                  ),
+                ),
               ],
             ),
           );
         },
       ),
-
-floatingActionButton: FloatingActionButton(
-  backgroundColor: myConstants.secondaryColor,
-  child: const Icon(Icons.pin_drop),
-  onPressed: () {
-    // Assuming you have a method to get selected cities
-  Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => Home(selectedCities: selectedCities), // Pass selectedCities here
-  ),
-);
-
-  },
-),
-
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: myConstants.secondaryColor,
+        child: const Icon(Icons.pin_drop),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Home(selectedCities: selectedCities),
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -70,33 +70,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  // void fetch7DayForecast() async {
-  //   try {
-  //     final coordinatesUrl = 'https://api.openweathermap.org/data/2.5/weather?q=$location&appid=$apiKey';
-  //     final weatherResult = await http.get(Uri.parse(coordinatesUrl));
-  //     if (weatherResult.statusCode == 200) {
-  //       var weatherData = json.decode(weatherResult.body);
-  //       var lat = weatherData['coord']['lat'];
-  //       var lon = weatherData['coord']['lon'];
-
-  //       var forecastResult = await http.get(Uri.parse('https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&exclude=hourly,minutely&appid=$apiKey'));
-  //       if (forecastResult.statusCode == 200) {
-  //         var forecastData = json.decode(forecastResult.body);
-  //         print('7-Day Forecast Data: $forecastData');
-  //         setState(() {
-  //           consolidatedWeatherList = forecastData;
-  //         });
-  //       } else {
-  //         throw Exception('Failed to load 7-day forecast');
-  //       }
-  //     } else {
-  //       throw Exception('Failed to load weather data');
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching 7-day forecast: $e');
-  //   }
-  // }
-
   final Shader linearGradient = const LinearGradient(
     colors: <Color>[Color(0xffABCFF2), Color(0xff9AC6F3)],
   ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0));
@@ -113,30 +86,29 @@ class _HomeState extends State<Home> {
         titleSpacing: 0,
         backgroundColor: Colors.white,
         elevation: 0.0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context); // Go back to the previous page
+          },
+        ),
         title: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           width: size.width,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end, // Align items to the right
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                child: Image.asset(
-                  'assets/logo.jpg',
-                  width: 40,
-                  height: 40,
-                ),
-              ),
+              // Location Icon and Dropdown Button
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Image.asset(
-                    'assets/pin.png',
-                    width: 20,
-                  ),
-                  const SizedBox(
-                    width: 4,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0), // Space between icon and dropdown
+                    child: Image.asset(
+                      'assets/pin.png',
+                      width: 20,
+                    ),
                   ),
                   DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -156,9 +128,9 @@ class _HomeState extends State<Home> {
                         });
                       },
                     ),
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -205,14 +177,17 @@ class _HomeState extends State<Home> {
                 children: [
                   Positioned(
                     top: -40,
-                    left: 20,
+                    left: 5,
                     child: imageUrl == ''
-                        ? const Text('')
-                        : Image.network(
-                            imageUrl,
-                            width: 150,
-                          ),
-                  ),
+                      ? const Text('')
+                      : Image.network(
+                          imageUrl,
+                          width: 200, 
+                          height: 200, 
+                          fit: BoxFit
+                          .cover,
+                        ),
+                    ),
                   Positioned(
                     bottom: 30,
                     left: 20,
@@ -284,108 +259,7 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            // const SizedBox(
-            //   height: 50,
-            // ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     const Text(
-            //       'Today',
-            //       style: TextStyle(
-            //         fontWeight: FontWeight.bold,
-            //         fontSize: 24,
-            //       ),
-            //     ),
-            //     Text(
-            //       'Next 7 Days',
-            //       style: TextStyle(
-            //         fontWeight: FontWeight.w600,
-            //         fontSize: 18,
-            //         color: Colors.blue,
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            // Expanded(
-          //     child: ListView.builder(
-          //       scrollDirection: Axis.horizontal,
-          //       itemCount: consolidatedWeatherList.length,
-          //       itemBuilder: (BuildContext context, int index) {
-          //         String today = DateTime.now().toString().substring(0, 10);
-          //         var selectedDay = DateFormat('yyyy-MM-dd').format(DateTime.fromMillisecondsSinceEpoch(consolidatedWeatherList[index]['dt'] * 1000));
-          //         var weatherDescription = consolidatedWeatherList[index]['weather'][0]['description'];
-          //         var iconCode = consolidatedWeatherList[index]['weather'][0]['icon'];
-          //         var weatherUrl = 'https://openweathermap.org/img/wn/$iconCode@2x.png';
-
-          //         var parsedDate = DateTime.fromMillisecondsSinceEpoch(consolidatedWeatherList[index]['dt'] * 1000);
-          //         var newDate = DateFormat('EEEE').format(parsedDate).substring(0, 3);
-
-          //         return GestureDetector(
-          //           onTap: () {
-          //             Navigator.push(
-          //               context,
-          //               MaterialPageRoute(
-          //                 builder: (context) => DetailPage(
-          //                   consolidatedWeatherList: consolidatedWeatherList,
-          //                   selectedId: index,
-          //                   location: location,
-          //                 ),
-          //               ),
-          //             );
-          //           },
-          //           child: Container(
-          //             padding: const EdgeInsets.symmetric(vertical: 20),
-          //             margin: const EdgeInsets.only(right: 20, bottom: 10, top: 10),
-          //             width: 80,
-          //             decoration: BoxDecoration(
-          //               color: selectedDay == today ? Colors.blue : Colors.white,
-          //               borderRadius: const BorderRadius.all(Radius.circular(10)),
-          //               boxShadow: [
-          //                 BoxShadow(
-          //                   offset: const Offset(0, 1),
-          //                   blurRadius: 5,
-          //                   color: selectedDay == today
-          //                       ? Colors.blue
-          //                       : Colors.black54.withOpacity(.2),
-          //                 ),
-          //               ],
-          //             ),
-          //             child: Column(
-          //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //               children: [
-          //                 Text(
-          //                   consolidatedWeatherList[index]['temp']['day'].round().toString() + "°C",
-          //                   style: TextStyle(
-          //                     fontSize: 17,
-          //                     color: selectedDay == today ? Colors.white : Colors.blue,
-          //                     fontWeight: FontWeight.w500,
-          //                   ),
-          //                 ),
-          //                 Image.network(
-          //                   weatherUrl,
-          //                   width: 30,
-          //                 ),
-          //                 Text(
-          //                   newDate,
-          //                   style: TextStyle(
-          //                     fontSize: 17,
-          //                     color: selectedDay == today ? Colors.white : Colors.blue,
-          //                     fontWeight: FontWeight.w500,
-          //                   ),
-          //                 )
-          //               ],
-          //             ),
-          //           ),
-          //         );
-          //       },
-          //     ),
-          //   ),
-           ],
+          ],
         ),
       ),
     );
