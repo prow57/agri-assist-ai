@@ -2,7 +2,7 @@ const axios = require('axios');
 
 exports.analyzeCrop = async (imageUrl) => {
     const response = await axios.post(
-            'https://api.plant.id/v2/health_assessment',
+            'https://plant.id/api/v3/health_assessment',
                     {
                                 api_key: process.env.PLANT_ID_API_KEY,
                                             images: [imageUrl],
@@ -38,4 +38,3 @@ exports.analyzeCrop = async (imageUrl) => {
 
                                                                                                                                                                                                                                                     return response.data.choices[0].text.trim();
                                                                                                                                                                                                                                                     };
-                                                                                                                                                                                                                                                    
