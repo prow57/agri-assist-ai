@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+// weather_page.dart
 import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
+import 'package:flutter/material.dart';
 
 class WeatherPage extends StatefulWidget {
   @override
@@ -96,137 +97,127 @@ class _WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Weather Page',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.location_on, color: Colors.white),
+            onPressed: _selectLocation,
+          ),
+        ],
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Weather Page',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.green,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.location_on, color: Colors.white),
-              onPressed: _selectLocation,
-            ),
-          ],
-        ),
-        body: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: _weatherData != null
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Header Section
-                    Text(
-                      _selectedCity,
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Mon, September 16 14:15',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Image.network(
-                          'https:${_weatherData!['current']['condition']['icon']}',
-                          width: 50,
-                        ),
-                        SizedBox(width: 20),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${_weatherData!['current']['temp_c']}°',
-                              style: TextStyle(fontSize: 50),
-                            ),
-                            Text(
-                              _weatherData!['current']['condition']['text'],
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-
-                    // Weather Details Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            Text('Feels like'),
-                            Text('${_weatherData!['current']['feelslike_c']}°'),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text('Precipitation'),
-                            Text('${_weatherData!['current']['precip_mm']} mm'),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text('UV index'),
-                            Text('${_weatherData!['current']['uv']}'),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text('Air Quality'),
-                            Text(_weatherData!['current']['air_quality'] != null
-                                ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
-                                : 'N/A'),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-
-                    // Forecast Section
-                    Text(
-                      '7-Day Weather Forecast',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 10),
-                    Expanded(
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: _buildForecast(),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: _weatherData != null
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header Section
+                  Text(
+                    _selectedCity,
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Mon, September 16 14:15',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Image.network(
+                        'https:${_weatherData!['current']['condition']['icon']}',
+                        width: 50,
                       ),
-                    ),
-                    SizedBox(height: 20),
+                      SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${_weatherData!['current']['temp_c']}°',
+                            style: TextStyle(fontSize: 50),
+                          ),
+                          Text(
+                            _weatherData!['current']['condition']['text'],
+                            style: TextStyle(fontSize: 20, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
 
-                    // Recommendations Section
-                    Text(
-                      'Farmer Recommendations',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  // Weather Details Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          Text('Feels like'),
+                          Text('${_weatherData!['current']['feelslike_c']}°'),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text('Precipitation'),
+                          Text('${_weatherData!['current']['precip_mm']} mm'),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text('UV index'),
+                          Text('${_weatherData!['current']['uv']}'),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text('Air Quality'),
+                          Text(_weatherData!['current']['air_quality'] != null
+                              ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
+                              : 'N/A'),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+
+                  // Forecast Section
+                  Text(
+                    '7-Day Weather Forecast',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: _buildForecast(),
                     ),
-                    SizedBox(height: 10),
-                    Text(_getRecommendation(
-                        _weatherData!['current']['condition']['text'])),
-                  ],
-                )
-              : Center(
-                  child:
-                      CircularProgressIndicator()), // Show loading spinner while fetching data
-        ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // Recommendations Section
+                  Text(
+                    'Farmer Recommendations',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Text(_getRecommendation(
+                      _weatherData!['current']['condition']['text'])),
+                ],
+              )
+            : Center(
+                child:
+                    CircularProgressIndicator()), // Show loading spinner while fetching data
       ),
     );
   }
