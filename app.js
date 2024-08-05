@@ -6,7 +6,9 @@ require('dotenv').config();
 const app = express();
 
 app.use(bodyParser.json());
+app.use(express.json);
 app.use('/api', routes);
+app.use('/api', healthRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
