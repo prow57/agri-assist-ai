@@ -1,10 +1,10 @@
-import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
+import 'package:agrifrontend/AI%20pages/AI%20chat/ai_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:agrifrontend/homepages/market/market_place.dart';
-import 'package:agrifrontend/homepages/weather/ui/welcome.dart';
+import 'package:agrifrontend/homepages/weather/ui/weather_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Welcome()));
+                                builder: (context) => WeatherPage()));
                       }),
                   CustomButton(
                       icon: Icons.attach_money,
