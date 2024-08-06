@@ -15,8 +15,17 @@ class DetailPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(dayOfWeek),
+        title: Text(
+          dayOfWeek,
+          style: TextStyle(color: Colors.white), // Set title color to white
+        ),
         backgroundColor: Colors.green,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white), // Set back arrow color to white
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Center(
         child: Padding(
@@ -28,67 +37,98 @@ class DetailPage extends StatelessWidget {
               // Weather Icon
               Image.network(
                 'https:${dayForecast['day']['condition']['icon']}',
-                height: 150, // Adjust image height as needed
-                width: 150, // Adjust image width as needed
+                height: 200, // Increased icon height
+                width: 200, // Increased icon width
+                fit: BoxFit.cover,
               ),
               SizedBox(height: 16),
               // Temperature
-              Text(
-                '${dayForecast['day']['avgtemp_c']}°C',
-                style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+              Container(
+                child: Column(
+                  children: [
+                    Text(
+                      '${dayForecast['day']['avgtemp_c']}°C',
+                      style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 8),
               // Weather Condition
-              Text(
-                '${dayForecast['day']['condition']['text']}',
-                style: TextStyle(fontSize: 20, color: Colors.grey),
+              Container(
+                child: Column(
+                  children: [
+                    Text(
+                      '${dayForecast['day']['condition']['text']}',
+                      style: TextStyle(fontSize: 20, color: Colors.grey),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 16),
               // Additional Weather Details
-              Text(
-                'Date: $dateFormatted',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Max Temp: ${dayForecast['day']['maxtemp_c']}°C',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Min Temp: ${dayForecast['day']['mintemp_c']}°C',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Humidity: ${dayForecast['day']['avghumidity']}%',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Wind Speed: ${dayForecast['day']['maxwind_kph']} kph',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Precipitation: ${dayForecast['day']['totalprecip_mm']} mm',
-                style: TextStyle(fontSize: 18),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: [
+                  _buildDetailBox('Max Temp', '${dayForecast['day']['maxtemp_c']}°C'),
+                  _buildDetailBox('Min Temp', '${dayForecast['day']['mintemp_c']}°C'),
+                  _buildDetailBox('Humidity', '${dayForecast['day']['avghumidity']}%'),
+                  _buildDetailBox('Wind Speed', '${dayForecast['day']['maxwind_kph']} kph'),
+                  _buildDetailBox('Precipitation', '${dayForecast['day']['totalprecip_mm']} mm'),
+                ],
               ),
               SizedBox(height: 16),
               // Recommendations based on weather
-              Text(
-                'Recommendation:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              SizedBox(height: 8),
-              Text(
-                _getRecommendation(dayForecast['day']['condition']['text']),
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.lightGreen[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Recommendation:',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      _getRecommendation(dayForecast['day']['condition']['text']),
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDetailBox(String label, String value) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.lightGreen[100],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.green, width: 1.0),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
       ),
     );
   }

@@ -66,7 +66,7 @@ class _WeatherPageState extends State<WeatherPage> {
       return [Text('No forecast data available')];
     }
 
-  return List<Widget>.generate(7, (index) {
+    return List<Widget>.generate(7, (index) {
       final dayForecast = _weatherData!['forecast']['forecastday'][index];
   
       // Convert the date string to a DateTime object
@@ -128,8 +128,7 @@ class _WeatherPageState extends State<WeatherPage> {
         ),
       );
     });
-
-}
+  }
 
   String _getRecommendation(String condition) {
     if (condition.contains('rain')) {
@@ -177,7 +176,6 @@ class _WeatherPageState extends State<WeatherPage> {
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    // 'Mon, September 16 14:15',
                     formattedDate,
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
@@ -214,31 +212,14 @@ class _WeatherPageState extends State<WeatherPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Column(
-                        children: [
-                          Text('Feels like'),
-                          Text('${_weatherData!['current']['feelslike_c']}°'),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text('Precipitation'),
-                          Text('${_weatherData!['current']['precip_mm']} mm'),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text('UV index'),
-                          Text('${_weatherData!['current']['uv']}'),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text('Air Quality'),
-                          Text(_weatherData!['current']['air_quality'] != null
-                              ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
-                              : 'N/A'),
-                        ],
+                      _buildDetailBox('Temp.', '${_weatherData!['current']['feelslike_c']}°'),
+                      _buildDetailBox('Rain', '${_weatherData!['current']['precip_mm']} mm'),
+                      _buildDetailBox('UV index', '${_weatherData!['current']['uv']}'),
+                      _buildDetailBox(
+                        'Air Quality',
+                        _weatherData!['current']['air_quality'] != null
+                            ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
+                            : 'N/A',
                       ),
                     ],
                   ),
@@ -269,8 +250,33 @@ class _WeatherPageState extends State<WeatherPage> {
                 ],
               )
             : Center(
-                child:
-                    CircularProgressIndicator()), // Show loading spinner while fetching data
+                child: CircularProgressIndicator()), // Show loading spinner while fetching data
+      ),
+    );
+  }
+
+  // Helper method to create the detail boxes
+  Widget _buildDetailBox(String label, String value) {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        color: Colors.lightGreen[100],
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.green, width: 1.0),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
       ),
     );
   }
