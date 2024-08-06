@@ -1,9 +1,11 @@
 crewai
 crewai_tools
 langchain_community
+langchain-openai
 ipython
 langchain-groq
 google_generativeai
 langchain_google_genai
 fastapi
 uvicorn
+pybase64
