@@ -99,21 +99,10 @@ class LeafAnalyser:
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
         
         print("step 4:done")
-         # Parse the response from the OpenAI Vision API
         openai_response = response.json()
         print(openai_response)
         print("step 5:done")
-        return openai_response['choices'][0]['message']['content']
-
-        # Extract JSON from the content
-        json_match = re.search(r'```json\n(.*?)\n```', content, re.DOTALL)
-        if json_match:
-            json_string = json_match.group(1)
-            leaf_analysis_result = json.loads(json_string)
-        else:
-            leaf_analysis_result = json.loads(content)  # Return the parsed JSON directly
-
-
-        print("step 6:done")
-
-        return leaf_analysis_result  # Return the parsed JSON directly
+        content = openai_response['choices'][0]['message']['content']
+        
+        # Parse the JSON string into a Python dictionary
+        return json.loads(content)

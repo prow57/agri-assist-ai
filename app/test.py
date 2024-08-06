@@ -27,36 +27,36 @@ def display_results(results):
     st.subheader("Leaf Analysis")
     leaf_analysis = results["leaf_analysis"]
     st.write(f"Crop Type: {leaf_analysis['crop_type']}")
-    st.write(f"Disease Name: {leaf_analysis['disease_name']}")
-    st.write(f"Description: {leaf_analysis['description']}")
-    st.write(f"Risk Level: {leaf_analysis['level_of_risk']}")
     st.write(f"Health Percentage: {leaf_analysis['percentage']}%")
-    st.write(f"Estimated Size: {leaf_analysis['estimated_size']}")
-    st.write(f"Stage: {leaf_analysis['stage']}")
-    st.write("Symptoms:")
-    for symptom in leaf_analysis['symptoms']:
-        st.write(f"- {symptom}")
-    
-    st.subheader("Disease Research")
-    disease_research = results["disease_research"]
-    st.write("Relevant Websites:")
-    for website in disease_research['relevant_websites']:
-        st.write(f"- {website}")
-    st.write("General Information:")
-    for info in disease_research['general_information']:
-        st.write(f"- {info}")
-    st.write("Recommended Treatments:")
-    for treatment in disease_research['recommended_treatments']:
-        st.write(f"- {treatment}")
-    
-    st.subheader("Treatment Guidance")
-    guidance = results["guidance_generation"]
-    st.write("Treatment Steps:")
-    for step in guidance['treatment_steps']:
-        st.write(f"- {step}")
-    st.write("Ingredients:")
-    for ingredient in guidance['ingredients']:
-        st.write(f"- {ingredient}")
+    if leaf_analysis['disease_name']!="None":
+        st.write(f"Disease Name: {leaf_analysis['disease_name']}")
+        st.write(f"Description: {leaf_analysis['description']}")
+        st.write(f"Risk Level: {leaf_analysis['level_of_risk']}")
+        st.write(f"Estimated Size: {leaf_analysis['estimated_size']}")
+        st.write(f"Stage: {leaf_analysis['stage']}")
+        st.write("Symptoms:")
+        for symptom in leaf_analysis['symptoms']:
+            st.write(f"- {symptom}")
+        st.subheader("Disease Research")
+        disease_research = results["disease_research"]
+        st.write("Relevant Websites:")
+        for website in disease_research['relevant_websites']:
+            st.write(f"- {website}")
+        st.write("General Information:")
+        for info in disease_research['general_information']:
+            st.write(f"- {info}")
+        st.write("Recommended Treatments:")
+        for treatment in disease_research['recommended_treatments']:
+            st.write(f"- {treatment}")
+        
+        st.subheader("Treatment Guidance")
+        guidance = results["guidance_generation"]
+        st.write("Treatment Steps:")
+        for step in guidance['treatment_steps']:
+            st.write(f"- {step}")
+        st.write("Ingredients:")
+        for ingredient in guidance['ingredients']:
+            st.write(f"- {ingredient}")
 
 st.title("Crop Leaf Analysis")
 
