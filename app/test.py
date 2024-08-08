@@ -13,7 +13,7 @@ def encode_image(image):
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 def call_api(image):
-    api_url = "http://localhost:8000/analyze-leaf/"  # Update this if your API is hosted elsewhere
+    api_url = "http://37.187.29.19:8000/analyze-leaf/"  # Update this if your API is hosted elsewhere
     
     encoded_image = encode_image(image)
     payload = {"image": encoded_image}
