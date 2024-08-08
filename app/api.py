@@ -139,19 +139,29 @@ async def analyze_leaf(request: ImageRequest):
 
     print("step 2:done")
     leaf_analysis_result = leaf_analyser.run(request)
-    
-    # Parse the JSON string into a Python dictionary
-    leaf_analysis_dict = json.loads(leaf_analysis_result)
-    
+
+    # Check if leaf_analysis_result is already a dict
+    if not isinstance(leaf_analysis_result, dict):
+        # If it's not a dict, assume it's a JSON string and parse it
+        leaf_analysis_dict = json.loads(leaf_analysis_result)
+    else:
+        # If it's already a dict, use it directly
+        leaf_analysis_dict = leaf_analysis_result
+
     leaf_analysis = LeafImageAnalysisOutput(**leaf_analysis_dict)
     
     # Prepare inputs for main_crew
     crew_inputs = {
         "disease_name": leaf_analysis.disease_name,
         "crop_type": leaf_analysis.crop_type,
+        "percentage": leaf_analysis.percentage,
         "estimated_size": leaf_analysis.estimated_size
     }
-    
+
+    if crew_inputs["disease_name"] == "None":
+        output_leaf_analysis = {"leaf_analysis": crew_inputs}
+        return JSONResponse(content=output_leaf_analysis)
+
     # Perform disease research and guidance generation
     main_crew_result = main_crew.kickoff(inputs=crew_inputs)
 
