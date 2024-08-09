@@ -21,6 +21,7 @@ dependencies:
   modal_bottom_sheet: ^2.0.1
   geolocator: ^9.0.1
   permission_handler: ^10.2.0
+  dio: ^5.5.0+1
 
 dev_dependencies:
   flutter_test:
