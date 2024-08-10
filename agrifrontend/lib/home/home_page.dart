@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const LeafDiagnosisPage()));
+                                    const LeafAnalysisScreen()));
                       }),
                   CustomButton(
                       icon: Icons.landscape,
