@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 services:
   app_model_ai:
     build:
@@ -11,6 +11,6 @@ services:
     container_name: app-model-ai
     restart: unless-stopped
     ports:
-       - '6932:8000'
+       - '6932:80'
     # volumes:
        # - './env:/code/app/.env'    
