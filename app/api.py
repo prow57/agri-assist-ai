@@ -97,7 +97,7 @@ guidance_generation_task = Task(
 
 # Define output models
 class LeafImageAnalysisOutput(BaseModel):
-    crop_type: str | None = Field(description='Type of the crop')
+    crop_type: str | None = Field(description='Type of the crop None if there is no crop')
     disease_name: str | None = Field(description='Name of the detected disease or None if healthy')
     description: str | None = Field(description='Detailed description of the disease')
     level_of_risk: str | None = Field(description='Level of risk')
@@ -158,7 +158,8 @@ async def analyze_leaf(request: ImageRequest):
         "estimated_size": leaf_analysis.estimated_size
     }
 
-    if crew_inputs["disease_name"] == "None":
+        
+    if crew_inputs["disease_name"] == "None" or crew_inputs["crop_type"] == "None":
         output_leaf_analysis = {"leaf_analysis": crew_inputs}
         return JSONResponse(content=output_leaf_analysis)
 

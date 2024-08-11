@@ -22,10 +22,13 @@ def call_api(image):
     return response.json()
 
 def display_results(results):
-    st.header("Analysis Results")
     
-    st.subheader("Leaf Analysis")
     leaf_analysis = results["leaf_analysis"]
+    if leaf_analysis['crop_type']=="None" :
+        st.header(f"Please retake the image")
+        return
+    st.header("Analysis Results")
+    st.subheader("Leaf Analysis")
     st.write(f"Crop Type: {leaf_analysis['crop_type']}")
     st.write(f"Health Percentage: {leaf_analysis['percentage']}%")
     if leaf_analysis['disease_name']!="None":
