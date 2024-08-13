@@ -9,25 +9,31 @@ class CourseGenerator:
 
     def generate_course(self, history: list[str]):
         topic_selection_agent = Agent(
-            role="Agricultural Course Topic Selector",
-            goal="Select a new and relevant agricultural course topic",
-            backstory="Expert in agricultural education with deep knowledge of current trends and needs in the field",
+            role="Agricultural Course Innovator",
+            goal="Identify practical and impactful agricultural course topics",
+            backstory="A seasoned agronomist with a passion for empowering farmers through education, specializing in practical solutions and innovative techniques for everyday challenges",
             tools=[self.search_tool],
             verbose=True
         )
 
         content_and_metadata_agent = Agent(
-            role="Agricultural Course Content and Metadata Creator",
-            goal="Create comprehensive course content, tags, and references for the selected topic",
-            backstory="Experienced agricultural educator with skills in curriculum development, research, and information organization",
+            role="Practical Agricultural Course Developer",
+            goal="Develop actionable course content, practical tips, and valuable references for the chosen topic",
+            backstory="An expert in agricultural practices with a strong background in curriculum development and hands-on farming experience, dedicated to creating courses that empower farmers with useful skills and knowledge",
             tools=[self.search_tool, self.scrape_tool],
             verbose=True
         )
 
         topic_selection_task = Task(
-            description=f"Select a new agricultural course topic not present in this list: {', '.join(history)}. The topic should be relevant, current, and beneficial for agricultural education.",
+            description=(
+                f"Identify a new agricultural course topic not present in this list: {', '.join(history)}. "
+                "The topic should focus on providing farmers with practical tips, tricks, and advice for solving daily challenges. "
+                "It should include specific information about managing common diseases, optimizing crop yields, or innovative farming techniques "
+                "that are relevant, current, and beneficial for farmers' education."
+            ),
             agent=topic_selection_agent,
-            expected_output=""" A JSON object with the following structure:
+            expected_output=""" 
+            A JSON object with the following structure:
             {
             "topic":"a single string containing the selected agricultural course topic."
             }
@@ -35,7 +41,11 @@ class CourseGenerator:
         )
 
         content_and_metadata_task = Task(
-            description="Create a detailed course outline, key content points, 5-10 relevant tags, and 3-5 authoritative reference links for the selected agricultural topic. Include main sections, important concepts, and practical applications.",
+            description=(
+                "Create a detailed course outline for the selected agricultural topic, focusing on practical applications and real-world scenarios. "
+                "Identify key content points that include actionable tips and tricks for farmers, as well as 2-5 relevant tags and 1-3 authoritative reference links. "
+                "Outline should include main sections, critical concepts, and strategies that can be directly applied by farmers to improve their daily operations."
+            ),
             agent=content_and_metadata_agent,
             expected_output="""
             A JSON object with the following structure:
