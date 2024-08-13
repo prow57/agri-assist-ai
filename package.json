@@ -8,12 +8,15 @@
   },
   "dependencies": {
     "axios": "^1.7.3",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "child_process": "^1.0.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "firebase-admin": "^12.2.0",
-    "openai": "^4.54.0"
+    "jsonwebtoken": "^9.0.2",
+    "openai": "^4.54.0",
+    "pg-promise": "^11.9.1"
   },
   "devDependencies": {
     "@vercel/node": "^1.12.0"
