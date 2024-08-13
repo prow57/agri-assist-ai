@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'market_service.dart';
 
-class MarketPlacePage extends StatelessWidget {
+class MarketPlacePage extends StatefulWidget {
+  @override
+  _MarketPlacePageState createState() => _MarketPlacePageState();
+}
+
+class _MarketPlacePageState extends State<MarketPlacePage> {
+  late Future<List<Commodity>> _futureCommodities;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureCommodities = MarketService().fetchMarketPrices();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,95 +26,91 @@ class MarketPlacePage extends StatelessWidget {
         ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Supply and Demand',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10.0),
-              Container(
-                height: 200.0,
-                child: SfCartesianChart(
-                  primaryXAxis: CategoryAxis(),
-                  legend: Legend(isVisible: true),
-                  series: <LineSeries>[
-                    LineSeries<ChartData, double>(
-                      name: 'Supply',
-                      dataSource: [
-                        ChartData(1, 3),
-                        ChartData(2, 4),
-                        ChartData(3, 2),
-                        ChartData(4, 5),
-                        ChartData(5, 3),
-                      ],
-                      xValueMapper: (ChartData data, _) => data.x,
-                      yValueMapper: (ChartData data, _) => data.y,
-                      color: Colors.green,
+      body: FutureBuilder<List<Commodity>>(
+        future: _futureCommodities,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No data available'));
+          } else {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Supply and Demand',
+                      style: TextStyle(
+                          fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
-                    LineSeries<ChartData, double>(
-                      name: 'Demand',
-                      dataSource: [
-                        ChartData(1, 2),
-                        ChartData(2, 3),
-                        ChartData(3, 1),
-                        ChartData(4, 4),
-                        ChartData(5, 2),
-                      ],
-                      xValueMapper: (ChartData data, _) => data.x,
-                      yValueMapper: (ChartData data, _) => data.y,
-                      color: Colors.red,
+                    const SizedBox(height: 10.0),
+                    Container(
+                      height: 200.0,
+                      child: SfCircularChart(
+                        legend: Legend(isVisible: true),
+                        series: <PieSeries>[
+                          PieSeries<Commodity, String>(
+                            dataSource: snapshot.data!,
+                            xValueMapper: (Commodity data, _) => data.name,
+                            yValueMapper: (Commodity data, _) => data.supply,
+                            dataLabelSettings:
+                                DataLabelSettings(isVisible: true),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    const Text(
+                      'Commodities and Prices',
+                      style: TextStyle(
+                          fontSize: 24.0, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10.0),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        final commodity = snapshot.data![index];
+                        return CommodityTile(
+                            name: commodity.name,
+                            price: commodity.supply.toString());
+                      },
+                    ),
+                    const SizedBox(height: 20.0),
+                    const Text(
+                      'Top Selling Commodities',
+                      style: TextStyle(
+                          fontSize: 24.0, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10.0),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        final commodity = snapshot.data![index];
+                        return CommodityTile(
+                            name: commodity.name,
+                            price: commodity.supply.toString());
+                      },
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20.0),
-              const Text(
-                'Commodities and Prices',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10.0),
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: const [
-                  CommodityTile(name: 'Wheat', price: 'K 1000'),
-                  CommodityTile(name: 'Maize', price: 'K 800'),
-                  CommodityTile(name: 'Rice', price: 'K 1200'),
-                  CommodityTile(name: 'Beans', price: 'K 900'),
-                ],
-              ),
-              const SizedBox(height: 20.0),
-              const Text(
-                'Top Selling Commodities',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10.0),
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: const [
-                  CommodityTile(name: 'Maize', price: 'K 800'),
-                  CommodityTile(name: 'Wheat', price: 'K 1000'),
-                  CommodityTile(name: 'Beans', price: 'K 900'),
-                ],
-              ),
-            ],
-          ),
-        ),
+            );
+          }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -109,10 +119,7 @@ class MarketPlacePage extends StatelessWidget {
             MaterialPageRoute(builder: (context) => MarketLocationPage()),
           );
         },
-        child: const Icon(
-          Icons.location_on,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.location_on, color: Colors.white),
         backgroundColor: Colors.green,
       ),
     );
@@ -145,12 +152,6 @@ class CommodityTile extends StatelessWidget {
       ),
     );
   }
-}
-
-class ChartData {
-  ChartData(this.x, this.y);
-  final double x;
-  final double y;
 }
 
 class MarketLocationPage extends StatelessWidget {
