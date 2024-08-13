@@ -9,18 +9,13 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import uvicorn
-
+from openai import OpenAI
 from app.leafanalyser import LeafAnalyser
+from app.coursegenerator import CourseGenerator
+from fastapi import HTTPException
 from app.crew import main_crew
 from app.tasks import disease_research_task, guidance_generation_task
-from app.validator import (
-    LeafImageAnalysisOutput,
-    DiseaseResearchOutput,
-    GuidanceGenerationOutput,
-    CumulativeOutput,
-    ImageRequest
-)
-
+from app.validator import *
 # Suppress warnings and set logging level
 warnings.filterwarnings("ignore", message="Overriding of current TracerProvider is not allowed")
 logging.getLogger("opentelemetry").setLevel(logging.ERROR)
@@ -94,6 +89,49 @@ async def analyze_leaf(request: ImageRequest):
     )
 
     return JSONResponse(content=cumulative_output.dict())
+
+
+@app.post("/course-generation/")
+async def course_generation(request: CourseRequest):
+    coursegenerator = CourseGenerator()
+    
+    # Generate a new course
+    course_result = coursegenerator.generate_course(request.history)
+    
+    if not course_result:
+        raise HTTPException(status_code=400, detail="Unable to generate a new unique course")
+    
+    # Generate image prompt
+    image_prompt = coursegenerator.generate_image_prompt(course_result['topic'], course_result['content'])
+    
+    # Generate image using DALL-E 3
+    image_url = generate_image(image_prompt)
+    
+    # Prepare the response
+    response = {
+        "topic": course_result['topic'],
+        "content": course_result['content'],
+        "tags": course_result['tags'],
+        "references": course_result['references'],
+        "image_url": image_url
+    }
+    
+    return JSONResponse(content=response)
+
+def generate_image(prompt: str) -> str:
+    try:
+        client = OpenAI()
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=prompt,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+        )
+        return response.data[0].url
+    except Exception as e:
+        print(f"Error generating image: {str(e)}")
+        return "https://placeholder.com/image?text=Image+generation+failed"
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

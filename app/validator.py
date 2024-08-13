@@ -26,3 +26,14 @@ class CumulativeOutput(BaseModel):
 
 class ImageRequest(BaseModel):
     image: str
+
+class CourseRequest(BaseModel):
+    history: list[str]
+
+class TopicSelectionOutput(BaseModel):
+    topic: str | None = Field(description='topic selected related to the agriculture')
+
+class ContentAndMetadataOutput(BaseModel):
+    content: str | None = Field(description='Detailed course outline and key content points related to the selected topic')
+    tags: list[str] | None = Field(description='List of tags related to the topic and content generated')
+    references: list[str] | None = Field(description='List of reference link')
