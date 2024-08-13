@@ -123,22 +123,33 @@
         }
 
         async function deleteCrop(cropId) {
+            // Show confirmation dialog
+            const confirmed = confirm('Are you sure you want to delete this crop?');
+            if (!confirmed) {
+                return; // Exit the function if the user cancels
+            }
+
             const token = localStorage.getItem('token');
 
-            const response = await fetch(`http://localhost:3000/api/crop-prices/${cropId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+            try {
+                const response = await fetch(`http://localhost:3000/api/crop-prices/delete/${cropId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
 
-            if (response.ok) {
-                alert('Crop deleted successfully');
-                window.location.reload(); // Refresh to update the table
-            } else {
-                const data = await response.json();
-                alert(data.error);
+                if (response.ok) {
+                    alert('Crop deleted successfully');
+                    window.location.reload(); // Refresh to update the table
+                } else {
+                    const data = await response.json();
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the crop.');
             }
         }
 
