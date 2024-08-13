@@ -6,6 +6,7 @@ const routes = require('./routes');
 const healthRoutes = require('./routes/healthRoutes');
 const cropPriceRoutes = require('./routes/cropPriceRoutes');
 const userRoutes = require('./routes/userRoutes'); 
+const path = require('path');
 
 const app = express();
 
@@ -22,6 +23,9 @@ db.connect()
 // Middleware setup
 app.use(bodyParser.json());
 app.use(express.json());
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Route setup
 app.use('/api', routes);
