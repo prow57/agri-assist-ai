@@ -95,6 +95,10 @@ class CourseGenerator:
             "tags": content_and_metadata.tags,
             "references": content_and_metadata.references
         }
-
     def generate_image_prompt(self, topic: str, content: str) -> str:
-        return f"An illustrative image representing the agricultural topic: {topic}. The image should incorporate key elements from the course content, including {content[:100]}..."
+        return (
+            f"Design a visually striking and realistic course thumbnail for the agricultural topic: '{topic}'. "
+            f"The image should be highly attractive and focus on one key element that encapsulates the essence of the course. "
+            f"Include realistic details that highlight the main theme from the course content, such as {content[:100]}... "
+            f"The thumbnail should be appealing and clearly convey the core idea of the course."
+        )
