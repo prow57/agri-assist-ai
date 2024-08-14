@@ -11,10 +11,6 @@ class AllCoursesPage extends StatefulWidget {
 
 class _AllCoursesPageState extends State<AllCoursesPage> {
   List<dynamic> _courses = [];
-  List<String> _previousTopics = [
-    "topic1",
-    "topic2"
-  ]; // Example previous topics
 
   @override
   void initState() {
@@ -31,7 +27,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'history': _previousTopics,
+          'history': [], // Updated to always send an empty list
         }),
       );
 
@@ -80,8 +76,6 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
         title: Text(title),
         subtitle: const Text('Start Lesson'),
         onTap: () {
-          // Handle course item tap
-          // For example, navigate to a detailed course page
         },
       ),
     );

@@ -1,9 +1,11 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/farming_practices.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'ai_advice.dart';
+import 'farming_practices.dart'; // Import the new page
 
 class PersonalizedAdvicePage extends StatefulWidget {
   const PersonalizedAdvicePage({super.key});
@@ -147,6 +149,12 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AiAdvice()),
+            );
+          } else if (title == 'Explore Farming') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const FarmingPracticesPage()), // Navigate to the new page
             );
           } else {
             // Define actions for other buttons
