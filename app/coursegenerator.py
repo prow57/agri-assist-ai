@@ -10,7 +10,7 @@ class CourseGenerator:
     def generate_course(self, history: list[str]):
         topic_selection_agent = Agent(
             role="Agricultural Course Innovator",
-            goal="Identify practical and impactful agricultural course topics",
+            goal="Identify practical and impactful agricultural post topics",
             backstory="A seasoned agronomist with a passion for empowering farmers through education, specializing in practical solutions and innovative techniques for everyday challenges",
             tools=[self.search_tool],
             verbose=True
@@ -26,9 +26,9 @@ class CourseGenerator:
 
         topic_selection_task = Task(
             description=(
-                f"Identify a new agricultural course topic not present in this list: {', '.join(history)}. "
+                f"Identify a new agricultural post topic not present in this list: [{', '.join(history)}]. it must be short and very random,this is important to me"
                 "The topic should focus on providing farmers with practical tips, tricks, and advice for solving daily challenges. "
-                "It should include specific information about managing common diseases, optimizing crop yields, or innovative farming techniques "
+                "It should include specific information about managing common diseases, optimizing crop yields, innovative farming techniques, best practices, or alternative ways to do the usual tasks "
                 "that are relevant, current, and beneficial for farmers' education."
             ),
             agent=topic_selection_agent,
