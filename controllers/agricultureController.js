@@ -29,7 +29,7 @@ export const getAiAdviceController = async (req, res) => {
 // Chat Conversation
 export const chatWithAiController = async (req, res) => {
     const { question } = req.body;
-    const prompt = `Answer the following agricultural question: ${question}`;
+    const prompt = `Answer the following agricultural question and remember you are representing Agriassist-AI. Make sure your answers are only about Agriculture. Do not say anything that has nothing to do with Agriculture. The answers should relate to Malawi Agriculture Farming.: ${question}`;
 
     try {
         const response = await chatWithAi(prompt);
