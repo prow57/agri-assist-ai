@@ -4,7 +4,7 @@ const {
   generateCourseController,
   getAiAdviceController,
   chatWithAiController,
-} = require('../controllers/agricultureController');
+} = require('../controllers/agricultureController'); // Ensure this path is correct
 
 const router = express.Router();
 
@@ -13,3 +13,4 @@ router.post('/get-ai-advice', getAiAdviceController);
 router.post('/chat', chatWithAiController);
 
 module.exports = router;
+
