@@ -49,7 +49,7 @@ class CourseGenerator:
             expected_output="""
             A JSON object with the following structure:
 
-                "content": "Short, Sweet, engaging social media content (maximum 500 characters), do not include the tags or any thing other then the content",
+                "content": "Short, Sweet, engaging social media content (maximum 500 characters), do not include the tags in the content",
                 "tags": ["tag1", "tag2", "tag3", ...],
                 "references": [
                     "Reference link 1 (preferably from .edu, .gov, or reputable agricultural organizations)",
