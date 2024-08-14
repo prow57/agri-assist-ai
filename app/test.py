@@ -37,7 +37,7 @@ def get_previous_topics():
 
 def display_leaf_analysis_results(results):
     leaf_analysis = results["leaf_analysis"]
-    if leaf_analysis['crop_type'] == "None":
+    if leaf_analysis['crop_type'] == "Unknown":
         st.header(f"Please retake the image")
         return
     st.header("Analysis Results")
