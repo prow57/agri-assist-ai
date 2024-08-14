@@ -1,34 +1,37 @@
-import Groq from "groq-sdk";
+// services/groqService.js
+const Groq = require('groq-sdk');
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const generateResponse = async (prompt: string, model: string) => {
-    try {
-        const completion = await groq.chat.completions.create({
-            messages: [
-                {
-                    role: "user",
-                    content: prompt,
-                },
-            ],
-            model: model,
-        });
+const generateCourse = async (prompt) => {
+  const response = await groq.chat.completions.create({
+    messages: [{ role: 'user', content: prompt }],
+    model: 'mixtral-8x7b-32768',
+  });
 
-        return completion.choices[0]?.message?.content || "";
-    } catch (error) {
-        console.error('Error generating response:', error);
-        throw error;
-    }
+  return response.choices[0]?.message?.content || '';
 };
 
-export const generateCourse = (prompt: string) => {
-    return generateResponse(prompt, "mixtral-8x7b-32768");
+const getAiAdvice = async (prompt) => {
+  const response = await groq.chat.completions.create({
+    messages: [{ role: 'user', content: prompt }],
+    model: 'mixtral-8x7b-32768',
+  });
+
+  return response.choices[0]?.message?.content || '';
 };
 
-export const getAiAdvice = (prompt: string) => {
-    return generateResponse(prompt, "mixtral-8x7b-32768");
+const chatWithAi = async (prompt) => {
+  const response = await groq.chat.completions.create({
+    messages: [{ role: 'user', content: prompt }],
+    model: 'mixtral-8x7b-32768',
+  });
+
+  return response.choices[0]?.message?.content || '';
 };
 
-export const chatWithAi = (prompt: string) => {
-    return generateResponse(prompt, "mixtral-8x7b-32768");
+module.exports = {
+  generateCourse,
+  getAiAdvice,
+  chatWithAi,
 };
