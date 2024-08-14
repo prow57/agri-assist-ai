@@ -15,7 +15,7 @@ def encode_image(image):
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 def call_api(endpoint, payload):
-    api_url = f"http://localhost:8000/{endpoint}"  # Update this if your API is hosted elsewhere
+    api_url = f"http://37.187.29.19:6932/{endpoint}"  # Update this if your API is hosted elsewhere
     response = requests.post(api_url, json=payload)
     return response.json()
 
