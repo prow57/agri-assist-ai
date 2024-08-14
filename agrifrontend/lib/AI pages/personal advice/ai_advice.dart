@@ -21,21 +21,20 @@ class _AiAdviceState extends State<AiAdvice> {
       _isLoading = true;
     });
 
-    final url = Uri.parse(
-        'https://api.openai.com/v1/engines/davinci-codex/completions');
+    final url = Uri.parse('https://api.openai.com/v1/completions');
     final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization':
-            'Bearer sk-proj-rztlFl3a0hgph3nmGUNJT3BlbkFJBtN6MYL29jguuSnqb5EG',
+        'Authorization': 'Bearer your-openai-api-key', // Replace with your OpenAI API key
       },
       body: json.encode({
+        'model': 'text-davinci-003', // Or 'gpt-4' if available
         'prompt':
-            'You are an agriculture expert. Given the following details, provide agriculture-focused advice: '
-                'Crop: ${_cropController.text}, '
-                'Practices: ${_practicesController.text}, '
-                'Issues: ${_issuesController.text}',
+            'You are an agriculture expert. Given the following details, provide agriculture-focused advice:\n'
+            'Crop: ${_cropController.text}\n'
+            'Practices: ${_practicesController.text}\n'
+            'Issues: ${_issuesController.text}',
         'max_tokens': 150,
         'temperature': 0.7,
       }),
@@ -50,6 +49,7 @@ class _AiAdviceState extends State<AiAdvice> {
       setState(() {
         _advice = 'Failed to get response from AI. Please try again later.';
       });
+      print('Error: ${response.statusCode} - ${response.body}');
     }
 
     setState(() {
@@ -149,7 +149,7 @@ class _AiAdviceState extends State<AiAdvice> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                     ),
-                    child: const Text('Send Message'),
+                    child: const Text('Get Advice'),
                   ),
                   ElevatedButton(
                     onPressed: () {

@@ -1,5 +1,6 @@
 // practice_detail_page.dart
 import 'package:flutter/material.dart';
+import 'all_courses.dart'; // Import the AllCoursesPage or specific course page
 
 class PracticeDetailPage extends StatelessWidget {
   final String practiceName;
@@ -37,8 +38,38 @@ class PracticeDetailPage extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
+            const SizedBox(height: 32),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  _applyForCourse(context, practiceName);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32, vertical: 12),
+                ),
+                child: const Text(
+                  'Apply for Course',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+              ),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _applyForCourse(BuildContext context, String practiceName) {
+    // Here you can define the logic for applying to a course related to this practice
+    // For now, it navigates to the AllCoursesPage. 
+    // You could modify this to go to a specific course page if available.
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AllCoursesPage(), // Or a specific course page
       ),
     );
   }
