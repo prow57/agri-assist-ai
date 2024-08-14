@@ -95,10 +95,10 @@ class CourseGenerator:
             "tags": content_and_metadata.tags,
             "references": content_and_metadata.references
         }
-    def generate_image_prompt(self, topic: str, content: str) -> str:
-        return (
-            f"Design a visually striking and realistic course thumbnail for the agricultural topic: '{topic}'. "
-            f"The image should be highly attractive and focus on one key element that encapsulates the essence of the course. "
-            f"Include realistic details that highlight the main theme from the course content, such as {content[:100]}... "
-            f"The thumbnail should be appealing and clearly convey the core idea of the course."
-        )
+def generate_image_prompt(self, topic: str, content: str) -> str:
+    return (
+        f"Create a hyper-realistic, post thumbnail for the agricultural topic: '{topic}'. "
+        f"The image should be visually stunning, capturing attention immediately with one key element that perfectly represents the essence of the course. "
+        f"Include intricate and lifelike details that highlight the main theme from the post content, such as {content[:100]}... "
+        f"Use keywords like 'hyper-realism,' 'vivid,' 'detailed,' 'immersive,' and 'impactful' to ensure the thumbnail is both awe-inspiring and clearly communicates the core idea of the course in an unforgettable way."
+    )
