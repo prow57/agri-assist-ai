@@ -7,7 +7,7 @@ class CourseGenerator:
         self.search_tool = SerperDevTool()
         self.scrape_tool = ScrapeWebsiteTool()
 
-    def generate_social_media_post(self, history: list[str]):
+    def generate_course(self, history: list[str]):
         topic_selection_agent = Agent(
             role="Agricultural Content Curator",
             goal="Identify engaging and impactful agricultural topics for social media posts",
