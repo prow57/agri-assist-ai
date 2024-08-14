@@ -1,9 +1,42 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import 'ai_advice.dart';
 
-class PersonalizedAdvicePage extends StatelessWidget {
+class PersonalizedAdvicePage extends StatefulWidget {
   const PersonalizedAdvicePage({super.key});
+
+  @override
+  _PersonalizedAdvicePageState createState() => _PersonalizedAdvicePageState();
+}
+
+class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
+  List<dynamic> _courses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCourses();
+  }
+
+  Future<void> _fetchCourses() async {
+    const url = 'http://37.187.29.19:6932/course-generation/';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        setState(() {
+          _courses = json.decode(response.body);
+        });
+      } else {
+        throw Exception('Failed to load courses');
+      }
+    } catch (e) {
+      // Handle error
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +49,7 @@ class PersonalizedAdvicePage extends StatelessWidget {
         backgroundColor: Colors.green,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search,color: Colors.white),
+            icon: const Icon(Icons.search, color: Colors.white),
             onPressed: () {
               // Define your action here
             },
@@ -45,29 +78,20 @@ class PersonalizedAdvicePage extends StatelessWidget {
             const SizedBox(height: 10.0),
             Container(
               height: 200.0,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildCourseCard(
-                    context,
-                    'Crops',
-                    'Start Lesson',
-                    'assets/crops.jpg',
-                  ),
-                  _buildCourseCard(
-                    context,
-                    'Pests',
-                    'Start Lesson',
-                    'assets/pests.jpg',
-                  ),
-                  _buildCourseCard(
-                    context,
-                    'Weeds',
-                    'Start Lesson',
-                    'assets/weeds.jpg',
-                  ),
-                ],
-              ),
+              child: _courses.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _courses.length,
+                      itemBuilder: (context, index) {
+                        return _buildCourseCard(
+                          context,
+                          _courses[index]['title'],
+                          'Start Lesson',
+                          _courses[index]['imagePath'],
+                        );
+                      },
+                    ),
             ),
             const SizedBox(height: 10.0),
             Center(
@@ -159,7 +183,7 @@ class PersonalizedAdvicePage extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         image: DecorationImage(
-          image: AssetImage(imagePath),
+          image: NetworkImage(imagePath),
           fit: BoxFit.cover,
         ),
       ),
@@ -194,7 +218,7 @@ class PersonalizedAdvicePage extends StatelessWidget {
               ),
               child: Text(
                 buttonText,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],

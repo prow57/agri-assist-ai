@@ -1,7 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class AllCoursesPage extends StatelessWidget {
+class AllCoursesPage extends StatefulWidget {
   const AllCoursesPage({super.key});
+
+  @override
+  _AllCoursesPageState createState() => _AllCoursesPageState();
+}
+
+class _AllCoursesPageState extends State<AllCoursesPage> {
+  List<dynamic> _courses = [];
+  List<String> _previousTopics = [
+    "topic1",
+    "topic2"
+  ]; // Example previous topics
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCourses();
+  }
+
+  Future<void> _fetchCourses() async {
+    const url = 'http://37.187.29.19:6932/course-generation/';
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'history': _previousTopics,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _courses = json.decode(response.body);
+        });
+      } else {
+        throw Exception('Failed to load courses');
+      }
+    } catch (e) {
+      // Handle error
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,26 +54,19 @@ class AllCoursesPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('All Courses'),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          _buildCourseCard(
-            context,
-            'Crops',
-            'assets/crops.jpg',
-          ),
-          _buildCourseCard(
-            context,
-            'Pests',
-            'assets/pests.jpg',
-          ),
-          _buildCourseCard(
-            context,
-            'Weeds',
-            'assets/weeds.jpg',
-          ),
-        ],
-      ),
+      body: _courses.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: _courses.length,
+              itemBuilder: (context, index) {
+                return _buildCourseCard(
+                  context,
+                  _courses[index]['title'],
+                  _courses[index]['imagePath'],
+                );
+              },
+            ),
     );
   }
 
@@ -38,25 +76,9 @@ class AllCoursesPage extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         leading:
-            Image.asset(imagePath, width: 50, height: 50, fit: BoxFit.cover),
+            Image.network(imagePath, width: 50, height: 50, fit: BoxFit.cover),
         title: Text(title),
         subtitle: const Text('Start Lesson'),
-        onTap: () {
-          // Handle course item tap
-          // For example, navigate to a detailed course page
-        },
-      ),
-    );
-  }
-
-  Widget _buildCourseListItem(String title, String author, String imagePath) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        leading:
-            Image.asset(imagePath, width: 50, height: 50, fit: BoxFit.cover),
-        title: Text(title),
-        subtitle: Text('By $author'),
         onTap: () {
           // Handle course item tap
           // For example, navigate to a detailed course page
