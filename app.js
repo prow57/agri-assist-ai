@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const routes = require('./routes');
 const healthRoutes = require('./routes/healthRoutes');
 const cropPriceRoutes = require('./routes/cropPriceRoutes');
+const marketRoutes = require('./routes/marketRoutes');
+const priceRoutes = require('./routes/priceRoutes');
 const userRoutes = require('./routes/userRoutes'); 
 const path = require('path');
 
@@ -32,6 +34,8 @@ app.use('/api', routes);
 app.use('/api/health', healthRoutes);
 app.use('/api/crop-prices', cropPriceRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/markets', marketRoutes);
+app.use('/api/prices', priceRoutes); 
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
