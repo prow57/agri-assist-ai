@@ -3,7 +3,7 @@ require('dotenv').config();
 const db = require('./db');
 const bodyParser = require('body-parser');
 const routes = require('./routes');
-const healthRoutes = require('./routes/healthRoutes');
+const agricultureRoutes = require('./routes/agricultureRoutes');
 const cropPriceRoutes = require('./routes/cropPriceRoutes');
 const marketRoutes = require('./routes/marketRoutes');
 const priceRoutes = require('./routes/priceRoutes');
@@ -26,12 +26,24 @@ db.connect()
 app.use(bodyParser.json());
 app.use(express.json());
 
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route setup
 app.use('/api', routes);
-app.use('/api/health', healthRoutes);
+app.use('/api/agriculture', agricultureRoutes);
+
+
+
+
+
+
+
+
+
+
+
 app.use('/api/crop-prices', cropPriceRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/markets', marketRoutes);
