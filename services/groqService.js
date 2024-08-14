@@ -1,29 +1,34 @@
-const axios = require('axios');
+import Groq from "groq-sdk";
 
-const groqApiUrl = process.env.GROQ_API_URL;
-const groqApiKey = process.env.GROQ_API_KEY;
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-const headers = {
-    'Content-Type': 'application/json',
-        'Authorization': `Bearer ${groqApiKey}`
-        };
+const generateResponse = async (prompt: string, model: string) => {
+    try {
+        const completion = await groq.chat.completions.create({
+            messages: [
+                {
+                    role: "user",
+                    content: prompt,
+                },
+            ],
+            model: model,
+        });
 
-        const generateCourse = async (prompt) => {
-            try {
-                    const response = await axios.post(groqApiUrl, {
-                                model: "text-davinci-002", // replace with your specific model
-                                            prompt: prompt,
-                                                        max_tokens: 1500, // adjust token count based on course content
-                                                                    temperature: 0.7 // adjust for creativity
-                                                                            }, { headers });
+        return completion.choices[0]?.message?.content || "";
+    } catch (error) {
+        console.error('Error generating response:', error);
+        throw error;
+    }
+};
 
-                                                                                    return response.data.choices[0].text;
-                                                                                        } catch (error) {
-                                                                                                console.error('Error generating course:', error);
-                                                                                                        throw error;
-                                                                                                            }
-                                                                                                            };
+export const generateCourse = (prompt: string) => {
+    return generateResponse(prompt, "mixtral-8x7b-32768");
+};
 
-                                                                                                            module.exports = {
-                                                                                                                generateCourse
-                                                                                                                };
+export const getAiAdvice = (prompt: string) => {
+    return generateResponse(prompt, "mixtral-8x7b-32768");
+};
+
+export const chatWithAi = (prompt: string) => {
+    return generateResponse(prompt, "mixtral-8x7b-32768");
+};
