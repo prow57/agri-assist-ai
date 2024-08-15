@@ -6,6 +6,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 // Add a market (authenticated)
 router.post('/add', authMiddleware, async (req, res) => {
     const { name, location } = req.body;
+   
     try {
         const result = await marketService.createMarket(name, location);
         res.status(201).json(result);
