@@ -4,7 +4,7 @@ const db = require('./db');
 const bodyParser = require('body-parser');
 const routes = require('./routes');
 const agricultureRoutes = require('./routes/agricultureRoutes');
-const cropPriceRoutes = require('./routes/cropPriceRoutes');
+const cropRoutes = require('./routes/cropRoutes');
 const marketRoutes = require('./routes/marketRoutes');
 const priceRoutes = require('./routes/priceRoutes');
 const userRoutes = require('./routes/userRoutes'); 
@@ -34,17 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', routes);
 app.use('/api/agriculture', agricultureRoutes);
 
-
-
-
-
-
-
-
-
-
-
-app.use('/api/crop-prices', cropPriceRoutes);
+app.use('/api/crops', cropRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/markets', marketRoutes);
 app.use('/api/prices', priceRoutes); 
