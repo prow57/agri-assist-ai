@@ -12,7 +12,7 @@ const addMarket = async (req, res) => {
         await marketService.createMarket(name, location);
         res.status(201).json({ message: 'Market created successfully' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Happened in controller' + error.message });
     }
 };
 
