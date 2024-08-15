@@ -3,11 +3,11 @@ const db = require('../db');
 // Add a new market
 const createMarket = async (name, location) => {
     try {
-        const result = await pool.query(
+        const result = await db.one(
             'INSERT INTO markets (name, location) VALUES ($1, $2) RETURNING id, name, location',
             [name, location]
         );
-        return result.rows[0]; // Return the inserted market
+        return result; // Return the inserted market
     } catch (error) {
         throw new Error(`Error adding market: ${error.message}`);
     }
@@ -16,8 +16,8 @@ const createMarket = async (name, location) => {
 // Get all markets
 const getAllMarkets = async () => {
     try {
-        const result = await pool.query('SELECT * FROM markets ORDER BY name');
-        return result.rows;
+        const result = await db.any('SELECT * FROM markets');
+        return result;
     } catch (error) {
         throw new Error(`Error retrieving markets: ${error.message}`);
     }
