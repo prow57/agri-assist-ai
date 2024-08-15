@@ -1,0 +1,19 @@
+body {
+    padding-top: 56px; /* Adjust based on the height of your navbar */
+}
+.container {
+    max-width: 800px;
+}
+img {
+    width: 30px;
+    height: 30px; /* Adjust size of the logo */
+    margin-right: 5px; /* Space between logo and text */
+    border-radius: 8px;
+}
+.spinner-border {
+    display: none;
+}
+.spinner-border {
+    width: 1.5rem;
+    height: 1.5rem;
+}
