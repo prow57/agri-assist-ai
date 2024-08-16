@@ -1,8 +1,14 @@
+// market_place_page.dart
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'market_service.dart';
+import 'commodity.dart'; // Import your Commodity model
 
 class MarketPlacePage extends StatefulWidget {
+  final String marketId;
+
+  MarketPlacePage({required this.marketId});
+
   @override
   _MarketPlacePageState createState() => _MarketPlacePageState();
 }
@@ -13,7 +19,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
   @override
   void initState() {
     super.initState();
-    _futureCommodities = MarketService().fetchMarketPrices();
+    _futureCommodities = MarketService().fetchMarketPrices(widget.marketId);
   }
 
   @override
@@ -62,7 +68,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                           PieSeries<Commodity, String>(
                             dataSource: snapshot.data!,
                             xValueMapper: (Commodity data, _) => data.name,
-                            yValueMapper: (Commodity data, _) => data.supply,
+                            yValueMapper: (Commodity data, _) => data.price,
                             dataLabelSettings:
                                 DataLabelSettings(isVisible: true),
                           ),
@@ -84,7 +90,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                         final commodity = snapshot.data![index];
                         return CommodityTile(
                             name: commodity.name,
-                            price: commodity.supply.toString());
+                            price: commodity.price.toString());
                       },
                     ),
                     const SizedBox(height: 20.0),
@@ -102,7 +108,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                         final commodity = snapshot.data![index];
                         return CommodityTile(
                             name: commodity.name,
-                            price: commodity.supply.toString());
+                            price: commodity.price.toString());
                       },
                     ),
                   ],
