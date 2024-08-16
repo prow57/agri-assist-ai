@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
 class LeafImageAnalysisOutput(BaseModel):
-    crop_type: str = Field(description='Type of the crop "Unknown" if there is no crop')
+    crop_type: str = Field(description='Type of the crop')
     disease_name: str | None = Field(description='Name of the detected disease or None if healthy')
     description: str | None = Field(description='Detailed description of the disease')
     level_of_risk: str | None = Field(description='Level of risk')

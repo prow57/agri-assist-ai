@@ -53,7 +53,7 @@ async def analyze_leaf(request: ImageRequest):
         "estimated_size": leaf_analysis.estimated_size
     }
 
-    if crew_inputs["disease_name"] == "None" or crew_inputs["crop_type"] == "Unknown":
+    if crew_inputs["disease_name"] == "None":
         output_leaf_analysis = {"leaf_analysis": crew_inputs}
         return JSONResponse(content=output_leaf_analysis)
 

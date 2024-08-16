@@ -28,7 +28,7 @@ class CourseGenerator:
             description=(
                 f"Identify a new agricultural topic not present in this list: [{', '.join(history)}]. "
                 "The topic should focus on providing farmers with practical tips, tricks, or advice for solving daily challenges. "
-                "It must be short, relevant, and random, aimed at sparking interest and offering immediate value."
+                "It must be short,very specific, relevant, and random, aimed at sparking interest and offering immediate value."
             ),
             agent=topic_selection_agent,
             expected_output=""" 
@@ -49,7 +49,7 @@ class CourseGenerator:
             expected_output="""
             A JSON object with the following structure:
 
-                "content": "Short, Sweet, engaging social media content (maximum 500 characters), do not include the tags in the content",
+                "content": "full markdown structred Sweet engaging social media content , do not include the tags in the content",
                 "tags": ["tag1", "tag2", "tag3", ...],
                 "references": [
                     "Reference link 1 (preferably from .edu, .gov, or reputable agricultural organizations)",

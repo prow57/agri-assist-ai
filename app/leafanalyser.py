@@ -68,7 +68,7 @@ class LeafAnalyser:
             A JSON object with the crop type, disease name, detailed description of the disease, level of risk, percentage of health of the spot, estimated size, the disease's stage and symptoms observed.
             structure:
                 {
-                "crop_type": "<string>",               // Type of the crop or "Unknown" if there is no crop
+                "crop_type": "<string>",               // Type of the crop
                 "disease_name": "<string or None>",    // Name of the detected disease or None if the crop is healthy
                 "description": "<string>",             // Detailed description of the disease
                 "level_of_risk": "<string>",           // Level of risk (e.g., "Low", "Medium", "High")
