@@ -5,7 +5,7 @@ import 'market_service.dart';
 import 'commodity.dart'; // Import your Commodity model
 
 class MarketPlacePage extends StatefulWidget {
-  final String marketId;
+  final int marketId;
 
   MarketPlacePage({required this.marketId});
 
