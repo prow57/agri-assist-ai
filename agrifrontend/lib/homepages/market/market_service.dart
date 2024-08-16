@@ -18,7 +18,7 @@ class MarketService {
     }
   }
 
-  Future<List<Commodity>> fetchMarketPrices(String marketId) async {
+  Future<List<Commodity>> fetchMarketPrices(int marketId) async {
     final response = await http.get(Uri.parse('$baseUrl/prices/market/$marketId'));
 
     if (response.statusCode == 200) {
