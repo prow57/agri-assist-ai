@@ -4,6 +4,7 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_pa
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:agrifrontend/homepages/market/market_place.dart';
+import 'package:agrifrontend/homepages/market/market_selection_page.dart';
 import 'package:agrifrontend/homepages/weather/ui/weather_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -102,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MarketPlacePage()));
+                                builder: (context) => MarketSelectionPage()));
                       }),
                   CustomButton(
                       icon: Icons.person,
