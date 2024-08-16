@@ -1,5 +1,5 @@
 class Market {
-  final String id;
+  final int id;
   final String name;
 
   Market({required this.id, required this.name});
