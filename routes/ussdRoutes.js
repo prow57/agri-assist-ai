@@ -42,6 +42,9 @@ router.post('/', async (req, res) => {
 });
 
 async function handleCustomMenuOptions(text, req, aiService, weatherService, marketService) {
+    console.log('weatherService:', weatherService);
+    console.log('fetchWeather function:', weatherService.fetchWeather);
+
     let response = '';
 
     if (text.startsWith('2*')) {
@@ -49,7 +52,15 @@ async function handleCustomMenuOptions(text, req, aiService, weatherService, mar
         response = `END Soil detection advice for ${soilType}`;
     } else if (text.startsWith('3*')) {
         const region = ussdUtils.getRegion(text.split('*')[1]);
-        response = `END Weather forecast for the ${region}: ${await weatherService.getWeatherForecast(region)}`;
+        try {
+            console.log(`Fetching weather data for region: ${region}`);
+            const weatherData = await weatherService.fetchWeather(region);
+            const weatherInfo = `Temperature: ${weatherData.current.temp_c}°C, ${weatherData.current.condition.text}, Humidity: ${weatherData.current.humidity}%`;
+            response = `END Weather forecast for the ${region}: ${weatherInfo}`;
+        } catch (error) {
+            console.error('Error fetching weather data:', error);
+            response = `END Unable to fetch weather data at the moment. Please try again later.`;
+        }
     } else if (text.startsWith('4*')) {
         const crop = ussdUtils.getCrop(text.split('*')[1]);
         response = `END Market price for ${crop}: ${marketService.getMarketPrice(crop)}`;

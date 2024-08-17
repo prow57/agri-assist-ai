@@ -1,3 +1,4 @@
+
 function getMainMenu() {
     return `CON Welcome to AI-Driven Agricultural Advisory System
 1. Scan Leaf
@@ -111,4 +112,8 @@ module.exports = {
     getPersonalizedAdvicePrompt,
     getCommunityForumOptions,
     handleSubMenu,
+    getSoilType,
+    getRegion,
+    getCrop,
+    getPersonalizedAdvice
 };
