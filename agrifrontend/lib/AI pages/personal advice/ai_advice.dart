@@ -15,39 +15,36 @@ class _AiAdviceState extends State<AiAdvice> {
   final TextEditingController _issuesController = TextEditingController();
   String _advice = '';
   bool _isLoading = false;
+  String _selectedFarmingType = 'Crop Farming'; // Default selected option
 
   Future<void> _getAiResponse() async {
     setState(() {
       _isLoading = true;
     });
 
-    final url = Uri.parse('https://api.openai.com/v1/completions');
+    final url =
+        Uri.parse('https://agriback-plum.vercel.app/api/advice/get-advice');
     final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer your-openai-api-key', // Replace with your OpenAI API key
       },
       body: json.encode({
-        'model': 'text-davinci-003', // Or 'gpt-4' if available
-        'prompt':
-            'You are an agriculture expert. Given the following details, provide agriculture-focused advice:\n'
-            'Crop: ${_cropController.text}\n'
-            'Practices: ${_practicesController.text}\n'
-            'Issues: ${_issuesController.text}',
-        'max_tokens': 150,
-        'temperature': 0.7,
+        'type': _selectedFarmingType,
+        'product': _cropController.text,
+        'practices': _practicesController.text,
+        'issues': _issuesController.text,
       }),
     );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        _advice = data['choices'][0]['text'].trim();
+        _advice = data['advice'];
       });
     } else {
       setState(() {
-        _advice = 'Failed to get response from AI. Please try again later.';
+        _advice = 'Failed to get advice. Please try again later.';
       });
       print('Error: ${response.statusCode} - ${response.body}');
     }
@@ -80,8 +77,36 @@ class _AiAdviceState extends State<AiAdvice> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'What crop are you growing?',
+                'Select your farming type:',
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8.0),
+              DropdownButton<String>(
+                value: _selectedFarmingType,
+                items: <String>['Crop Farming', 'Animal Rearing']
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedFarmingType = newValue!;
+                    _cropController.clear();
+                    _practicesController.clear();
+                    _issuesController.clear();
+                    _advice = '';
+                  });
+                },
+              ),
+              const SizedBox(height: 16.0),
+              Text(
+                _selectedFarmingType == 'Crop Farming'
+                    ? 'Name of crop (e.g., maize):'
+                    : 'Name of animal (e.g., cattle):',
+                style: const TextStyle(
+                    fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8.0),
               TextField(

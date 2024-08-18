@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class FarmingPracticesPage extends StatefulWidget {
   const FarmingPracticesPage({super.key});
@@ -10,8 +10,9 @@ class FarmingPracticesPage extends StatefulWidget {
 }
 
 class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
-  List<Map<String, String>> _farmingPractices = [];
+  String _responseContent = '';
   bool _isLoading = true;
+  bool _isError = false;
 
   @override
   void initState() {
@@ -20,63 +21,38 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
   }
 
   Future<void> _fetchFarmingPractices() async {
-    const url = 'https://api.openai.com/v1/completions';
-    const apiKey =
-        'sk-ZxonIMxLFUcVXhY0ZhhU8jUKqPUsxMOlAWNBcRUyBqT3BlbkFJZOom0hmSkhrSXRy6dxzrf7MOru-3X72p6HgeiChq0A'; // Replace with your OpenAI API key
+    const url = 'https://agriback-plum.vercel.app/api/courses/topics';
 
     try {
-      final response = await http.post(
+      final response = await http.get(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $apiKey',
         },
-        body: json.encode({
-          'model': 'text-davinci-003', // or 'gpt-4' if available
-          'prompt': 'Generate a list of farming practices with descriptions.',
-          'max_tokens': 200,
-          'n': 1,
-          'stop': null,
-          'temperature': 0.7,
-        }),
       );
 
       if (response.statusCode == 200) {
-        final decodedResponse = json.decode(response.body);
-        final generatedText = decodedResponse['choices'][0]['text'] as String;
-        _parseFarmingPractices(generatedText);
+        setState(() {
+          _responseContent = response.body;
+          _isLoading = false;
+          _isError = false;
+        });
       } else {
-        throw Exception('Failed to load farming practices');
+        setState(() {
+          _responseContent =
+              'Failed to load farming practices: ${response.statusCode}';
+          _isLoading = false;
+          _isError = true;
+        });
       }
     } catch (e) {
       setState(() {
+        _responseContent = 'Error: $e';
         _isLoading = false;
+        _isError = true;
       });
       print('Error: $e');
     }
-  }
-
-  void _parseFarmingPractices(String text) {
-    final List<Map<String, String>> practices = [];
-
-    // Assuming the text is in a bullet-point format
-    final lines = text.split('\n');
-    for (var line in lines) {
-      if (line.trim().isNotEmpty) {
-        final parts = line.split(':');
-        if (parts.length == 2) {
-          practices.add({
-            'name': parts[0].trim(),
-            'description': parts[1].trim(),
-          });
-        }
-      }
-    }
-
-    setState(() {
-      _farmingPractices = practices;
-      _isLoading = false;
-    });
   }
 
   @override
@@ -85,24 +61,40 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
       appBar: AppBar(
         title: const Text('Farming Practices'),
         backgroundColor: Colors.green,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.copy),
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: _responseContent));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Response copied to clipboard')),
+              );
+            },
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
+          : Padding(
               padding: const EdgeInsets.all(16.0),
-              itemCount: _farmingPractices.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: ListTile(
-                    title: Text(_farmingPractices[index]['name']!),
-                    subtitle: Text(_farmingPractices[index]['description']!),
-                    onTap: () {
-                      // Navigate to PracticeDetailPage or perform other actions
-                    },
-                  ),
-                );
-              },
+              child: SingleChildScrollView(
+                child: _isError
+                    ? Text(
+                        _responseContent,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                        ),
+                      )
+                    : Text(
+                        _responseContent,
+                        style: const TextStyle(
+                          fontFamily: 'Courier',
+                          fontSize: 14,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+              ),
             ),
     );
   }

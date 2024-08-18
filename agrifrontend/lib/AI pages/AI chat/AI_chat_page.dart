@@ -15,10 +15,6 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
 
-  // Replace this with your actual OpenAI API key
-  final String _apiKey =
-      'sk-ZxonIMxLFUcVXhY0ZhhU8jUKqPUsxMOlAWNBcRUyBqT3BlbkFJZOom0hmSkhrSXRy6dxzrf7MOru-3X72p6HgeiChq0A';
-
   void _sendMessage(String text) {
     if (text.isEmpty) return;
 
@@ -29,33 +25,28 @@ class _ChatPageState extends State<ChatPage> {
           true; // Show a loading indicator while waiting for the response
     });
 
-    _fetchGPTResponse(text);
+    _fetchAPIResponse(text);
   }
 
-  Future<void> _fetchGPTResponse(String userMessage) async {
-    const url = 'https://api.openai.com/v1/completions';
+  Future<void> _fetchAPIResponse(String userMessage) async {
+    const url = 'https://agriback-plum.vercel.app/api/chat/chat';
 
     try {
       final response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $_apiKey',
         },
         body: json.encode({
-          'model':
-              'text-davinci-003', // You can change this to 'gpt-4' if available
-          'prompt': userMessage,
-          'max_tokens': 100,
-          'n': 1,
-          'stop': null,
-          'temperature': 0.7,
+          'message':
+              userMessage, // Adjust this payload based on your API requirements
         }),
       );
 
       if (response.statusCode == 200) {
         final decodedResponse = json.decode(response.body);
-        final aiResponse = decodedResponse['choices'][0]['text'].trim();
+        final aiResponse = decodedResponse[
+            'response']; // Adjust this key based on your API response
 
         setState(() {
           _messages.add(Message(text: aiResponse, isUser: false));
@@ -63,7 +54,7 @@ class _ChatPageState extends State<ChatPage> {
               false; // Hide the loading indicator once response is received
         });
       } else {
-        throw Exception('Failed to load AI response');
+        throw Exception('Failed to load API response');
       }
     } catch (e) {
       setState(() {

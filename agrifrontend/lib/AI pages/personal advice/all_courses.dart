@@ -11,6 +11,8 @@ class AllCoursesPage extends StatefulWidget {
 
 class _AllCoursesPageState extends State<AllCoursesPage> {
   List<dynamic> _courses = [];
+  bool _isLoading = true;
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -19,7 +21,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   }
 
   Future<void> _fetchCourses() async {
-    const url = 'http://37.187.29.19:6932/course-generation/';
+    const url = 'https://agriback-plum.vercel.app/api/courses/generate-full-course/:id';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -27,20 +29,26 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'history': [], // Updated to always send an empty list
+          'history': [],
         }),
       );
 
       if (response.statusCode == 200) {
         setState(() {
           _courses = json.decode(response.body);
+          _isLoading = false;
         });
       } else {
-        throw Exception('Failed to load courses');
+        setState(() {
+          _errorMessage = 'Failed to load courses: ${response.statusCode}';
+          _isLoading = false;
+        });
       }
     } catch (e) {
-      // Handle error
-      print('Error: $e');
+      setState(() {
+        _errorMessage = 'Error: $e';
+        _isLoading = false;
+      });
     }
   }
 
@@ -49,33 +57,46 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Courses'),
+        backgroundColor: Colors.green,
       ),
-      body: _courses.isEmpty
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: _courses.length,
-              itemBuilder: (context, index) {
-                return _buildCourseCard(
-                  context,
-                  _courses[index]['title'],
-                  _courses[index]['imagePath'],
-                );
-              },
-            ),
+          : _errorMessage.isNotEmpty
+              ? Center(child: Text(_errorMessage))
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: _courses.length,
+                  itemBuilder: (context, index) {
+                    return _buildCourseCard(
+                      context,
+                      _courses[index]['title'] ?? 'No title available',
+                      _courses[index]['imagePath'],
+                    );
+                  },
+                ),
     );
   }
 
   Widget _buildCourseCard(
-      BuildContext context, String title, String imagePath) {
+      BuildContext context, String title, String? imagePath) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
-        leading:
-            Image.network(imagePath, width: 50, height: 50, fit: BoxFit.cover),
+        leading: imagePath != null
+            ? Image.network(
+                imagePath,
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.broken_image, size: 50);
+                },
+              )
+            : const Icon(Icons.image_not_supported, size: 50),
         title: Text(title),
         subtitle: const Text('Start Lesson'),
         onTap: () {
+          // Handle course selection
         },
       ),
     );
