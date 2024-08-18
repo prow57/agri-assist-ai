@@ -41,7 +41,7 @@ class DetailPage extends StatelessWidget {
                 width: 200, // Increased icon width
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 20),
               // Temperature
               Container(
                 child: Column(
@@ -65,20 +65,27 @@ class DetailPage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 20),
               // Additional Weather Details
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: [
-                  _buildDetailBox('Max Temp', '${dayForecast['day']['maxtemp_c']}°C'),
-                  _buildDetailBox('Min Temp', '${dayForecast['day']['mintemp_c']}°C'),
-                  _buildDetailBox('Humidity', '${dayForecast['day']['avghumidity']}%'),
-                  _buildDetailBox('Wind Speed', '${dayForecast['day']['maxwind_kph']} kph'),
-                  _buildDetailBox('Precipitation', '${dayForecast['day']['totalprecip_mm']} mm'),
-                ],
+              Expanded(
+                child: ListView.separated(
+                  itemCount: 7, // Number of items
+                  separatorBuilder: (context, index) => Divider(height: 16.0, color: Colors.grey[300]),
+                  itemBuilder: (context, index) {
+                    final details = [
+                      ['Max Temp', '${dayForecast['day']['maxtemp_c']}°C'],
+                      ['Min Temp', '${dayForecast['day']['mintemp_c']}°C'],
+                      ['Humidity', '${dayForecast['day']['avghumidity']}%'],
+                      ['Wind Speed', '${dayForecast['day']['maxwind_kph']} kph'],
+                      ['Precipitation', '${dayForecast['day']['totalprecip_mm']} mm'],
+                      ['Sunrise', '${dayForecast['astro']['sunrise']}'],
+                      ['Sunset', '${dayForecast['astro']['sunset']}'],
+                    ];
+                    return _buildDetailBox(details[index][0], details[index][1]);
+                  },
+                ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 20),
               // Recommendations based on weather
               Container(
                 padding: EdgeInsets.all(12),
