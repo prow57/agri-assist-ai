@@ -11,6 +11,7 @@ class AllCoursesPage extends StatefulWidget {
 
 class _AllCoursesPageState extends State<AllCoursesPage> {
   List<dynamic> _courses = [];
+  List<String> _appliedCourses = [];
   bool _isLoading = true;
   String _errorMessage = '';
 
@@ -21,7 +22,8 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   }
 
   Future<void> _fetchCourses() async {
-    const url = 'https://agriback-plum.vercel.app/api/courses/generate-full-course/:id';
+    const url =
+        'https://agriback-plum.vercel.app/api/courses/generate-full-course/:id';
     try {
       final response = await http.post(
         Uri.parse(url),
@@ -52,6 +54,12 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
     }
   }
 
+  void _applyForCourse(String title) {
+    setState(() {
+      _appliedCourses.add(title);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,16 +71,52 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
               ? Center(child: Text(_errorMessage))
-              : ListView.builder(
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: _courses.length,
-                  itemBuilder: (context, index) {
-                    return _buildCourseCard(
-                      context,
-                      _courses[index]['title'] ?? 'No title available',
-                      _courses[index]['imagePath'],
-                    );
-                  },
+              : Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16.0),
+                        itemCount: _courses.length,
+                        itemBuilder: (context, index) {
+                          return _buildCourseCard(
+                            context,
+                            _courses[index]['title'] ?? 'No title available',
+                            _courses[index]['imagePath'],
+                          );
+                        },
+                      ),
+                    ),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Applied Courses:',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    _appliedCourses.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text('No courses applied yet.'),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.all(16.0),
+                              itemCount: _appliedCourses.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  title: Text(_appliedCourses[index]),
+                                );
+                              },
+                            ),
+                          ),
+                  ],
                 ),
     );
   }
@@ -95,6 +139,10 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
             : const Icon(Icons.image_not_supported, size: 50),
         title: Text(title),
         subtitle: const Text('Start Lesson'),
+        trailing: ElevatedButton(
+          onPressed: () => _applyForCourse(title),
+          child: const Text('Apply'),
+        ),
         onTap: () {
           // Handle course selection
         },
