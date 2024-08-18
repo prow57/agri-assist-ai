@@ -1,4 +1,3 @@
-// weather_page.dart
 import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -74,8 +73,11 @@ class _WeatherPageState extends State<WeatherPage> {
       return [Text('No forecast data available')];
     }
 
-    return List<Widget>.generate(7, (index) {
-      final dayForecast = _weatherData!['forecast']['forecastday'][index];
+    final forecastDays = _weatherData!['forecast']['forecastday'] as List<dynamic>;
+    final numberOfDays = forecastDays.length;
+
+    return List<Widget>.generate(numberOfDays, (index) {
+      final dayForecast = forecastDays[index];
       final date = DateTime.parse(dayForecast['date']);
       final dayOfWeek = DateFormat('EEEE').format(date);
 
@@ -91,8 +93,7 @@ class _WeatherPageState extends State<WeatherPage> {
         child: SizedBox(
           width: 150, // Set a fixed width for the forecast cards
           child: Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             elevation: 5,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -230,7 +231,7 @@ class _WeatherPageState extends State<WeatherPage> {
                       ),
                       SizedBox(height: 20),
                       Text(
-                        '7-Day Weather Forecast',
+                        'Weather Forecast',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
