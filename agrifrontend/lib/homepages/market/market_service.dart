@@ -1,11 +1,10 @@
-// market_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'market.dart'; // Import your Market model
 import 'commodity.dart'; // Import your Commodity model
 
 class MarketService {
-  final String baseUrl = 'http://localhost:3000/api';
+  final String baseUrl = 'https://agri-backend-8het.onrender.com/api';
 
   Future<List<Market>> fetchMarkets() async {
     final response = await http.get(Uri.parse('$baseUrl/markets'));

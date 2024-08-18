@@ -1,13 +1,15 @@
 class Commodity {
-  final String name;
-  final double price; // or the appropriate type based on your API response
+  final String cropName;
+  final String marketName;
+  final double price;
 
-  Commodity({required this.name, required this.price});
+  Commodity({required this.cropName, required this.marketName, required this.price});
 
   factory Commodity.fromJson(Map<String, dynamic> json) {
     return Commodity(
-      name: json['name'],
-      price: json['price'].toDouble(), // Adjust as needed
+      cropName: json['crop_name'],
+      marketName: json['market_name'],
+      price: double.parse(json['price']), // Assuming 'price' is a String in your JSON
     );
   }
 }

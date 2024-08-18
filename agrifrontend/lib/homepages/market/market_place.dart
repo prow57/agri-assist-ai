@@ -1,4 +1,3 @@
-// market_place_page.dart
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'market_service.dart';
@@ -56,8 +55,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                   children: [
                     const Text(
                       'Supply and Demand',
-                      style: TextStyle(
-                          fontSize: 24.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
                     Container(
@@ -67,10 +65,9 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                         series: <PieSeries>[
                           PieSeries<Commodity, String>(
                             dataSource: snapshot.data!,
-                            xValueMapper: (Commodity data, _) => data.name,
+                            xValueMapper: (Commodity data, _) => data.cropName,
                             yValueMapper: (Commodity data, _) => data.price,
-                            dataLabelSettings:
-                                DataLabelSettings(isVisible: true),
+                            dataLabelSettings: DataLabelSettings(isVisible: true),
                           ),
                         ],
                       ),
@@ -78,8 +75,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                     const SizedBox(height: 20.0),
                     const Text(
                       'Commodities and Prices',
-                      style: TextStyle(
-                          fontSize: 24.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
                     ListView.builder(
@@ -89,26 +85,9 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                       itemBuilder: (context, index) {
                         final commodity = snapshot.data![index];
                         return CommodityTile(
-                            name: commodity.name,
-                            price: commodity.price.toString());
-                      },
-                    ),
-                    const SizedBox(height: 20.0),
-                    const Text(
-                      'Top Selling Commodities',
-                      style: TextStyle(
-                          fontSize: 24.0, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10.0),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        final commodity = snapshot.data![index];
-                        return CommodityTile(
-                            name: commodity.name,
-                            price: commodity.price.toString());
+                          name: '${commodity.cropName} - ${commodity.marketName}',
+                          price: commodity.price.toString(),
+                        );
                       },
                     ),
                   ],
