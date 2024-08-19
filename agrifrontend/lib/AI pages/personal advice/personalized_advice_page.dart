@@ -24,21 +24,22 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   }
 
   Future<void> _fetchCourses() async {
-    const url = 'http://37.187.29.19:6932/course-generation/';
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        setState(() {
-          _courses = json.decode(response.body);
-        });
-      } else {
-        throw Exception('Failed to load courses');
-      }
-    } catch (e) {
-      // Handle error
-      print('Error: $e');
+  const url = 'https://agriback-plum.vercel.app/api/courses/random-courses';
+  try {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      setState(() {
+        _courses = json.decode(response.body);
+      });
+    } else {
+      throw Exception('Failed to load courses');
     }
+  } catch (e) {
+    // Handle error
+    print('Error: $e');
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -184,54 +185,62 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   }
 
   Widget _buildCourseCard(
-      BuildContext context, String title, String buttonText, String imagePath) {
-    return Container(
-      width: 150,
-      margin: const EdgeInsets.all(8),
+    BuildContext context, String title, String buttonText, String imagePath, String description) {
+  return Container(
+    width: 150,
+    margin: const EdgeInsets.all(8),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      image: DecorationImage(
+        image: NetworkImage(imagePath),
+        fit: BoxFit.cover,
+      ),
+    ),
+    child: Container(
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        image: DecorationImage(
-          image: NetworkImage(imagePath),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            colors: [
-              Colors.black.withOpacity(0.8),
-              Colors.black.withOpacity(0.3),
-            ],
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            ElevatedButton(
-              onPressed: () {
-                // Define your action here
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              child: Text(
-                buttonText,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
+        gradient: LinearGradient(
+          colors: [
+            Colors.black.withOpacity(0.8),
+            Colors.black.withOpacity(0.3),
           ],
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
         ),
       ),
-    );
-  }
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            description.length > 100
+                ? '${description.substring(0, 100)}...'  // Show only the first 100 characters
+                : description,
+            style: const TextStyle(color: Colors.white),
+          ),
+          const SizedBox(height: 4),
+          ElevatedButton(
+            onPressed: () {
+              // Define your action to view full course here
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+            ),
+            child: Text(
+              buttonText,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 }
