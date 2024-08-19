@@ -92,6 +92,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                           _courses[index]['title'],
                           'Start Lesson',
                           _courses[index]['imagePath'],
+                          _courses[index]['description'],
                         );
                       },
                     ),
