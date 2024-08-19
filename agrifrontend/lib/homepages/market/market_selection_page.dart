@@ -61,7 +61,7 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
                       ),
                     ),
                     subtitle: Text(
-                      'Market ID: ${market.id}',
+                      '${market.location}', // Display the market location here
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     onTap: () {
@@ -70,7 +70,8 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
                         MaterialPageRoute(
                           builder: (context) => MarketPlacePage(
                             marketId: market.id,
-                            marketName: market.name, // Pass the market name here
+                            marketName: market.name,
+                            marketLocation: market.location, // Pass the market name here
                           ),
                         ),
                       );

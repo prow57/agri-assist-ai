@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:intl/intl.dart'; // Import the intl package
 import 'market_service.dart';
 import 'commodity.dart'; // Import your Commodity model
 
 class MarketPlacePage extends StatefulWidget {
   final int marketId;
-  final String marketName; // Add this to hold the market name
+  final String marketName;
+  final String marketLocation;
 
-  MarketPlacePage({required this.marketId, required this.marketName});
+  MarketPlacePage({
+    required this.marketId,
+    required this.marketName,
+    required this.marketLocation,
+  });
 
   @override
   _MarketPlacePageState createState() => _MarketPlacePageState();
@@ -15,11 +21,14 @@ class MarketPlacePage extends StatefulWidget {
 
 class _MarketPlacePageState extends State<MarketPlacePage> {
   late Future<List<Commodity>> _futureCommodities;
+  late String _currentDate; // Variable to hold the formatted date
 
   @override
   void initState() {
     super.initState();
     _futureCommodities = MarketService().fetchMarketPrices(widget.marketId);
+    _currentDate = DateFormat('EEEE, MMMM d, yyyy')
+        .format(DateTime.now()); // Format the current date
   }
 
   @override
@@ -27,7 +36,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.marketName, // Use the market name here as the heading
+          '${widget.marketName}, ${widget.marketLocation}', // Display market name and location
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
@@ -54,9 +63,10 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Supply and Demand',
-                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                    Text(
+                      _currentDate, // Display the current date
+                      style: TextStyle(
+                          fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
                     Container(
@@ -68,7 +78,8 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                             dataSource: snapshot.data!,
                             xValueMapper: (Commodity data, _) => data.cropName,
                             yValueMapper: (Commodity data, _) => data.price,
-                            dataLabelSettings: DataLabelSettings(isVisible: true),
+                            dataLabelSettings:
+                                DataLabelSettings(isVisible: true),
                           ),
                         ],
                       ),
@@ -76,7 +87,8 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                     const SizedBox(height: 20.0),
                     const Text(
                       'Commodities and Prices',
-                      style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 24.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
                     ListView.builder(
@@ -86,8 +98,9 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                       itemBuilder: (context, index) {
                         final commodity = snapshot.data![index];
                         return CommodityTile(
-                          name: '${commodity.cropName} - ${commodity.marketName}',
-                          price: commodity.price.toString(),
+                          name:
+                              '${commodity.cropName}',
+                          price: 'Mk ${commodity.price.toString()}',
                         );
                       },
                     ),
