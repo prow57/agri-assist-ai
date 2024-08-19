@@ -24,7 +24,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   }
 
   Future<void> _fetchCourses() async {
-  const url = 'https://agriback-plum.vercel.app/api/courses/random-courses';
+  const url = 'https://agriback-plum.vercel.app/api/courses/random-topics';
   try {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
