@@ -10,11 +10,40 @@ class MarketSelectionPage extends StatefulWidget {
 
 class _MarketSelectionPageState extends State<MarketSelectionPage> {
   late Future<List<Market>> _futureMarkets;
+  List<Market> _markets = [];
+  List<Market> _filteredMarkets = [];
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _futureMarkets = MarketService().fetchMarkets();
+    _futureMarkets.then((markets) {
+      setState(() {
+        _markets = markets;
+        _filteredMarkets = markets;
+      });
+    });
+
+    // Trigger filtering as the user types
+    _searchController.addListener(() {
+      _filterMarkets();
+    });
+  }
+
+  void _filterMarkets() {
+    final query = _searchController.text.toLowerCase();
+
+    setState(() {
+      if (query.isEmpty) {
+        _filteredMarkets = _markets;
+      } else {
+        _filteredMarkets = _markets.where((market) {
+          return market.name.toLowerCase().contains(query) ||
+              market.location.toLowerCase().contains(query);
+        }).toList();
+      }
+    });
   }
 
   @override
@@ -23,65 +52,83 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
       appBar: AppBar(
         title: const Text(
           'Select Market',
-          style: TextStyle(color: Colors.white), // Set text color to white
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // Set icon color to white
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      body: FutureBuilder<List<Market>>(
-        future: _futureMarkets,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No markets available'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final market = snapshot.data![index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  elevation: 4,
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(16),
-                    leading: Icon(Icons.store, size: 40, color: Colors.green),
-                    title: Text(
-                      market.name,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(
-                      '${market.location}', // Display the market location here
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MarketPlacePage(
-                            marketId: market.id,
-                            marketName: market.name,
-                            marketLocation: market.location, // Pass the market name here
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search markets...',
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                prefixIcon: Icon(Icons.search),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    _filterMarkets(); // Trigger filtering after clearing the text field
+                  },
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ),
+          ),
+          Expanded(
+            child: _filteredMarkets.isEmpty
+                ? Center(child: Text('No markets found'))
+                : ListView.builder(
+                    itemCount: _filteredMarkets.length,
+                    itemBuilder: (context, index) {
+                      final market = _filteredMarkets[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 4,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(16),
+                          leading: Icon(Icons.store, size: 40, color: Colors.green),
+                          title: Text(
+                            market.name,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          subtitle: Text(
+                            market.location,
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MarketPlacePage(
+                                  marketId: market.id,
+                                  marketName: market.name,
+                                  marketLocation: market.location,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },
                   ),
-                );
-              },
-            );
-          }
-        },
+          ),
+        ],
       ),
     );
   }
