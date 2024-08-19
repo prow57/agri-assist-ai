@@ -5,8 +5,9 @@ import 'commodity.dart'; // Import your Commodity model
 
 class MarketPlacePage extends StatefulWidget {
   final int marketId;
+  final String marketName; // Add this to hold the market name
 
-  MarketPlacePage({required this.marketId});
+  MarketPlacePage({required this.marketId, required this.marketName});
 
   @override
   _MarketPlacePageState createState() => _MarketPlacePageState();
@@ -25,9 +26,9 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Market Place',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          widget.marketName, // Use the market name here as the heading
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
         leading: IconButton(

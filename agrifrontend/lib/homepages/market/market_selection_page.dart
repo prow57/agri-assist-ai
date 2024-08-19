@@ -1,7 +1,7 @@
-import 'package:agrifrontend/homepages/market/market_place.dart';
 import 'package:flutter/material.dart';
 import 'market_service.dart';
 import 'market.dart'; // Import your Market model
+import 'market_place.dart'; // Import the MarketPlacePage
 
 class MarketSelectionPage extends StatefulWidget {
   @override
@@ -68,7 +68,10 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MarketPlacePage(marketId: market.id),
+                          builder: (context) => MarketPlacePage(
+                            marketId: market.id,
+                            marketName: market.name, // Pass the market name here
+                          ),
                         ),
                       );
                     },
