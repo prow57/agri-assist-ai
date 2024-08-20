@@ -1,15 +1,59 @@
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   final Map<String, dynamic> dayForecast;
 
   DetailPage({required this.dayForecast});
 
   @override
+  _DetailPageState createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+
+    setState(() {
+      _selectedIndex = index;
+
+      switch (index) {
+        case 0:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AllCoursesPage()),
+          );
+          break;
+        case 1:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AllCoursesPage()),
+          );
+          break;
+        case 2:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const PersonalizedAdvicePage()),
+          );
+          break;
+        case 3:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SettingsPage()),
+          );
+          break;
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Convert the date string to a DateTime object
-    final date = DateTime.parse(dayForecast['date']);
+    final date = DateTime.parse(widget.dayForecast['date']);
     final dayOfWeek = DateFormat('EEEE').format(date);
     final dateFormatted = DateFormat('yyyy-MM-dd').format(date);
 
@@ -17,11 +61,11 @@ class DetailPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           dayOfWeek,
-          style: TextStyle(color: Colors.white), // Set title color to white
+          style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white), // Set back arrow color to white
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -34,59 +78,43 @@ class DetailPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Weather Icon
               Image.network(
-                'https:${dayForecast['day']['condition']['icon']}',
-                height: 200, // Increased icon height
-                width: 200, // Increased icon width
+                'https:${widget.dayForecast['day']['condition']['icon']}',
+                height: 200,
+                width: 200,
                 fit: BoxFit.cover,
               ),
               SizedBox(height: 20),
-              // Temperature
-              Container(
-                child: Column(
-                  children: [
-                    Text(
-                      '${dayForecast['day']['avgtemp_c']}°C',
-                      style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+              Text(
+                '${widget.dayForecast['day']['avgtemp_c']}°C',
+                style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              // Weather Condition
-              Container(
-                child: Column(
-                  children: [
-                    Text(
-                      '${dayForecast['day']['condition']['text']}',
-                      style: TextStyle(fontSize: 20, color: Colors.grey),
-                    ),
-                  ],
-                ),
+              Text(
+                '${widget.dayForecast['day']['condition']['text']}',
+                style: TextStyle(fontSize: 20, color: Colors.grey),
               ),
               SizedBox(height: 20),
-              // Additional Weather Details
               Expanded(
                 child: ListView.separated(
-                  itemCount: 7, // Number of items
-                  separatorBuilder: (context, index) => Divider(height: 16.0, color: Colors.grey[300]),
+                  itemCount: 7,
+                  separatorBuilder: (context, index) =>
+                      Divider(height: 16.0, color: Colors.grey[300]),
                   itemBuilder: (context, index) {
                     final details = [
-                      ['Max Temp', '${dayForecast['day']['maxtemp_c']}°C'],
-                      ['Min Temp', '${dayForecast['day']['mintemp_c']}°C'],
-                      ['Humidity', '${dayForecast['day']['avghumidity']}%'],
-                      ['Wind Speed', '${dayForecast['day']['maxwind_kph']} kph'],
-                      ['Precipitation', '${dayForecast['day']['totalprecip_mm']} mm'],
-                      ['Sunrise', '${dayForecast['astro']['sunrise']}'],
-                      ['Sunset', '${dayForecast['astro']['sunset']}'],
+                      ['Max Temp', '${widget.dayForecast['day']['maxtemp_c']}°C'],
+                      ['Min Temp', '${widget.dayForecast['day']['mintemp_c']}°C'],
+                      ['Humidity', '${widget.dayForecast['day']['avghumidity']}%'],
+                      ['Wind Speed', '${widget.dayForecast['day']['maxwind_kph']} kph'],
+                      ['Precipitation', '${widget.dayForecast['day']['totalprecip_mm']} mm'],
+                      ['Sunrise', '${widget.dayForecast['astro']['sunrise']}'],
+                      ['Sunset', '${widget.dayForecast['astro']['sunset']}'],
                     ];
                     return _buildDetailBox(details[index][0], details[index][1]);
                   },
                 ),
               ),
               SizedBox(height: 20),
-              // Recommendations based on weather
               Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -102,7 +130,7 @@ class DetailPage extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      _getRecommendation(dayForecast['day']['condition']['text']),
+                      _getRecommendation(widget.dayForecast['day']['condition']['text']),
                       style: TextStyle(fontSize: 16),
                     ),
                   ],
@@ -111,6 +139,31 @@ class DetailPage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Courses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
       ),
     );
   }

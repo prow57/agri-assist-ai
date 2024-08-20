@@ -1,3 +1,6 @@
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -39,6 +42,48 @@ class _WeatherPageState extends State<WeatherPage> {
       );
     }
   }
+
+// code for bottom navigation bar
+   int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+
+    setState(() {
+      _selectedIndex = index;
+
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AllCoursesPage(),
+          ),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AllCoursesPage(),
+          ),
+        );
+      } else if (index == 2) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PersonalizedAdvicePage(),
+          ),
+        );
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SettingsPage(),
+          ),
+        );
+      }
+    });
+  }
+
 
   void _selectLocation() async {
     final List<String> locations = ['Zomba', 'Mzuzu', 'Blantyre', 'Lilongwe'];
@@ -256,6 +301,32 @@ class _WeatherPageState extends State<WeatherPage> {
                   ),
                 )
               : Center(child: Text('No weather data available')),
+
+        bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Set the current index
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Courses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+      ),
     );
   }
 

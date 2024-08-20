@@ -4,7 +4,6 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
-import 'package:agrifrontend/homepages/market/market_place.dart';
 import 'package:agrifrontend/homepages/market/market_selection_page.dart';
 import 'package:agrifrontend/homepages/weather/ui/weather_screen.dart';
 import 'package:flutter/material.dart';
@@ -55,15 +54,23 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.person, color: Colors.green),
-          onPressed: () {
-            // Define your action here
-          },
+appBar: AppBar(
+  title: Row(
+    children: [
+      SizedBox(
+        height: 50, // Adjust the height as needed
+        width: 50,  // Adjust the width as needed
+        child: Image.asset(
+          '../../assets/logo.png', // Replace with the path to your logo
+          fit: BoxFit.contain, // Ensures the logo fits within the box
         ),
-        title: const Text('OpenTechZ App'),
       ),
+      const SizedBox(width: 8), // Spacing between logo and text
+    ],
+  ),
+),
+
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

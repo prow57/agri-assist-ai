@@ -1,3 +1,6 @@
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'market_service.dart';
 import 'market.dart'; // Import your Market model
@@ -13,6 +16,7 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
   List<Market> _markets = [];
   List<Market> _filteredMarkets = [];
   TextEditingController _searchController = TextEditingController();
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -22,6 +26,13 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
       setState(() {
         _markets = markets;
         _filteredMarkets = markets;
+        _isLoading = false;
+      });
+    }).catchError((error) {
+      setState(() {
+        _isLoading = false;
+        _markets = []; // Handle error by setting an empty list
+        _filteredMarkets = [];
       });
     });
 
@@ -42,6 +53,46 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
           return market.name.toLowerCase().contains(query) ||
               market.location.toLowerCase().contains(query);
         }).toList();
+      }
+    });
+  }
+
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+
+    setState(() {
+      _selectedIndex = index;
+
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AllCoursesPage(),
+          ),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AllCoursesPage(),
+          ),
+        );
+      } else if (index == 2) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PersonalizedAdvicePage(),
+          ),
+        );
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SettingsPage(),
+          ),
+        );
       }
     });
   }
@@ -88,47 +139,76 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
             ),
           ),
           Expanded(
-            child: _filteredMarkets.isEmpty
-                ? Center(child: Text('No markets found'))
-                : ListView.builder(
-                    itemCount: _filteredMarkets.length,
-                    itemBuilder: (context, index) {
-                      final market = _filteredMarkets[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        elevation: 4,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(16),
-                          leading: Icon(Icons.store, size: 40, color: Colors.green),
-                          title: Text(
-                            market.name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text(
-                            market.location,
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MarketPlacePage(
-                                  marketId: market.id,
-                                  marketName: market.name,
-                                  marketLocation: market.location,
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : _filteredMarkets.isEmpty
+                    ? Center(child: Text('No markets found'))
+                    : ListView.builder(
+                        itemCount: _filteredMarkets.length,
+                        itemBuilder: (context, index) {
+                          final market = _filteredMarkets[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
+                            elevation: 4,
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(16),
+                              leading: Icon(Icons.store,
+                                  size: 40, color: Colors.green),
+                              title: Text(
+                                market.name,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                              subtitle: Text(
+                                market.location,
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MarketPlacePage(
+                                      marketId: market.id,
+                                      marketName: market.name,
+                                      marketLocation: market.location,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Set the current index
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Courses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
       ),
     );
   }

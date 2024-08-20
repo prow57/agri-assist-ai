@@ -1,3 +1,6 @@
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart'; // Import the intl package
@@ -29,6 +32,46 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
     _futureCommodities = MarketService().fetchMarketPrices(widget.marketId);
     _currentDate = DateFormat('EEEE, MMMM d, yyyy')
         .format(DateTime.now()); // Format the current date
+  }
+
+  int _selectedIndex = 0;
+  
+   void _onItemTapped(int index) {
+    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+
+    setState(() {
+      _selectedIndex = index;
+
+      if (index == 0) {
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AllCoursesPage(),
+          ),
+        );
+      } else if (index == 1) {
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AllCoursesPage(),
+          ),
+        );
+      } else if (index == 2) {
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const PersonalizedAdvicePage(),
+          ),
+        );
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SettingsPage(),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -99,7 +142,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                         final commodity = snapshot.data![index];
                         return CommodityTile(
                           name:
-                              '${commodity.cropName}',
+                              commodity.cropName,
                           price: 'Mk ${commodity.price.toString()}',
                         );
                       },
@@ -120,6 +163,34 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         },
         child: const Icon(Icons.location_on, color: Colors.white),
         backgroundColor: Colors.green,
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Set the current index
+        // currentIndex: _selectedIndex >= 0 ? _selectedIndex : -1,
+        // currentIndex: _selectedIndex >= 0 && _selectedIndex < 4 ? _selectedIndex : 0, // Ensure the index is valid
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Courses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
       ),
     );
   }
