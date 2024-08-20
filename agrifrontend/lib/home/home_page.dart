@@ -1,5 +1,6 @@
 import 'package:agrifrontend/AI%20pages/AI%20chat/ai_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
@@ -18,21 +19,33 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0; // Add this property to track the selected index
 
-  void _onItemTapped(int index) {
+   void _onItemTapped(int index) {
+    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+
     setState(() {
       _selectedIndex = index;
-      if (index == 1) {
-        Navigator.push(
+
+      if (index == 0) {
+        //Already in home page
+      } else if (index == 1) {
+          Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SettingsPage(),
+            builder: (context) => const AllCoursesPage(),
           ),
         );
       } else if (index == 2) {
-        Navigator.push(
+          Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const PersonalizedAdvicePage(),
+          ),
+        );
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SettingsPage(),
           ),
         );
       }
@@ -132,25 +145,30 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Set the current index
         onTap: _onItemTapped,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.book),
             label: 'Courses',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
         ],
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
       ),
     );
   }

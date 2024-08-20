@@ -1,5 +1,8 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/full_course.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/practice_detail.dart';
+import 'package:agrifrontend/home/home_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -16,6 +19,7 @@ class PersonalizedAdvicePage extends StatefulWidget {
 
 class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   List<dynamic> _courses = [];
+  int _selectedIndex = 2;
 
   @override
   void initState() {
@@ -37,6 +41,39 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
     } catch (e) {
       print('Error: $e');
     }
+  }
+
+   void _onItemTapped(int index) {
+    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+
+    setState(() {
+      _selectedIndex = index;
+
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(),
+          ),
+        );
+      } else if (index == 1) {
+          Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const AllCoursesPage(),
+          ),
+        );
+      } else if (index == 2) {
+          //Already in personalized advice
+      } else if (index == 3) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SettingsPage(),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -112,6 +149,8 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Set the current index
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -124,6 +163,10 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
         selectedItemColor: Colors.green,
