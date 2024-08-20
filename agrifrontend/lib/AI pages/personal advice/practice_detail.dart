@@ -77,6 +77,14 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     }
   }
 
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0.0,
+      duration: const Duration(seconds: 1),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,6 +146,11 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                   ),
                 )
               : Center(child: Text('No course data available.')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _scrollToTop,
+        backgroundColor: Colors.green,
+        child: const Icon(Icons.arrow_upward, color: Colors.white),
+      ),
     );
   }
 
@@ -239,98 +252,87 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
         : const SizedBox.shrink();
   }
 
-Widget _buildReference(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
-  return sectionContent != null
-      ? Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: ExpansionTile(
-            key: sectionKey, // Attach the GlobalKey here
-            title: Text(
-              sectionTitle,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+  Widget _buildReference(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
+    return sectionContent != null
+        ? Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: ExpansionTile(
+              key: sectionKey, // Attach the GlobalKey here
+              title: Text(
+                sectionTitle,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: sectionContent is List
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: sectionContent.map<Widget>((item) {
+                            final content = item is Map ? item['link'] : item.toString();
+                            return content != null && content.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                    child: _buildRichTextWithLinks(content),
+                                  )
+                                : const SizedBox.shrink();
+                          }).toList(),
+                        )
+                      : _buildRichTextWithLinks(sectionContent.toString()),
+                ),
+              ],
             ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: sectionContent is List
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: sectionContent.map<Widget>((item) {
-                          final content = item is Map ? item['link'] : item.toString();
-                          return content != null && content.isNotEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                                  child: _buildRichTextWithLinks(content),
-                                )
-                              : const SizedBox.shrink();
-                        }).toList(),
-                      )
-                    : _buildRichTextWithLinks(sectionContent.toString()),
-              ),
-            ],
-          ),
-        )
-      : const SizedBox.shrink();
-}
+          )
+        : const SizedBox.shrink();
+  }
 
-Widget _buildRichTextWithLinks(String text) {
-  final linkRegex = RegExp(r'(https?://[^\s]+)');
-  final matches = linkRegex.allMatches(text);
+  Widget _buildRichTextWithLinks(String text) {
+    final RegExp urlRegex = RegExp(r'((https?|ftp)://[^\s/$.?#].[^\s]*)');
+    final matches = urlRegex.allMatches(text);
 
-  if (matches.isEmpty) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 16, color: Colors.black54),
+    if (matches.isEmpty) {
+      return Text(
+        text,
+        style: const TextStyle(fontSize: 16, color: Colors.black54),
+      );
+    }
+
+    final List<TextSpan> textSpans = [];
+    int lastMatchEnd = 0;
+
+    for (final match in matches) {
+      if (match.start > lastMatchEnd) {
+        textSpans.add(TextSpan(text: text.substring(lastMatchEnd, match.start)));
+      }
+
+      final url = match.group(0);
+      if (url != null) {
+        textSpans.add(TextSpan(
+          text: url,
+          style: const TextStyle(color: Colors.blue),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              launchUrl(Uri.parse(url));
+            },
+        ));
+      }
+
+      lastMatchEnd = match.end;
+    }
+
+    if (lastMatchEnd < text.length) {
+      textSpans.add(TextSpan(text: text.substring(lastMatchEnd)));
+    }
+
+    return RichText(
+      text: TextSpan(
+        style: const TextStyle(fontSize: 16, color: Colors.black54),
+        children: textSpans,
+      ),
     );
   }
-
-  final List<TextSpan> spans = [];
-  int currentIndex = 0;
-
-  for (final match in matches) {
-    final linkText = match.group(0)!;
-    if (match.start > currentIndex) {
-      spans.add(TextSpan(
-        text: text.substring(currentIndex, match.start),
-        style: const TextStyle(fontSize: 16, color: Colors.black54),
-      ));
-    }
-    spans.add(TextSpan(
-      text: linkText,
-      style: const TextStyle(
-        fontSize: 16,
-        color: Colors.blue,
-        decoration: TextDecoration.underline,
-      ),
-      recognizer: TapGestureRecognizer()..onTap = () => _launchURL(linkText),
-    ));
-    currentIndex = match.end;
-  }
-
-  if (currentIndex < text.length) {
-    spans.add(TextSpan(
-      text: text.substring(currentIndex),
-      style: const TextStyle(fontSize: 16, color: Colors.black54),
-    ));
-  }
-
-  return RichText(
-    text: TextSpan(children: spans),
-  );
-}
-
-void _launchURL(String url) async {
-  final Uri uri = Uri.parse(url);
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri);
-  } else {
-    throw 'Could not launch $url';
-  }
-}
-
-
 }
