@@ -106,12 +106,6 @@ class _HomePageState extends State<HomePage> {
               // Handle notifications
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Handle settings
-            },
-          ),
         ],
       ),
       body: Padding(
