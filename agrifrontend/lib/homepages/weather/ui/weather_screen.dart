@@ -33,7 +33,8 @@ class _WeatherPageState extends State<WeatherPage> {
       _opacity = 0.0;
     });
 
-    await Future.delayed(Duration(milliseconds: 300)); // Small delay for smooth animation
+    await Future.delayed(
+        Duration(milliseconds: 300)); // Small delay for smooth animation
 
     await _fetchWeather();
 
@@ -50,7 +51,8 @@ class _WeatherPageState extends State<WeatherPage> {
     // Check if data is cached
     final fileInfo = await cacheManager.getFileFromCache(_selectedCity);
 
-    if (fileInfo != null && DateTime.now().difference(fileInfo.validTill).inMinutes < 30) {
+    if (fileInfo != null &&
+        DateTime.now().difference(fileInfo.validTill).inMinutes < 30) {
       // Load cached data if it's not older than 30 minutes
       final jsonString = await fileInfo.file.readAsString();
       final json = jsonDecode(jsonString);
@@ -59,14 +61,16 @@ class _WeatherPageState extends State<WeatherPage> {
       // Fetch data from the network
       try {
         final data = await _weatherService.fetchWeather(_selectedCity);
-        await cacheManager.putFile(_selectedCity, utf8.encode(jsonEncode(data)));
+        await cacheManager.putFile(
+            _selectedCity, utf8.encode(jsonEncode(data)));
         _updateWeatherData(data);
       } catch (e) {
         setState(() {
           _isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load weather data: ${e.toString()}')),
+          SnackBar(
+              content: Text('Failed to load weather data: ${e.toString()}')),
         );
       }
     }
@@ -129,7 +133,8 @@ class _WeatherPageState extends State<WeatherPage> {
         case 2:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const PersonalizedAdvicePage()),
+            MaterialPageRoute(
+                builder: (context) => const PersonalizedAdvicePage()),
           );
           break;
         case 3:
@@ -245,6 +250,7 @@ class _WeatherPageState extends State<WeatherPage> {
       ],
     );
   }
+
   Widget _buildDetailBox(String label, String value) {
     return Container(
       padding: const EdgeInsets.all(12.0),
@@ -272,7 +278,6 @@ class _WeatherPageState extends State<WeatherPage> {
       ),
     );
   }
-
 
   Widget _buildWeatherDetails() {
     return Row(
@@ -319,7 +324,8 @@ class _WeatherPageState extends State<WeatherPage> {
       return [Text('No forecast data available')];
     }
 
-    final forecastDays = _weatherData!['forecast']['forecastday'] as List<dynamic>;
+    final forecastDays =
+        _weatherData!['forecast']['forecastday'] as List<dynamic>;
     final numberOfDays = forecastDays.length;
 
     return List<Widget>.generate(numberOfDays, (index) {
@@ -334,7 +340,8 @@ class _WeatherPageState extends State<WeatherPage> {
         child: SizedBox(
           width: 150,
           child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             elevation: 5,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -370,9 +377,11 @@ class _WeatherPageState extends State<WeatherPage> {
     });
   }
 
-  void _navigateToDetailPage(BuildContext context, Map<String, dynamic> dayForecast) {
+  void _navigateToDetailPage(
+      BuildContext context, Map<String, dynamic> dayForecast) {
     Navigator.of(context).push(PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => DetailPage(dayForecast: dayForecast),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          DetailPage(dayForecast: dayForecast),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(0.0, 1.0);
         const end = Offset.zero;
@@ -447,6 +456,51 @@ class _WeatherPageState extends State<WeatherPage> {
       selectedItemColor: Colors.green[700],
       unselectedItemColor: Colors.grey,
       showUnselectedLabels: true,
+    );
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  const CustomButton({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        elevation: 8,
+        shadowColor: Colors.grey.withOpacity(0.5),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 60.0, color: Colors.white),
+          const SizedBox(height: 10.0),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
