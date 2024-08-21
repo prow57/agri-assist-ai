@@ -29,7 +29,7 @@ datalibrary/: This directory contains the source data library for training AI an
 
 3. **Lessons/ Courses Access:**
    - Ai generated short lessons for farmers to learn and expand their      agriculture knowledge to help them in day to day farming activities.
-  - Offer updated agriculture lessons that are suitable for farmers to learn new methods, explore and gain knowledge to ensure that they are productive.
+   - Offer updated agriculture lessons that are suitable for farmers to learn new methods, explore and gain knowledge to ensure that they are productive.
 
 4. **Personalized Advice:**
    - **Input:** Text-based input for describing issues and receiving advice.
