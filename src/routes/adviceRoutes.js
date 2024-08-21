@@ -13,7 +13,7 @@ router.post('/get-advice', async (req, res) => {
     Type: ${type} (Crop/Animal)
     Name: ${name}
     Current Methods Used: ${currentMethods}
-    Issues/Challenges: ${issues}
+    Issues/Challenges Facing or Faced: ${issues}
 
     The advice should be suitable for Malawi and should include:
     - Identification of possible causes
