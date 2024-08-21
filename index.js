@@ -1,19 +1,37 @@
+// index.js
+
 const express = require('express');
+const cors = require('cors');
+const admin = require("firebase-admin");
+const db = require("./db");
+
+require('dotenv').config();
+
+const courseRoutes = require('./src/routes/courseRoutes');
+const adviceRoutes = require('./src/routes/adviceRoutes');
+const chatRoutes = require('./src/routes/chatRoutes');
+
 const app = express();
-const leafScanRouter = require('./routes/leafScan');
-const soilDetectionRouter = require('./routes/soilDetection');
-const realtimeDataRouter = require('./routes/realtimeData');
+const PORT = process.env.PORT || 5000;
 
+// Initialize Firebase Admin SDK
+
+
+// Middleware
+app.use(cors());
 app.use(express.json());
-app.use('/api/leaf-scan', leafScanRouter);
-app.use('/api/soil-detection', soilDetectionRouter);
-app.use('/api/realtime-data', realtimeDataRouter);
 
+// Routes
+app.use('/api/courses', courseRoutes);
+app.use('/api/advice', adviceRoutes);
+app.use('/api/chat', chatRoutes);
+
+// Default route
 app.get('/', (req, res) => {
-    res.send('Welcome to the AI-driven Agricultural Advisory System');
+  res.send('Agri-Assist-AI Backend API is running');
 });
 
-const PORT = process.env.PORT || 3000;
+// Start server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
