@@ -2,7 +2,7 @@
 
 Open-TechZ hackathon group
 
-### Project Description: AgriVision AI
+### Project Description: Agriculture AI-driven Assistant
 
 **Project Name:** AgriAssist AI
 
