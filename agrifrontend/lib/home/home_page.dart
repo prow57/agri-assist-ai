@@ -1,4 +1,4 @@
-import 'package:agrifrontend/AI%20pages/AI%20chat/ai_chat_page.dart';
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
@@ -7,6 +7,7 @@ import 'package:agrifrontend/home/settings_page.dart';
 import 'package:agrifrontend/homepages/market/market_selection_page.dart';
 import 'package:agrifrontend/homepages/weather/ui/weather_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,25 +17,52 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0; // Add this property to track the selected index
+  int _selectedIndex = 0;
+  bool _showGreeting = false;
 
-   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+  @override
+  void initState() {
+    super.initState();
+    _checkFirstLaunch();
+  }
+
+  Future<void> _checkFirstLaunch() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstLaunch = prefs.getBool('firstLaunch') ?? true;
+
+    if (isFirstLaunch) {
+      setState(() {
+        _showGreeting = true;
+      });
+
+      // Hide the greeting after 2 seconds
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {
+          _showGreeting = false;
+        });
+      });
+
+      await prefs.setBool('firstLaunch', false);
+    }
+  }
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
 
     setState(() {
       _selectedIndex = index;
 
       if (index == 0) {
-        //Already in home page
+        // Already on the home page
       } else if (index == 1) {
-          Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const AllCoursesPage(),
           ),
         );
       } else if (index == 2) {
-          Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const PersonalizedAdvicePage(),
@@ -54,32 +82,48 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-appBar: AppBar(
-  title: Row(
-    children: [
-      SizedBox(
-        height: 50, // Adjust the height as needed
-        width: 50,  // Adjust the width as needed
-        child: Image.asset(
-          '../../assets/logo.png', // Replace with the path to your logo
-          fit: BoxFit.contain, // Ensures the logo fits within the box
+      appBar: AppBar(
+        centerTitle: true,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/logo.png',
+              height: 40,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'AgriAssist-AI',
+              style: TextStyle(fontSize: 24),
+            ),
+          ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              // Handle notifications
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // Handle settings
+            },
+          ),
+        ],
       ),
-      const SizedBox(width: 8), // Spacing between logo and text
-    ],
-  ),
-),
-
-
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Greetings! Welcome to AgriAssist-AI.',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-            ),
+            if (_showGreeting)
+              const Text(
+                'Greetings! Welcome to AgriAssist-AI.',
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+              ),
             const SizedBox(height: 20.0),
             Expanded(
               child: GridView.count(
@@ -88,72 +132,77 @@ appBar: AppBar(
                 mainAxisSpacing: 16.0,
                 children: [
                   CustomButton(
-                      icon: Icons.search,
-                      label: 'Scan Leaf',
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const LeafAnalysisScreen()));
-                      }),
-                  CustomButton(
-                      icon: Icons.landscape,
-                      label: 'Soil Detection',
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const SoilDiagnosisPage()));
-                      }),
-                  CustomButton(
-                      icon: Icons.cloud,
-                      label: 'Weather Forecast',
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WeatherPage()));
-                      }),
-                  CustomButton(
-                      icon: Icons.attach_money,
-                      label: 'Market Prices',
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MarketSelectionPage()));
-                      }),
-                  CustomButton(
-                      icon: Icons.person,
-                      label: 'Personalized AI',
-                      onPressed: () {
-                        Navigator.push(
+                    icon: Icons.search,
+                    label: 'Scan Leaf',
+                    onPressed: () {
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const PersonalizedAdvicePage()),
-                        );
-                      }),
+                                  const LeafAnalysisScreen()));
+                    },
+                  ),
                   CustomButton(
-                      icon: Icons.chat_bubble,
-                      label: 'AI chat',
-                      onPressed: () {
-                        Navigator.push(
+                    icon: Icons.landscape,
+                    label: 'Soil Detection',
+                    onPressed: () {
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const ChatPage()),
-                        );
-                      }),
+                              builder: (context) => const SoilDiagnosisPage()));
+                    },
+                  ),
+                  CustomButton(
+                    icon: Icons.cloud,
+                    label: 'Weather Forecast',
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WeatherPage()));
+                    },
+                  ),
+                  CustomButton(
+                    icon: Icons.attach_money,
+                    label: 'Market Prices',
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MarketSelectionPage()));
+                    },
+                  ),
+                  CustomButton(
+                    icon: Icons.person,
+                    label: 'Personalized AI',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const PersonalizedAdvicePage()),
+                      );
+                    },
+                  ),
+                  CustomButton(
+                    icon: Icons.chat_bubble,
+                    label: 'AI chat',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ChatPage()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
           ],
         ),
       ),
-       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Set the current index
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -166,16 +215,18 @@ appBar: AppBar(
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+        selectedItemColor: Colors.green[800],
+        unselectedItemColor: Colors.green[300],
+        showUnselectedLabels: false,
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -202,20 +253,22 @@ class CustomButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
-        elevation: 5,
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        elevation: 8,
+        shadowColor: Colors.grey.withOpacity(0.5),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 50.0, color: Colors.white),
+          Icon(icon, size: 60.0, color: Colors.white),
           const SizedBox(height: 10.0),
           Text(
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 18.0,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],

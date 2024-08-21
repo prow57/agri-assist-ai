@@ -4,7 +4,7 @@ import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'personalized_advice_page.dart'; // Import the personalized advice page
+import 'personalized_advice_page.dart';
 
 class AllCoursesPage extends StatefulWidget {
   const AllCoursesPage({super.key});
@@ -55,7 +55,8 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   }
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+    if (index == _selectedIndex)
+      return; // Ignore tap if already on the selected tab
 
     setState(() {
       _selectedIndex = index;
@@ -64,7 +65,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else if (index == 1) {
@@ -103,7 +104,8 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
                   children: [
                     Expanded(
                       child: ListView.builder(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16.0, horizontal: 12.0),
                         itemCount: _courses.length,
                         itemBuilder: (context, index) {
                           final course = _courses[index];
@@ -111,7 +113,8 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
                             context,
                             course['title'] ?? 'No title available',
                             course['imagePath'],
-                            course['id'], // Assuming 'id' is the identifier for the course
+                            course[
+                                'id'], // Assuming 'id' is the identifier for the course
                           );
                         },
                       ),
@@ -119,7 +122,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
                   ],
                 ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Set the current index
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -139,9 +142,11 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
             label: 'Settings',
           ),
         ],
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+        selectedItemColor: Colors.green[800],
+        unselectedItemColor: Colors.green[300],
+        showUnselectedLabels: false,
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -150,36 +155,59 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
     BuildContext context,
     String title,
     String? imagePath,
-    String courseId, // Add the courseId parameter
+    String courseId,
   ) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      elevation: 4.0,
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16.0),
-        leading: imagePath != null
-            ? Image.network(
-                imagePath,
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.broken_image, size: 80);
-                },
-              )
-            : const Icon(Icons.image_not_supported, size: 80),
-        title: Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FullCourse(courseId: courseId),
+          ),
+        );
+      },
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
         ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FullCourse(courseId: courseId),
+        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+        elevation: 8.0,
+        shadowColor: Colors.grey.withOpacity(0.5),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+            gradient: LinearGradient(
+              colors: [
+                Colors.green.withOpacity(0.2),
+                Colors.green.withOpacity(0.1)
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          );
-        },
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(16.0),
+            leading: imagePath != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image.network(
+                      imagePath,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.broken_image, size: 80);
+                      },
+                    ),
+                  )
+                : const Icon(Icons.image_not_supported, size: 80),
+            title: Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.green),
+          ),
+        ),
       ),
     );
   }
