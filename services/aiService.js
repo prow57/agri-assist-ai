@@ -1,3 +1,6 @@
+//services/aiService.js
+
+
 async function getFarmingAdvice(soilType, cropType, farmingIssue) {
     // Example AI-based recommendations (These could be more sophisticated in a real implementation)
     const adviceDatabase = {
