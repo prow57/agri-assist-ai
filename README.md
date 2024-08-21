@@ -27,21 +27,30 @@ datalibrary/: This directory contains the source data library for training AI an
    - Analyze soil samples using AI models to determine soil health and nutrient levels.
    - Offer tailored advice on soil management practices to improve crop yield.
 
-3. **Weather Updates:**
-   - Integrate with reliable weather APIs to provide real-time weather forecasts and alerts.
-   - Help farmers plan their activities based on accurate weather predictions.
+3. **Lessons/ Courses Access:**
+   - Ai generated short lessons for farmers to learn and expand their      agriculture knowledge to help them in day to day farming activities.
+  - Offer updated agriculture lessons that are suitable for farmers to learn new methods, explore and gain knowledge to ensure that they are productive.
 
-4. **Market Prices:**
+4. **Personalized Advice:**
+   - **Input:** Text-based input for describing issues and receiving advice.
+   - **Response:** Text-based AI-generated advice based on the specific agriculture farming data that it has been trained.
+
+5. **Agriculture Based ChatBot:**
+   -  **Input:** Text-based input that a farmer enters to ask anything about Agriculture specifically for Malawi.
+   - **Response:** Ai generated response based on farmer's response
+6. **Market Prices:**
    - Provide up-to-date market prices for various crops to help farmers make informed selling decisions.
    - Integrate with local market data providers and governmental agricultural departments.
+   - Locations of markets where farmers can sell their harvests.
+   - Locations where farmers can buy farm inputs
 
-5. **USSD Access:**
+7. **USSD Access:**
    - Enable farmers to access key features and information via USSD, ensuring accessibility even without internet connectivity.
    - Offer a simple and intuitive interface for farmers to interact with the system using basic mobile phones.
 
-6. **Personalized Advice:**
-   - **Input:** Text-based input for describing issues and receiving advice.
-   - **Response:** Text-based AI-generated advice based on the specific agriculture farming data that it has been trained.
+8. **Weather Updates:**
+   - Integrate with reliable weather APIs to provide real-time weather forecasts and alerts.
+   - Help farmers plan their activities based on accurate weather predictions.
 
 **Technical Implementation:**
 - **Frontend:** Developed using Flutter for cross-platform mobile application, ensuring a seamless user experience on both Android and iOS devices.
