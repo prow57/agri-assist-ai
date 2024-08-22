@@ -24,6 +24,8 @@ dependencies:
   dio: ^5.5.0+1
   url_launcher: ^6.3.0
   flutter_cache_manager: ^3.3.0
+  flutter_map: ^4.0.0
+  latlong2: ^0.8.1
 
 dev_dependencies:
   flutter_test:
