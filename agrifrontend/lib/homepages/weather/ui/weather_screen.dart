@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
+import 'package:agrifrontend/homepages/weather/ui/detail_page.dart';
 import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:agrifrontend/homepages/weather/ui/detail_page.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class WeatherPage extends StatefulWidget {
   @override
@@ -16,74 +18,70 @@ class _WeatherPageState extends State<WeatherPage> {
   Map<String, dynamic>? _weatherData;
   String _selectedCity = 'Lilongwe';
   bool _isLoading = true;
+  int _selectedIndex = 0;
+  final cacheManager = DefaultCacheManager();
+  double _opacity = 1.0;
 
   @override
   void initState() {
     super.initState();
-    _fetchWeather();
+    _fetchWeatherWithAnimation();
   }
 
-  void _fetchWeather() async {
+  void _fetchWeatherWithAnimation() async {
+    setState(() {
+      _opacity = 0.0;
+    });
+
+    await Future.delayed(
+        Duration(milliseconds: 300)); // Small delay for smooth animation
+
+    await _fetchWeather();
+
+    setState(() {
+      _opacity = 1.0;
+    });
+  }
+
+  Future<void> _fetchWeather() async {
     setState(() {
       _isLoading = true;
     });
-    try {
-      final data = await _weatherService.fetchWeather(_selectedCity);
-      setState(() {
-        _weatherData = data;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load weather data: ${e.toString()}')),
-      );
+
+    // Check if data is cached
+    final fileInfo = await cacheManager.getFileFromCache(_selectedCity);
+
+    if (fileInfo != null &&
+        DateTime.now().difference(fileInfo.validTill).inMinutes < 30) {
+      // Load cached data if it's not older than 30 minutes
+      final jsonString = await fileInfo.file.readAsString();
+      final json = jsonDecode(jsonString);
+      _updateWeatherData(json);
+    } else {
+      // Fetch data from the network
+      try {
+        final data = await _weatherService.fetchWeather(_selectedCity);
+        await cacheManager.putFile(
+            _selectedCity, utf8.encode(jsonEncode(data)));
+        _updateWeatherData(data);
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to load weather data: ${e.toString()}')),
+        );
+      }
     }
   }
 
-// code for bottom navigation bar
-   int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
-
+  void _updateWeatherData(Map<String, dynamic> data) {
     setState(() {
-      _selectedIndex = index;
-
-      if (index == 0) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
-          ),
-        );
-      } else if (index == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
-          ),
-        );
-      } else if (index == 2) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PersonalizedAdvicePage(),
-          ),
-        );
-      } else if (index == 3) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SettingsPage(),
-          ),
-        );
-      }
+      _weatherData = data;
+      _isLoading = false;
     });
   }
-
 
   void _selectLocation() async {
     final List<String> locations = ['Zomba', 'Mzuzu', 'Blantyre', 'Lilongwe'];
@@ -109,8 +107,216 @@ class _WeatherPageState extends State<WeatherPage> {
       setState(() {
         _selectedCity = selectedLocation;
       });
-      _fetchWeather();
+      _fetchWeatherWithAnimation();
     }
+  }
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+
+    setState(() {
+      _selectedIndex = index;
+
+      switch (index) {
+        case 0:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AllCoursesPage()),
+          );
+          break;
+        case 1:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AllCoursesPage()),
+          );
+          break;
+        case 2:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const PersonalizedAdvicePage()),
+          );
+          break;
+        case 3:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SettingsPage()),
+          );
+          break;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('EEEE, h:mm a').format(now);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Weather Forecast'),
+        backgroundColor: Colors.green[700],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.location_on),
+            onPressed: _selectLocation,
+          ),
+        ],
+      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : AnimatedOpacity(
+              opacity: _opacity,
+              duration: Duration(milliseconds: 500),
+              child: _weatherData != null
+                  ? SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildCityAndDate(formattedDate),
+                          const SizedBox(height: 20),
+                          _buildCurrentWeather(),
+                          const SizedBox(height: 20),
+                          _buildWeatherDetails(),
+                          const SizedBox(height: 20),
+                          _buildWeatherForecast(),
+                          const SizedBox(height: 20),
+                          _buildFarmerRecommendations(),
+                        ],
+                      ),
+                    )
+                  : Center(child: Text('No weather data available')),
+            ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildCityAndDate(String formattedDate) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          _selectedCity,
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          formattedDate,
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.grey[700],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCurrentWeather() {
+    return Row(
+      children: [
+        Image.network(
+          'https:${_weatherData!['current']['condition']['icon']}',
+          height: 120,
+          width: 120,
+          fit: BoxFit.cover,
+        ),
+        const SizedBox(width: 20),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${_weatherData!['current']['temp_c']}°C',
+              style: TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              _weatherData!['current']['condition']['text'],
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailBox(String label, String value) {
+    return Container(
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: Colors.lightGreen[100],
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.green, width: 1.0),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeatherDetails() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildDetailBox('Temp.', '${_weatherData!['current']['feelslike_c']}°'),
+        _buildDetailBox('Rain', '${_weatherData!['current']['precip_mm']} mm'),
+        _buildDetailBox('UV index', '${_weatherData!['current']['uv']}'),
+        _buildDetailBox(
+          'Air Quality',
+          _weatherData!['current']['air_quality'] != null
+              ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
+              : 'N/A',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWeatherForecast() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Weather Forecast',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          height: 250,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: _buildForecast(),
+          ),
+        ),
+      ],
+    );
   }
 
   List<Widget> _buildForecast() {
@@ -118,7 +324,8 @@ class _WeatherPageState extends State<WeatherPage> {
       return [Text('No forecast data available')];
     }
 
-    final forecastDays = _weatherData!['forecast']['forecastday'] as List<dynamic>;
+    final forecastDays =
+        _weatherData!['forecast']['forecastday'] as List<dynamic>;
     final numberOfDays = forecastDays.length;
 
     return List<Widget>.generate(numberOfDays, (index) {
@@ -128,17 +335,13 @@ class _WeatherPageState extends State<WeatherPage> {
 
       return GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailPage(dayForecast: dayForecast),
-            ),
-          );
+          _navigateToDetailPage(context, dayForecast);
         },
         child: SizedBox(
-          width: 150, // Set a fixed width for the forecast cards
+          width: 150,
           child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             elevation: 5,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -174,6 +377,50 @@ class _WeatherPageState extends State<WeatherPage> {
     });
   }
 
+  void _navigateToDetailPage(
+      BuildContext context, Map<String, dynamic> dayForecast) {
+    Navigator.of(context).push(PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          DetailPage(dayForecast: dayForecast),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(0.0, 1.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+
+        final tween = Tween(begin: begin, end: end);
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: curve,
+        );
+
+        return SlideTransition(
+          position: tween.animate(curvedAnimation),
+          child: child,
+        );
+      },
+    ));
+  }
+
+  Widget _buildFarmerRecommendations() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Farmer Recommendations',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          _getRecommendation(_weatherData!['current']['condition']['text']),
+          style: TextStyle(fontSize: 18),
+        ),
+      ],
+    );
+  }
+
   String _getRecommendation(String condition) {
     if (condition.contains('rain')) {
       return 'It is likely to rain. Ensure your crops have proper drainage.';
@@ -184,171 +431,73 @@ class _WeatherPageState extends State<WeatherPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('EEEE, h:mm a').format(now);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Weather Page',
-          style: TextStyle(color: Colors.white),
+  BottomNavigationBar _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
         ),
-        backgroundColor: Colors.green,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        BottomNavigationBarItem(
+          icon: Icon(Icons.book),
+          label: 'Courses',
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.location_on, color: Colors.white),
-            onPressed: _selectLocation,
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _weatherData != null
-              ? SingleChildScrollView(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _selectedCity,
-                        style: TextStyle(
-                            fontSize: 30, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        formattedDate,
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 150,
-                            width: 150,
-                            child: Image.network(
-                              'https:${_weatherData!['current']['condition']['icon']}',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          SizedBox(width: 20),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${_weatherData!['current']['temp_c']}°',
-                                  style: TextStyle(fontSize: 50),
-                                ),
-                                Text(
-                                  _weatherData!['current']['condition']['text'],
-                                  style: TextStyle(
-                                      fontSize: 20, color: Colors.grey),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildDetailBox('Temp.',
-                              '${_weatherData!['current']['feelslike_c']}°'),
-                          _buildDetailBox('Rain',
-                              '${_weatherData!['current']['precip_mm']} mm'),
-                          _buildDetailBox(
-                              'UV index', '${_weatherData!['current']['uv']}'),
-                          _buildDetailBox(
-                            'Air Quality',
-                            _weatherData!['current']['air_quality'] != null
-                                ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
-                                : 'N/A',
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Weather Forecast',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        height: 250, // Set a fixed height for the forecast list
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: _buildForecast(),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Farmer Recommendations',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 10),
-                      Text(_getRecommendation(
-                          _weatherData!['current']['condition']['text'])),
-                    ],
-                  ),
-                )
-              : Center(child: Text('No weather data available')),
-
-        bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Set the current index
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Courses',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-      ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: 'Settings',
+        ),
+      ],
+      selectedItemColor: Colors.green[700],
+      unselectedItemColor: Colors.grey,
+      showUnselectedLabels: true,
     );
   }
+}
 
-  Widget _buildDetailBox(String label, String value) {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Colors.lightGreen[100],
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: Colors.green, width: 1.0),
+class CustomButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  const CustomButton({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        elevation: 8,
+        shadowColor: Colors.grey.withOpacity(0.5),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Icon(icon, size: 60.0, color: Colors.white),
+          const SizedBox(height: 10.0),
           Text(
             label,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(fontSize: 16),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),

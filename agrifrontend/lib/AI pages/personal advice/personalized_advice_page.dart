@@ -43,7 +43,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
     }
   }
 
-   void _onItemTapped(int index) {
+  void _onItemTapped(int index) {
     if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
 
     setState(() {
@@ -57,14 +57,14 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           ),
         );
       } else if (index == 1) {
-          Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const AllCoursesPage(),
           ),
         );
       } else if (index == 2) {
-          //Already in personalized advice
+        //Already in personalized advice
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
@@ -82,10 +82,10 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
       appBar: AppBar(
         title: const Text(
           'Agriculture Assistant',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.green,
-        iconTheme: const IconThemeData(color: Colors.white), // Set back arrow color to white
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -93,22 +93,29 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildFeatureButton(
-                    context, 'AI Advice', 'Get AI advice', Icons.lightbulb),
-                _buildFeatureButton(context, 'Explore Farming',
-                    'Explore farming', Icons.search),
+                  context, 
+                  'AI Advice', 
+                  'Get AI advice', 
+                  Icons.lightbulb
+                ),
+                const SizedBox(width: 10.0),
+                _buildFeatureButton(
+                  context, 
+                  'Explore Farming', 
+                  'Explore farming', 
+                  Icons.search
+                ),
               ],
             ),
             const SizedBox(height: 20.0),
             const Text(
               'Recommended for you',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10.0),
-            Container(
-              height: 250,
+            Expanded(
               child: _courses.isEmpty
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
@@ -117,7 +124,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                       itemBuilder: (context, index) {
                         return _buildCourseCard(
                           context,
-                          _courses[index]['id'], // Pass the id
+                          _courses[index]['id'],
                           _courses[index]['title'],
                           'Start Lesson',
                           _courses[index]['imagePath'] ?? 'https://via.placeholder.com/150',
@@ -125,7 +132,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                       },
                     ),
             ),
-            const SizedBox(height: 10.0),
+            const SizedBox(height: 20.0),
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -138,10 +145,17 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40.0,
+                    vertical: 15.0,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
                 ),
                 child: const Text(
                   'View all courses',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 16.0),
                 ),
               ),
             ),
@@ -149,7 +163,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Set the current index
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -190,28 +204,39 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const FarmingPracticesPage()), 
+                  builder: (context) => const FarmingPracticesPage()),
             );
-          } else {
-            // Define actions for other buttons
-          }
+          } 
         },
         child: Container(
-          margin: const EdgeInsets.all(4),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.green.shade100,
+            color: Colors.green.shade50,
             borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 8.0,
+              ),
+            ],
           ),
           child: Column(
             children: [
-              Icon(icon, size: 40, color: Colors.green),
+              Icon(icon, size: 40, color: Colors.green.shade700),
               const SizedBox(height: 8),
-              Text(title,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16, 
+                  fontWeight: FontWeight.bold
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(subtitle, style: const TextStyle(fontSize: 12)),
+              Text(
+                subtitle, 
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),
@@ -219,29 +244,34 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
     );
   }
 
-  Widget _buildCourseCard(
-      BuildContext context, String courseId, String title, String buttonText, String imagePath) {
+  Widget _buildCourseCard(BuildContext context, String courseId, String title, String buttonText, String imagePath) {
     return Container(
-      width: 150,
-      height: 250,
+      width: 180,
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(15),
         image: DecorationImage(
           image: NetworkImage(imagePath),
           fit: BoxFit.cover,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8.0,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(15),
           gradient: LinearGradient(
             colors: [
-              Colors.black.withOpacity(0.8),
-              Colors.black.withOpacity(0.3),
+              Colors.black.withOpacity(0.7),
+              Colors.black.withOpacity(0.2),
             ],
-            begin: Alignment.topCenter, // Start gradient from top
+            begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
@@ -251,26 +281,36 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             Text(
               title,
               style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.bold),
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             const Spacer(),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CourseDetailPage(
-                      courseId: courseId, // Pass the id
+            Align(
+              alignment: Alignment.bottomRight,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CourseDetailPage(courseId: courseId),
                     ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              child: Text(
-                buttonText,
-                style: const TextStyle(color: Colors.white),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                ),
+                child: Text(
+                  buttonText,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ],

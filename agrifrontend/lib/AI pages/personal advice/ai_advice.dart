@@ -54,14 +54,20 @@ class _AiAdviceState extends State<AiAdvice> {
     });
   }
 
+  void _clearFields() {
+    _cropController.clear();
+    _practicesController.clear();
+    _issuesController.clear();
+    setState(() {
+      _advice = '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'AI Advice',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('AI Advice', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -78,10 +84,10 @@ class _AiAdviceState extends State<AiAdvice> {
             children: [
               const Text(
                 'Select your farming type:',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8.0),
-              DropdownButton<String>(
+              const SizedBox(height: 10.0),
+              DropdownButtonFormField<String>(
                 value: _selectedFarmingType,
                 items: <String>['Crop Farming', 'Animal Rearing']
                     .map((String value) {
@@ -99,8 +105,15 @@ class _AiAdviceState extends State<AiAdvice> {
                     _advice = '';
                   });
                 },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.green.shade50,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 20.0),
               Text(
                 _selectedFarmingType == 'Crop Farming'
                     ? 'Name of crop (e.g., maize):'
@@ -108,82 +121,104 @@ class _AiAdviceState extends State<AiAdvice> {
                 style: const TextStyle(
                     fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: 10.0),
               TextField(
                 controller: _cropController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  hintText: _selectedFarmingType == 'Crop Farming'
+                      ? 'Enter crop name'
+                      : 'Enter animal name',
                   filled: true,
-                  fillColor: Color.fromARGB(255, 189, 226, 208),
-                  border: OutlineInputBorder(),
+                  fillColor: Colors.green.shade50,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 20.0),
               const Text(
                 'What are your farming practices?',
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: 10.0),
               TextField(
                 controller: _practicesController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  hintText: 'Describe your practices',
                   filled: true,
-                  fillColor: Color.fromARGB(255, 189, 226, 208),
-                  border: OutlineInputBorder(),
+                  fillColor: Colors.green.shade50,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
                 maxLines: 3,
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 20.0),
               const Text(
                 'What issues are you facing?',
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: 10.0),
               TextField(
                 controller: _issuesController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  hintText: 'Describe your issues',
                   filled: true,
-                  fillColor: Color.fromARGB(255, 189, 226, 208),
-                  border: OutlineInputBorder(),
+                  fillColor: Colors.green.shade50,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
                 maxLines: 3,
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 20.0),
               const Text(
                 'Advice',
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: 10.0),
               Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : Text(_advice.isNotEmpty
-                        ? _advice
-                        : 'Enter details to get advice'),
+                    : Text(
+                        _advice.isNotEmpty
+                            ? _advice
+                            : 'Enter details to get advice',
+                        style: const TextStyle(fontSize: 16.0),
+                      ),
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 20.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
+                  ElevatedButton.icon(
                     onPressed: _isLoading ? null : _getAiResponse,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                     ),
-                    child: const Text('Get Advice'),
+                    icon: const Icon(Icons.lightbulb_outline),
+                    label: const Text('Get Advice'),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                  ElevatedButton.icon(
+                    onPressed: _clearFields,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
+                      backgroundColor: Colors.redAccent,
                     ),
-                    child: const Text('Back'),
+                    icon: const Icon(Icons.clear),
+                    label: const Text('Clear'),
                   ),
                 ],
               ),

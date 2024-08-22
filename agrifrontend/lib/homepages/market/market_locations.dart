@@ -1,49 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class YourExistingPage extends StatefulWidget {
-  @override
-  _YourExistingPageState createState() => _YourExistingPageState();
-}
+import 'package:flutter_map/flutter_map.dart';
 
-class _YourExistingPageState extends State<YourExistingPage> {
-  GoogleMapController? _controller;
+import 'package:latlong2/latlong.dart';
 
-  final LatLng _initialPosition = LatLng(-33.865143, 151.209900);
+
+
+class MarketLocationPage extends StatelessWidget {
 
   @override
+
   Widget build(BuildContext context) {
+
     return Scaffold(
+
       appBar: AppBar(
-        title: Text('Your Page with Map'),
+
+        title: Text('Malawi Market Locations'),
+
       ),
-      body: Column(
-        children: [
-          // Other widgets can be added here
-          Expanded(
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _initialPosition,
-                zoom: 12,
-              ),
-              onMapCreated: (controller) {
-                setState(() {
-                  _controller = controller;
-                });
-              },
-              markers: {
-                Marker(
-                  markerId: MarkerId('market1'),
-                  position: LatLng(-33.868820, 151.209296),
-                  infoWindow: InfoWindow(title: 'Market 1'),
-                ),
-                // Add more markers here
-              },
-            ),
+
+      body: FlutterMap(
+
+        options: MapOptions(
+
+          center: LatLng(-13.2543, 34.3015),
+
+          zoom: 7.0,
+
+        ),
+
+        layers: [
+
+          TileLayerOptions(
+
+            urlTemplate: "https://api.mapbox.com/styles/v1/prow/clh9jmy6d001501qe6i8us3ep/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoicHJvdyIsImEiOiJjbTA1MTFwOGIwZzVwMmlzZDUzNzh2YnRxIn0.lXsl2BkrTYO168oBeXUZgQ",
+
+            additionalOptions: {
+
+              'access_token': 'pk.eyJ1IjoicHJvdyIsImEiOiJjbTA1MTFwOGIwZzVwMmlzZDUzNzh2YnRxIn0.lXsl2BkrTYO168oBeXUZgQ',
+
+            },
+
           ),
-          // Other widgets below the map can be added here
+
+          MarkerLayerOptions(
+
+            markers: [
+
+              Marker(
+
+                width: 80.0,
+
+                height: 80.0,
+
+                point: LatLng(-13.9626, 33.7741), // Example location in Malawi
+
+                builder: (ctx) => Container(
+
+                  child: Icon(
+
+                    Icons.location_on,
+
+                    color: Colors.red,
+
+                    size: 40.0,
+
+                  ),
+
+                ),
+
+              ),
+
+              
+
+            ],
+
+          ),
+
         ],
+
       ),
+
     );
+
   }
+
 }
