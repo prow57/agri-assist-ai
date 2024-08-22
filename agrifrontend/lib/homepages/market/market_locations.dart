@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 
 
 
-class MarketLocations extends StatelessWidget {
+class MarketLocationPage extends StatelessWidget {
 
   @override
 
