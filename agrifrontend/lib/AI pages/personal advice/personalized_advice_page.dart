@@ -176,16 +176,18 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Ai',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
           ),
         ],
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+        selectedItemColor: Colors.green[800],
+        unselectedItemColor: Colors.green[300],
+        showUnselectedLabels: false,
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
