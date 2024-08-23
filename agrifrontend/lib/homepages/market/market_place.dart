@@ -25,39 +25,54 @@ class MarketPlacePage extends StatefulWidget {
 class _MarketPlacePageState extends State<MarketPlacePage> {
   late Future<List<Commodity>> _futureCommodities;
   late String _currentDate; // Variable to hold the formatted date
+  String _selectedCategory = 'Crop Products'; // Track the selected category
 
   @override
   void initState() {
     super.initState();
-    _futureCommodities = MarketService().fetchMarketPrices(widget.marketId);
     _currentDate = DateFormat('EEEE, MMMM d, yyyy')
         .format(DateTime.now()); // Format the current date
+    _fetchData(); // Initial data fetch
+  }
+
+  void _fetchData() {
+    setState(() {
+      if (_selectedCategory == 'Crop') {
+        _futureCommodities = MarketService().fetchCropPrices(widget.marketId);
+      } else if (_selectedCategory == 'Animal') {
+        _futureCommodities = MarketService().fetchAnimalPrices(widget.marketId);
+      } else if (_selectedCategory == 'Crop Products') {
+        _futureCommodities = MarketService().fetchCropProductPrices(widget.marketId);
+      } else if (_selectedCategory == 'Animal Products') {
+        _futureCommodities = MarketService().fetchAnimalProductPrices(widget.marketId);
+      }
+    });
   }
 
   int _selectedIndex = 0;
-  
-   void _onItemTapped(int index) {
+
+  void _onItemTapped(int index) {
     if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
 
     setState(() {
       _selectedIndex = index;
 
       if (index == 0) {
-          Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const AllCoursesPage(),
           ),
         );
       } else if (index == 1) {
-          Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const AllCoursesPage(),
           ),
         );
       } else if (index == 2) {
-          Navigator.pushReplacement(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => const PersonalizedAdvicePage(),
@@ -90,69 +105,99 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
           },
         ),
       ),
-      body: FutureBuilder<List<Commodity>>(
-        future: _futureCommodities,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No data available'));
-          } else {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _currentDate, // Display the current date
-                      style: TextStyle(
-                          fontSize: 24.0, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10.0),
-                    Container(
-                      height: 200.0,
-                      child: SfCircularChart(
-                        legend: Legend(isVisible: true),
-                        series: <PieSeries>[
-                          PieSeries<Commodity, String>(
-                            dataSource: snapshot.data!,
-                            xValueMapper: (Commodity data, _) => data.cropName,
-                            yValueMapper: (Commodity data, _) => data.price,
-                            dataLabelSettings:
-                                DataLabelSettings(isVisible: true),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: DropdownButton<String>(
+              value: _selectedCategory,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedCategory = newValue!;
+                  _fetchData(); // Fetch new data based on the selected option
+                });
+              },
+              items: <String>[
+                'Crop Products',
+                'Animal Products',
+                'Crop and Animal'
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder<List<Commodity>>(
+              future: _futureCommodities,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No data available'));
+                } else {
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _currentDate, // Display the current date
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10.0),
+                          Container(
+                            height: 200.0,
+                            child: SfCircularChart(
+                              legend: Legend(isVisible: true),
+                              series: <PieSeries>[
+                                PieSeries<Commodity, String>(
+                                  dataSource: snapshot.data!,
+                                  xValueMapper: (Commodity data, _) =>
+                                      data.cropName,
+                                  yValueMapper: (Commodity data, _) =>
+                                      data.price,
+                                  dataLabelSettings:
+                                      DataLabelSettings(isVisible: true),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20.0),
+                          const Text(
+                            'Commodities and Prices',
+                            style: TextStyle(
+                                fontSize: 24.0, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10.0),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              final commodity = snapshot.data![index];
+                              return CommodityTile(
+                                name: commodity.cropName,
+                                price: 'Mk ${commodity.price.toString()}',
+                              );
+                            },
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20.0),
-                    const Text(
-                      'Commodities and Prices',
-                      style: TextStyle(
-                          fontSize: 24.0, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10.0),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        final commodity = snapshot.data![index];
-                        return CommodityTile(
-                          name:
-                              commodity.cropName,
-                          price: 'Mk ${commodity.price.toString()}',
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-        },
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -164,11 +209,8 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         child: const Icon(Icons.location_on, color: Colors.white),
         backgroundColor: Colors.green,
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex, // Set the current index
-        // currentIndex: _selectedIndex >= 0 ? _selectedIndex : -1,
-        // currentIndex: _selectedIndex >= 0 && _selectedIndex < 4 ? _selectedIndex : 0, // Ensure the index is valid
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
