@@ -176,12 +176,12 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                             child: SfCircularChart(
                               legend: Legend(isVisible: true),
                               series: <PieSeries>[
-                                // PieSeries<Commodity, String>(
-                                //   dataSource: snapshot.data!,
-                                //   xValueMapper: (Commodity data, _) => data.name,
-                                //   yValueMapper: (Commodity data, _) => data.price,
-                                //   dataLabelSettings: DataLabelSettings(isVisible: true),
-                                // ),
+                                PieSeries<Commodity, String>(
+                                  dataSource: snapshot.data!,
+                                  xValueMapper: (Commodity data, _) => data.name,
+                                  yValueMapper: (Commodity data, _) => data.price,
+                                  dataLabelSettings: DataLabelSettings(isVisible: true),
+                                ),
                               ],
                             ),
                           ),
