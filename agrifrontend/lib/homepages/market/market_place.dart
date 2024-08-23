@@ -1,6 +1,7 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
+import 'package:agrifrontend/homepages/market/market_locations.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart'; // Import the intl package
@@ -203,7 +204,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => MarketLocationPage()),
+            MaterialPageRoute(builder: (context) => MarketLocation()),
           );
         },
         child: const Icon(Icons.location_on, color: Colors.white),

@@ -137,13 +137,13 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   CustomButton(
-                    icon: Icons.landscape,
-                    label: 'Soil Detection',
+                    icon: Icons.group,
+                    label: 'Community',
                     onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SoilDiagnosisPage()));
+                              builder: (context) => const CommunityChatPage()));
                     },
                   ),
                   CustomButton(
