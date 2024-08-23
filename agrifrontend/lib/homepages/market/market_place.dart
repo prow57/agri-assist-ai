@@ -3,9 +3,9 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_pa
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:intl/intl.dart'; // Import the intl package
+import 'package:intl/intl.dart';
 import 'market_service.dart';
-import 'commodity.dart'; // Import your Commodity model
+import 'commodity.dart';
 
 class MarketPlacePage extends StatefulWidget {
   final int marketId;
@@ -24,27 +24,31 @@ class MarketPlacePage extends StatefulWidget {
 
 class _MarketPlacePageState extends State<MarketPlacePage> {
   late Future<List<Commodity>> _futureCommodities;
-  late String _currentDate; // Variable to hold the formatted date
-  String _selectedCategory = 'Crop Products'; // Track the selected category
+  late String _currentDate;
+  String _selectedCategory = 'Animal';
 
   @override
   void initState() {
     super.initState();
-    _currentDate = DateFormat('EEEE, MMMM d, yyyy')
-        .format(DateTime.now()); // Format the current date
-    _fetchData(); // Initial data fetch
+    _currentDate = DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
+    _fetchData();
   }
 
   void _fetchData() {
     setState(() {
-      if (_selectedCategory == 'Crop') {
-        _futureCommodities = MarketService().fetchCropPrices(widget.marketId);
-      } else if (_selectedCategory == 'Animal') {
-        _futureCommodities = MarketService().fetchAnimalPrices(widget.marketId);
-      } else if (_selectedCategory == 'Crop Products') {
-        _futureCommodities = MarketService().fetchCropProductPrices(widget.marketId);
-      } else if (_selectedCategory == 'Animal Products') {
-        _futureCommodities = MarketService().fetchAnimalProductPrices(widget.marketId);
+      switch (_selectedCategory) {
+        case 'Crop':
+          _futureCommodities = MarketService().fetchCropPrices(widget.marketId);
+          break;
+        case 'Animal':
+          _futureCommodities = MarketService().fetchAnimalPrices(widget.marketId);
+          break;
+        case 'Crop Products':
+          _futureCommodities = MarketService().fetchCropProductPrices(widget.marketId);
+          break;
+        case 'Animal Products':
+          _futureCommodities = MarketService().fetchAnimalProductPrices(widget.marketId);
+          break;
       }
     });
   }
@@ -52,7 +56,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+    if (index == _selectedIndex) return;
 
     setState(() {
       _selectedIndex = index;
@@ -61,21 +65,21 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
+            builder: (context) => AllCoursesPage(),
           ),
         );
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
+            builder: (context) => AllCoursesPage(),
           ),
         );
       } else if (index == 2) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const PersonalizedAdvicePage(),
+            builder: (context) => PersonalizedAdvicePage(),
           ),
         );
       } else if (index == 3) {
@@ -89,12 +93,25 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
     });
   }
 
+ Widget buildCommodityTile(Commodity commodity) {
+  return ListTile(
+    title: Text(commodity.name),
+    trailing: Text(
+      'MK ${(commodity.price).toString()}',
+      style: const TextStyle(
+        color: Colors.green,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.marketName}, ${widget.marketLocation}', // Display market name and location
+          '${widget.marketName}, ${widget.marketLocation}',
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
@@ -115,13 +132,14 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
               onChanged: (String? newValue) {
                 setState(() {
                   _selectedCategory = newValue!;
-                  _fetchData(); // Fetch new data based on the selected option
+                  _fetchData();
                 });
               },
               items: <String>[
-                'Crop Products',
+                'Animal',
+                'Crop',
                 'Animal Products',
-                'Crop and Animal'
+                'Crop Products'
               ].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -148,7 +166,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _currentDate, // Display the current date
+                            _currentDate,
                             style: TextStyle(
                                 fontSize: 24.0, fontWeight: FontWeight.bold),
                           ),
@@ -158,15 +176,12 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                             child: SfCircularChart(
                               legend: Legend(isVisible: true),
                               series: <PieSeries>[
-                                PieSeries<Commodity, String>(
-                                  dataSource: snapshot.data!,
-                                  xValueMapper: (Commodity data, _) =>
-                                      data.cropName,
-                                  yValueMapper: (Commodity data, _) =>
-                                      data.price,
-                                  dataLabelSettings:
-                                      DataLabelSettings(isVisible: true),
-                                ),
+                                // PieSeries<Commodity, String>(
+                                //   dataSource: snapshot.data!,
+                                //   xValueMapper: (Commodity data, _) => data.name,
+                                //   yValueMapper: (Commodity data, _) => data.price,
+                                //   dataLabelSettings: DataLabelSettings(isVisible: true),
+                                // ),
                               ],
                             ),
                           ),
@@ -183,10 +198,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
                               final commodity = snapshot.data![index];
-                              return CommodityTile(
-                                name: commodity.cropName,
-                                price: 'Mk ${commodity.price.toString()}',
-                              );
+                              return buildCommodityTile(commodity);
                             },
                           ),
                         ],
@@ -210,7 +222,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         backgroundColor: Colors.green,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Set the current index
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -223,7 +235,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Ai',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -235,34 +247,6 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         showUnselectedLabels: false,
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-class CommodityTile extends StatelessWidget {
-  final String name;
-  final String price;
-
-  const CommodityTile({
-    required this.name,
-    required this.price,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        title: Text(
-          name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        trailing: Text(
-          price,
-          style: const TextStyle(color: Colors.green),
-        ),
       ),
     );
   }

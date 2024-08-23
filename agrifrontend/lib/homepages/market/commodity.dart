@@ -1,15 +1,26 @@
-class Commodity {
-  final String cropName;
-  final String marketName;
-  final double price;
+abstract class Commodity {
+  final String name;
+  final String price;
 
-  Commodity({required this.cropName, required this.marketName, required this.price});
+  Commodity({required this.name, required this.price});
+}
 
-  factory Commodity.fromJson(Map<String, dynamic> json) {
-    return Commodity(
-      cropName: json['crop_name'],
-      marketName: json['market_name'],
-      price: double.parse(json['price']), // Assuming 'price' is a String in your JSON
-    );
-  }
+class CropCommodity extends Commodity {
+  CropCommodity({required String crop_name, required String price})
+      : super(name: crop_name, price: price);
+}
+
+class AnimalCommodity extends Commodity {
+  AnimalCommodity({required String animal_name, required String price})
+      : super(name: animal_name, price: price);
+}
+
+class CropProductCommodity extends Commodity {
+  CropProductCommodity({required String product_name, required String price})
+      : super(name: product_name, price: price);
+}
+
+class AnimalProductCommodity extends Commodity {
+  AnimalProductCommodity({required String product_name, required String price})
+      : super(name: product_name, price: price);
 }
