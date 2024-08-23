@@ -17,47 +17,59 @@ class MarketService {
     }
   }
 
-  Future<List<Commodity>> fetchCropPrices(int marketId) async {
+  Future<List<CropCommodity>> fetchCropPrices(int marketId) async {
     final response = await http.get(Uri.parse('$baseUrl/prices/market/$marketId'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((item) => Commodity.fromJson(item)).toList();
+      return data.map((item) => CropCommodity(
+        crop_name: item['crop_name'] ?? 'N/A',
+        price: double.tryParse(item['price'] ?? '0') ?? 0.0,
+      )).toList();
     } else {
-      throw Exception('Failed to load market prices');
+      throw Exception('Failed to load crop prices');
     }
   }
 
-  Future<List<Commodity>> fetchAnimalPrices(int marketId) async {
+  Future<List<AnimalCommodity>> fetchAnimalPrices(int marketId) async {
     final response = await http.get(Uri.parse('$baseUrl/prices/animal/$marketId'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((item) => Commodity.fromJson(item)).toList();
+      return data.map((item) => AnimalCommodity(
+        animal_name: item['animal_name'] ?? 'N/A',
+        price: double.tryParse(item['price'] ?? '0') ?? 0.0,
+      )).toList();
     } else {
-      throw Exception('Failed to load animal and crop products');
+      throw Exception('Failed to load animal prices');
     }
   }
 
-  Future<List<Commodity>> fetchCropProductPrices(int marketId) async {
+  Future<List<CropProductCommodity>> fetchCropProductPrices(int marketId) async {
     final response = await http.get(Uri.parse('$baseUrl/crops/get/products/price/$marketId'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((item) => Commodity.fromJson(item)).toList();
+      return data.map((item) => CropProductCommodity(
+        product_name: item['product_name'] ?? 'N/A',
+        price: double.tryParse(item['price'] ?? '0') ?? 0.0,
+      )).toList();
     } else {
-      throw Exception('Failed to load animal and crop products');
+      throw Exception('Failed to load crop product prices');
     }
   }
 
-    Future<List<Commodity>> fetchAnimalProductPrices(int marketId) async {
-    final response = await http.get(Uri.parse('$baseUrl/animal/get/products/price/$marketId'));
+  Future<List<AnimalProductCommodity>> fetchAnimalProductPrices(int marketId) async {
+    final response = await http.get(Uri.parse('$baseUrl/animals/get/products/price/$marketId'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
-      return data.map((item) => Commodity.fromJson(item)).toList();
+      return data.map((item) => AnimalProductCommodity(
+        product_name: item['product_name'] ?? 'N/A',
+        price: double.tryParse(item['price'] ?? '0') ?? 0.0,
+      )).toList();
     } else {
-      throw Exception('Failed to load animal and crop products');
+      throw Exception('Failed to load animal product prices');
     }
   }
 }
