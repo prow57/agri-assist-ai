@@ -154,7 +154,7 @@ class _WeatherPageState extends State<WeatherPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Weather Forecast'),
+        title: Text('Weather Forecast', style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.green[700],
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -162,7 +162,7 @@ class _WeatherPageState extends State<WeatherPage> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.location_on),
+            icon: Icon(Icons.location_on, color: Colors.white),
             onPressed: _selectLocation,
           ),
         ],
@@ -446,7 +446,7 @@ class _WeatherPageState extends State<WeatherPage> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: 'Ai',
+          label: 'AI',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
