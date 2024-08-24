@@ -55,7 +55,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     final date = DateTime.parse(widget.dayForecast['date']);
     final dayOfWeek = DateFormat('EEEE').format(date);
-    final dateFormatted = DateFormat('yyyy-MM-dd').format(date);
+    // final dateFormatted = DateFormat('EEEE, h:mm a').format(date);
 
     return Scaffold(
       appBar: AppBar(
@@ -80,11 +80,11 @@ class _DetailPageState extends State<DetailPage> {
             children: [
               Image.network(
                 'https:${widget.dayForecast['day']['condition']['icon']}',
-                height: 200,
-                width: 200,
+                height: 150,
+                width: 150,
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Text(
                 '${widget.dayForecast['day']['avgtemp_c']}°C',
                 style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
@@ -94,7 +94,7 @@ class _DetailPageState extends State<DetailPage> {
                 '${widget.dayForecast['day']['condition']['text']}',
                 style: TextStyle(fontSize: 20, color: Colors.grey),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 10),
               Expanded(
                 child: ListView.separated(
                   itemCount: 7,
@@ -115,27 +115,7 @@ class _DetailPageState extends State<DetailPage> {
                 ),
               ),
               SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.lightGreen[100],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Recommendation:',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      _getRecommendation(widget.dayForecast['day']['condition']['text']),
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
             ],
           ),
         ),
@@ -154,7 +134,7 @@ class _DetailPageState extends State<DetailPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -191,15 +171,5 @@ class _DetailPageState extends State<DetailPage> {
         ],
       ),
     );
-  }
-
-  String _getRecommendation(String condition) {
-    if (condition.contains('rain')) {
-      return 'It is likely to rain. Ensure your crops have proper drainage.';
-    } else if (condition.contains('sunny')) {
-      return 'It will be sunny. Consider watering your crops early in the morning or late in the evening.';
-    } else {
-      return 'Weather is stable. Regular farming activities can continue.';
-    }
   }
 }
