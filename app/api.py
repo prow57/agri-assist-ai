@@ -18,6 +18,7 @@ from app.tasks import disease_research_task, guidance_generation_task
 from app.validator import *
 from app.librarymaker import CropInfoManager
 # Suppress warnings and set logging level
+from fastapi import HTTPException, status
 warnings.filterwarnings("ignore", message="Overriding of current TracerProvider is not allowed")
 logging.getLogger("opentelemetry").setLevel(logging.ERROR)
 
@@ -29,107 +30,131 @@ app = FastAPI()
 leaf_image_analysis_agent = LeafAnalyser()
 crop_info_manager = CropInfoManager()
 
+
 @app.get("/crop-info/{crop_name}")
 async def get_crop_info(crop_name: str):
+    if not crop_name or crop_name.strip() == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Crop name is required and cannot be empty."
+        )
+    
     try:
-        crop_info = crop_info_manager.get_crop_description(crop_name)
+        crop_info = crop_info_manager.get_crop_description(crop_name.strip())
+        if not crop_info:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No information found for crop: {crop_name}"
+            )
         return JSONResponse(content=crop_info)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching crop info: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching crop info: {str(e)}"
+        )
 @app.post("/analyze-leaf/")
 async def analyze_leaf(request: ImageRequest):
-    print("step 1:done")
-    leaf_analyser = LeafAnalyser()
+    try:
+        leaf_analyser = LeafAnalyser()
 
-    print("step 2:done")
-    leaf_analysis_result = leaf_analyser.run(request)
+        leaf_analysis_result = leaf_analyser.run(request)
 
-    # Check if leaf_analysis_result is already a dict
-    if not isinstance(leaf_analysis_result, dict):
-        # If it's not a dict, assume it's a JSON string and parse it
-        leaf_analysis_dict = json.loads(leaf_analysis_result)
-    else:
-        # If it's already a dict, use it directly
-        leaf_analysis_dict = leaf_analysis_result
-
-    leaf_analysis = LeafImageAnalysisOutput(**leaf_analysis_dict)
-
-    crew_inputs = {
-        "disease_name": leaf_analysis.disease_name,
-        "crop_type": leaf_analysis.crop_type,
-        "percentage": leaf_analysis.percentage,
-        "estimated_size": leaf_analysis.estimated_size,
-        "image_feedback": leaf_analysis.image_feedback.dict()
-    }
-
-    if (leaf_analysis.image_feedback.focus == "bad" or 
-        leaf_analysis.image_feedback.distance == "bad" or 
-        leaf_analysis.image_feedback.distance is None or
-        leaf_analysis.disease_name == "None"):
-        
-        output_leaf_analysis = {"leaf_analysis": leaf_analysis.dict()}
-        return JSONResponse(content=output_leaf_analysis)
-    
-    # Perform disease research and guidance generation
-    main_crew_result = main_crew.kickoff(inputs=crew_inputs)
-
-    print("step 8:done")
-    def parse_task_result(task, output_model):
-        output = task.output
-        result = output.raw
-        if output.json_dict:
-            result = json.dumps(output.json_dict, indent=2)
-        if output.pydantic:
-            result = output.pydantic
-        if isinstance(result, str):
-            try:
-                return output_model.parse_raw(result)
-            except json.JSONDecodeError:
-                return output_model.parse_obj(json.loads(result))
-        elif isinstance(result, dict):
-            return output_model.parse_obj(result)
+        # Check if leaf_analysis_result is already a dict
+        if not isinstance(leaf_analysis_result, dict):
+            # If it's not a dict, assume it's a JSON string and parse it
+            leaf_analysis_dict = json.loads(leaf_analysis_result)
         else:
-            raise ValueError(f"Unexpected task result type: {type(result)}")
+            # If it's already a dict, use it directly
+            leaf_analysis_dict = leaf_analysis_result
 
-    disease_research = parse_task_result(disease_research_task, DiseaseResearchOutput)
-    guidance_generation = parse_task_result(guidance_generation_task, GuidanceGenerationOutput)
+        leaf_analysis = LeafImageAnalysisOutput(**leaf_analysis_dict)
 
-    # Compile final output
-    cumulative_output = CumulativeOutput(
-        leaf_analysis=leaf_analysis,
-        disease_research=disease_research,
-        guidance_generation=guidance_generation
-    )
+        crew_inputs = {
+            "disease_name": leaf_analysis.disease_name,
+            "crop_type": leaf_analysis.crop_type,
+            "percentage": leaf_analysis.percentage,
+            "estimated_size": leaf_analysis.estimated_size,
+            "image_feedback": leaf_analysis.image_feedback.dict()
+        }
 
-    return JSONResponse(content=cumulative_output.dict())
+        if (leaf_analysis.image_feedback.focus == "bad" or 
+            leaf_analysis.image_feedback.distance == "bad" or 
+            leaf_analysis.image_feedback.distance is None or
+            leaf_analysis.disease_name == "None"):
+            
+            output_leaf_analysis = {"leaf_analysis": leaf_analysis.dict()}
+            return JSONResponse(content=output_leaf_analysis)
+        
+        # Perform disease research and guidance generation
+        main_crew_result = main_crew.kickoff(inputs=crew_inputs)
+
+        print("step 8:done")
+        def parse_task_result(task, output_model):
+            output = task.output
+            result = output.raw
+            if output.json_dict:
+                result = json.dumps(output.json_dict, indent=2)
+            if output.pydantic:
+                result = output.pydantic
+            if isinstance(result, str):
+                try:
+                    return output_model.parse_raw(result)
+                except json.JSONDecodeError:
+                    return output_model.parse_obj(json.loads(result))
+            elif isinstance(result, dict):
+                return output_model.parse_obj(result)
+            else:
+                raise ValueError(f"Unexpected task result type: {type(result)}")
+
+        disease_research = parse_task_result(disease_research_task, DiseaseResearchOutput)
+        guidance_generation = parse_task_result(guidance_generation_task, GuidanceGenerationOutput)
+
+        # Compile final output
+        cumulative_output = CumulativeOutput(
+            leaf_analysis=leaf_analysis,
+            disease_research=disease_research,
+            guidance_generation=guidance_generation
+        )
+
+        return JSONResponse(content=cumulative_output.dict())
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error analyzing leaf: {str(e)}")
 
 
 @app.post("/course-generation/")
 async def course_generation(request: CourseRequest):
-    coursegenerator = CourseGenerator()
+    try:
+        coursegenerator = CourseGenerator()
+        
+        # Generate a new course
+        course_result = coursegenerator.generate_course(request.history)
+        
+        if not course_result:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unable to generate a new unique course")
     
-    # Generate a new course
-    course_result = coursegenerator.generate_course(request.history)
-    
-    if not course_result:
-        raise HTTPException(status_code=400, detail="Unable to generate a new unique course")
-    
-    # Generate image prompt
-    image_prompt = coursegenerator.generate_image_prompt(course_result['topic'], course_result['content'])
-    
-    # Generate image using DALL-E 3
-    image_url = generate_image(image_prompt)
-    
-    # Prepare the response
-    response = {
-        "topic": course_result['topic'],
-        "content": course_result['content'],
-        "tags": course_result['tags'],
-        "references": course_result['references'],
-        "image_url": image_url
-    }
-    
-    return JSONResponse(content=response)
+        # Generate image prompt
+        image_prompt = coursegenerator.generate_image_prompt(course_result['topic'], course_result['content'])
+        
+        # Generate image using DALL-E 3
+        image_url = generate_image(image_prompt)
+        
+        # Prepare the response
+        response = {
+            "topic": course_result['topic'],
+            "content": course_result['content'],
+            "tags": course_result['tags'],
+            "references": course_result['references'],
+            "image_url": image_url
+        }
+        
+        return JSONResponse(content=response)
+    except ValidationError as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error generating course: {str(e)}")
+
 
 def generate_image(prompt: str) -> str:
     try:

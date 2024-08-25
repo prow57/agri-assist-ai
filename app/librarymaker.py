@@ -163,13 +163,19 @@ class CropInfoManager:
             json.dump(existing_data, file, indent=2)
 
     def get_crop_description(self, crop_name):
+        if not crop_name or crop_name.strip() == "":
+            raise ValueError("Crop name is required and cannot be empty.")
+
+        crop_name = crop_name.strip()
         if crop_name in self.processed_crops:
             # Read the existing data and return the description if it exists
             with open(self.output_file, 'r') as file:
                 data = json.load(file)
                 for crop in data:
-                    if crop['crop_name'] == crop_name:
+                    if crop['crop_name'].lower() == crop_name.lower():
                         return crop
+            # If we get here, the crop wasn't found in the file
+            return None
         else:
             # Fetch new data if not already processed
             print(f"Fetching data for crop: {crop_name}")

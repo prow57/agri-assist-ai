@@ -227,17 +227,19 @@ with tab3:
     crop_name = st.text_input("Enter crop name:")
     
     if st.button('Get Crop Info'):
-        if crop_name:
+        if crop_name and crop_name.strip():
             with st.spinner('Fetching crop information...'):
                 try:
-                    response = requests.get(f"http://localhost:8000/crop-info/{crop_name}")
+                    response = requests.get(f"http://localhost:8000/crop-info/{crop_name.strip()}")
                     if response.status_code == 200:
                         crop_info = response.json()
                         display_crop_info(crop_info)
+                    elif response.status_code == 404:
+                        st.warning(f"No information found for crop: {crop_name}")
                     else:
-                        st.error(f"Error fetching crop info: {response.text}")
-                except Exception as e:
-                    st.error(f"Error: {str(e)}")
+                        st.error(f"Error fetching crop info: {response.json().get('detail', 'Unknown error')}")
+                except requests.exceptions.RequestException as e:
+                    st.error(f"Error fetching crop info: {str(e)}")
         else:
-            st.warning("Please enter a crop name.")
+            st.warning("Please enter a valid crop name.")
 st.sidebar.info("This application analyzes crop leaf images to identify diseases, provide treatment guidance, and generate agricultural courses.")
