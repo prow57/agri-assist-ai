@@ -17,22 +17,39 @@ class MobileNumberScreen extends StatelessWidget {
     }
 
     try {
-      final response = await http.post(
-        Uri.parse('https://agriback-plum.vercel.app/api/verify/send-otp'),
+      final checkResponse = await http.post(
+        Uri.parse('https://agriback-plum.vercel.app/api/auth/check-phone'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': phone}),
       );
 
-      if (response.statusCode == 200) {
-        // OTP sent successfully, navigate to the OTP verification page
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => OtpVerificationScreen(phone: phone)),
+      if (checkResponse.statusCode == 200) {
+        final otpResponse = await http.post(
+          Uri.parse('https://agriback-plum.vercel.app/api/verify/send-otp'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'phone': phone}),
+        );
+
+        if (otpResponse.statusCode == 200) {
+          // OTP sent successfully
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('OTP sent successfully.')),
+          );
+        } else {
+          // Handle error
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to send OTP. Please try again.')),
+          );
+        }
+      } else if (checkResponse.statusCode == 404) {
+        // Handle error from the check-phone API
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No account associated with that number.')),
         );
       } else {
-        // Handle error
+        // Handle other errors from the check-phone API
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send OTP. Please try again.')),
+          SnackBar(content: Text('Failed to verify phone number. Please try again.')),
         );
       }
     } catch (error) {
@@ -84,5 +101,3 @@ class MobileNumberScreen extends StatelessWidget {
     );
   }
 }
-
-
