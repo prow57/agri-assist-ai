@@ -45,16 +45,20 @@ async def analyze_leaf(request: ImageRequest):
 
     leaf_analysis = LeafImageAnalysisOutput(**leaf_analysis_dict)
     
-    # Prepare inputs for main_crew
     crew_inputs = {
         "disease_name": leaf_analysis.disease_name,
         "crop_type": leaf_analysis.crop_type,
         "percentage": leaf_analysis.percentage,
-        "estimated_size": leaf_analysis.estimated_size
+        "estimated_size": leaf_analysis.estimated_size,
+        "image_feedback": leaf_analysis.image_feedback.dict()
     }
 
-    if crew_inputs["disease_name"] == "None":
-        output_leaf_analysis = {"leaf_analysis": crew_inputs}
+    if (leaf_analysis.image_feedback.focus == "bad" or 
+        leaf_analysis.image_feedback.distance == "bad" or 
+        leaf_analysis.image_feedback.distance is None or
+        leaf_analysis.disease_name == "None"):
+        
+        output_leaf_analysis = {"leaf_analysis": leaf_analysis.dict()}
         return JSONResponse(content=output_leaf_analysis)
 
     # Perform disease research and guidance generation

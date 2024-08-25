@@ -1,5 +1,11 @@
 from pydantic import BaseModel, Field
 
+# In validator.py
+
+class ImageFeedback(BaseModel):
+    focus: str = Field(description='Description of the focus of the image (good, mediocre, bad)')
+    distance: str | None = Field(description='Quality of estimated distance from the captured image lens to the crop')
+
 class LeafImageAnalysisOutput(BaseModel):
     crop_type: str = Field(description='Type of the crop')
     disease_name: str | None = Field(description='Name of the detected disease or None if healthy')
@@ -9,7 +15,7 @@ class LeafImageAnalysisOutput(BaseModel):
     estimated_size: str | None = Field(description='Estimated size of the crop')
     stage: str | None = Field(description='Disease stage or None if healthy')
     symptoms: list[str] | None = Field(description='List of observed symptoms')
-
+    image_feedback: ImageFeedback = Field(description='Logistical image feedback on the image, crop and disease predictions')
 class DiseaseResearchOutput(BaseModel):
     relevant_websites: list[str] | None = Field(description='List of relevant websites for disease solutions')
     general_information: list[str] | None = Field(description='General information about the diagnosed disease')

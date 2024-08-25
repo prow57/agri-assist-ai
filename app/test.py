@@ -15,7 +15,7 @@ def encode_image(image):
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 def call_api(endpoint, payload):
-    api_url = f"http://37.187.29.19:6932/{endpoint}"  # Update this if your API is hosted elsewhere
+    api_url = f"http://localhost:8000/{endpoint}"  #in prod 37.187.29.19:6932
     response = requests.post(api_url, json=payload)
     return response.json()
 
@@ -37,22 +37,34 @@ def get_previous_topics():
 
 def display_leaf_analysis_results(results):
     leaf_analysis = results["leaf_analysis"]
-    if leaf_analysis['crop_type'] == "Unknown":
-        st.header(f"Please retake the image")
-        return
+    
     st.header("Analysis Results")
     st.subheader("Leaf Analysis")
     st.write(f"Crop Type: {leaf_analysis['crop_type']}")
     st.write(f"Health Percentage: {leaf_analysis['percentage']}%")
-    if leaf_analysis['disease_name'] != "None":
-        st.write(f"Disease Name: {leaf_analysis['disease_name']}")
-        st.write(f"Description: {leaf_analysis['description']}")
-        st.write(f"Risk Level: {leaf_analysis['level_of_risk']}")
-        st.write(f"Estimated Size: {leaf_analysis['estimated_size']}")
-        st.write(f"Stage: {leaf_analysis['stage']}")
-        st.write("Symptoms:")
-        for symptom in leaf_analysis['symptoms']:
-            st.write(f"- {symptom}")
+    
+    # Display image feedback
+    st.subheader("Image Feedback")
+    st.write(f"Focus: {leaf_analysis['image_feedback']['focus']}")
+    st.write(f"Distance: {leaf_analysis['image_feedback']['distance']}")
+    
+    if leaf_analysis['image_feedback']['focus'] == "bad" or leaf_analysis['image_feedback']['distance'] in ["bad", None]:
+        st.warning("Image quality is poor. Please retake the image with better focus and appropriate distance.")
+        return
+    
+    if leaf_analysis['disease_name'] == "None":
+        st.success("No disease detected. The plant appears to be healthy.")
+        return
+    
+    # Continue with displaying disease information, research, and guidance
+    st.write(f"Disease Name: {leaf_analysis['disease_name']}")
+    st.write(f"Description: {leaf_analysis['description']}")
+    st.write(f"Risk Level: {leaf_analysis['level_of_risk']}")
+    st.write(f"Estimated Size: {leaf_analysis['estimated_size']}")
+    st.write(f"Stage: {leaf_analysis['stage']}")
+    st.write("Symptoms:")
+    for symptom in leaf_analysis['symptoms']:
+        st.write(f"- {symptom}")
         st.subheader("Disease Research")
         disease_research = results["disease_research"]
         st.write("Relevant Websites:")
