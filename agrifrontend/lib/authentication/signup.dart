@@ -24,7 +24,7 @@ class _SignupState extends State<Signup> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://your-backend-url/api/signup'),
+        Uri.parse('https://agriback-plum.vercel.app/api/auth/signup'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'fullName': fullName,
