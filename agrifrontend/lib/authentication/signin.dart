@@ -34,7 +34,7 @@ class _SigninState extends State<Signin> {
           SnackBar(content: Text(data['message'])),
           Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LanguageSelectionScreen()),
+                    MaterialPageRoute(builder: (context) => SelectLanguageScreen()),
                   );
         );
       } else {
