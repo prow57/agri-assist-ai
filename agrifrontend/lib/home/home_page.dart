@@ -8,6 +8,7 @@ import 'package:agrifrontend/homepages/market/market_selection_page.dart';
 import 'package:agrifrontend/homepages/weather/ui/weather_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:agrifrontend/authentication/signin.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -143,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const CommunityChatPage()));
+                              builder: (context) => const SignIn()));
                     },
                   ),
                   CustomButton(
