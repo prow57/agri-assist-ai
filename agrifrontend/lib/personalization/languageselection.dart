@@ -1,5 +1,5 @@
+import 'package:agrifrontend/personalization/preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:agrifrontend/lib/personalization/preferences.dart';
 
 class SelectLanguageScreen extends StatelessWidget {
   @override

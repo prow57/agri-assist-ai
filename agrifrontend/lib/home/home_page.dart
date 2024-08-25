@@ -3,6 +3,7 @@ import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/AI%20pages/soil%20scan/soil_diagnosis_page.dart';
+import 'package:agrifrontend/AI%20pages/vision/upload_image.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:agrifrontend/homepages/market/market_selection_page.dart';
 import 'package:agrifrontend/homepages/weather/ui/weather_screen.dart';
@@ -134,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const LeafAnalysisScreen()));
+                                   UploadImagePage()));
                     },
                   ),
                   CustomButton(
