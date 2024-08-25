@@ -1,3 +1,4 @@
+import 'package:agrifrontend/AI%20pages/leaf%20scan/history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -5,7 +6,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
-import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
@@ -192,6 +192,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                 _buildErrorDisplay(),
               const SizedBox(height: 20),
               _buildSubmitButton(),
+              if (_result != null) _buildAskQuestionButton(), // Add this line
             ],
           ),
         ),
@@ -276,17 +277,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
 
   Widget _buildSubmitButton() {
     return ElevatedButton(
-      onPressed: _isLoading
-          ? null
-          : () {
-              if (_image != null) {
-                _analyzeImage(_image!);
-              } else {
-                setState(() {
-                  _errorMessage = 'Please select or capture an image first.';
-                });
-              }
-            },
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ScanHistoryPage(), // Replace with your actual page
+          ),
+        );
+      },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
@@ -295,7 +293,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         ),
       ),
       child: const Text(
-        "Submit",
+        "Recent search",
         style: TextStyle(fontSize: 20, color: Colors.white),
       ),
     );
@@ -313,97 +311,103 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           _buildResultCard("Leaf Analysis", [
             _buildResultRow("Crop Type", leafAnalysis['crop_type']),
             _buildResultRow("Disease", leafAnalysis['disease_name']),
-            _buildResultRow("Description", leafAnalysis['description']),
-            _buildResultRow("Risk Level", leafAnalysis['level_of_risk']),
-            _buildResultRow(
-                "Infection Percentage", "${leafAnalysis['percentage'] ?? 0}%"),
-            _buildResultRow(
-                "Estimated Size", leafAnalysis['estimated_size']),
-            _buildResultRow("Stage", leafAnalysis['stage']),
-            const SizedBox(height: 10),
-            const Text(
-              "Symptoms:",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            ...?leafAnalysis['symptoms']?.map<Widget>((symptom) =>
-                Text("- $symptom")).toList(),
+            _buildResultRow("Accuracy", leafAnalysis['disease_accuracy']),
           ]),
         if (diseaseResearch != null)
           _buildResultCard("Disease Research", [
-            const Text("Relevant Websites:"),
-            ...?diseaseResearch['relevant_websites']?.map<Widget>(
-                (website) => Text(website)).toList(),
-            const Text("General Information:"),
-            ...?diseaseResearch['general_information']?.map<Widget>(
-                (info) => Text(info)).toList(),
-            const Text("Recommended Treatments:"),
-            ...?diseaseResearch['recommended_treatments']?.map<Widget>(
-                (treatment) => Text("- $treatment")).toList(),
+            _buildResultRow("Information", diseaseResearch['disease_information']),
+            _buildResultRow("Prevention", diseaseResearch['disease_prevention']),
+            _buildResultRow("Solution", diseaseResearch['disease_solution']),
           ]),
         if (guidanceGeneration != null)
           _buildResultCard("Guidance Generation", [
-            const Text("Treatment Steps:"),
-            ...?guidanceGeneration['treatment_steps']?.map<Widget>(
-                (step) => Text("- $step")).toList(),
-            const Text("Ingredients:"),
-            ...?guidanceGeneration['ingredients']?.map<Widget>(
-                (ingredient) => Text("- $ingredient")).toList(),
+            _buildResultRow("Recommendation", guidanceGeneration['recommendation']),
           ]),
       ],
     );
   }
 
-  Widget _buildResultCard(String title, List<Widget> content) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-            const SizedBox(height: 10),
-            ...content,
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildResultRow(String label, String? value) {
+  Widget _buildResultRow(String title, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           Text(
-            value ?? 'N/A',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+            value,
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),
     );
   }
 
+  Widget _buildResultCard(String title, List<Widget> rows) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Divider(color: Colors.green),
+            ...rows,
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildErrorDisplay() {
-    return Center(
-      child: Text(
-        _errorMessage,
-        style: const TextStyle(fontSize: 14.0, color: Colors.red),
-        textAlign: TextAlign.center,
+    return Card(
+      color: Colors.red[100],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            const Icon(Icons.error, color: Colors.red),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                _errorMessage,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAskQuestionButton() {
+    return ElevatedButton.icon(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ChatPage(), // Navigate to the chat page
+          ),
+        );
+      },
+      icon: const Icon(Icons.help_outline, size: 24),
+      label: const Text(
+        "Ask a Question",
+        style: TextStyle(fontSize: 18),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
       ),
     );
   }

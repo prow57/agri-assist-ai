@@ -47,14 +47,15 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
         });
       } else {
         setState(() {
-          _responseContent = 'Failed to load course: ${response.statusCode}';
+          _responseContent =
+              'Failed to load course: ${response.statusCode}. Please try again later.';
           _isLoading = false;
           _isError = true;
         });
       }
     } catch (e) {
       setState(() {
-        _responseContent = 'Error: $e';
+        _responseContent = 'Network error: Unable to fetch course. Please check your internet connection or try again later.';
         _isLoading = false;
         _isError = true;
       });
@@ -67,7 +68,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Farming Practices'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.green[800],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -79,13 +80,18 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
                 controller: _titleController,
                 decoration: const InputDecoration(
                   labelText: 'Course Title',
+                  prefixIcon: Icon(Icons.title),
+                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16.0),
               TextField(
                 controller: _descriptionController,
+                maxLines: 3,
                 decoration: const InputDecoration(
                   labelText: 'Course Description',
+                  prefixIcon: Icon(Icons.description),
+                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -93,30 +99,52 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
                 controller: _categoryController,
                 decoration: const InputDecoration(
                   labelText: 'Category',
+                  prefixIcon: Icon(Icons.category),
+                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _fetchCourse,
-                child: const Text('Fetch Course'),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _fetchCourse,
+                  icon: const Icon(Icons.download),
+                  label: const Text('Fetch Course', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[700],
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  ),
+                ),
               ),
               const SizedBox(height: 32.0),
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _isError
-                      ? Text(
-                          _responseContent,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
+                      ? Card(
+                          color: Colors.red.shade100,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              _responseContent,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
                         )
-                      : Text(
-                          _responseContent,
-                          style: const TextStyle(
-                            fontFamily: 'Courier',
-                            fontSize: 14,
-                            letterSpacing: 1.2,
+                      : Card(
+                          color: Colors.green.shade50,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              _responseContent,
+                              style: const TextStyle(
+                                fontFamily: 'Courier',
+                                fontSize: 14,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
                           ),
                         ),
             ],
