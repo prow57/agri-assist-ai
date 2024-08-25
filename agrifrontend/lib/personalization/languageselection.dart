@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:agrifrontend/lib/personalization/preferences.dart';
 
 class SelectLanguageScreen extends StatelessWidget {
   @override
@@ -30,6 +31,10 @@ class SelectLanguageScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   // Set language to English and navigate to the next screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PreferencesScreen()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green, // Assuming green is your primary color
