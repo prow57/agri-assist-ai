@@ -42,7 +42,7 @@ class _SignupState extends State<Signup> {
         // Navigate to login screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => Signin()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
