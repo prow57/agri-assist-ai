@@ -9,6 +9,18 @@ import os
 # File to store course history
 COURSE_HISTORY_FILE = 'course_history.json'
 
+def get_risk_color(level_of_risk):
+    risk_color_map = {
+        "NO RISK": "#006400",  # Dark green for no risk
+        "LOW": "#228B22",  # Forest green for low risk
+        "MODERATE": "#FFD700",  # Dark goldenrod for moderate risk
+        "SUBSTANTIAL": "#FF8C00",  # Dark orange for substantial risk
+        "SEVERE": "#FF4500",  # Orange-red for severe risk
+        "CRITICAL": "#B22222",  # Firebrick for critical risk
+        None: "#A9A9A9"  # Dark gray for no input
+    }
+    return risk_color_map.get(level_of_risk, "#A9A9A9")  # Default to dark gray if no match
+
 def encode_image(image):
     buffered = io.BytesIO()
     image.save(buffered, format="PNG")
@@ -59,7 +71,7 @@ def display_leaf_analysis_results(results):
     # Continue with displaying disease information, research, and guidance
     st.write(f"Disease Name: {leaf_analysis['disease_name']}")
     st.write(f"Description: {leaf_analysis['description']}")
-    st.write(f"Risk Level: {leaf_analysis['level_of_risk']}")
+    st.markdown(f"""Risk Level: <b style="color:{get_risk_color(leaf_analysis['level_of_risk'])}">{leaf_analysis['level_of_risk']} </b>""",unsafe_allow_html=True)
     st.write(f"Estimated Size: {leaf_analysis['estimated_size']}")
     st.write(f"Stage: {leaf_analysis['stage']}")
     st.write("Symptoms:")

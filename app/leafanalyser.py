@@ -16,6 +16,7 @@ import re
 api_key = os.getenv("OPENAI_API_KEY")
 
 
+
 class ImageRequest(BaseModel):
     image: str
 
@@ -67,20 +68,20 @@ class LeafAnalyser:
             A JSON object with the crop type, disease name, detailed description of the disease, level of risk, percentage of health of the spot, estimated size, the disease's stage, symptoms observed, and image feedback.
             structure:
                 {
-                "crop_type": "<string>",
-                "disease_name": "<string or None>",
-                "description": "<string>",
-                "level_of_risk": "<string>",
-                "percentage": <integer>,
-                "estimated_size": "<string>",
-                "stage": "<string or None>",
+                "crop_type": "<string>",               // Type of the crop
+                "disease_name": "<string or None>",    // Name of the detected disease or None if the crop is healthy
+                "description": "<string>",             // Detailed description of the disease
+                "level_of_risk": "<string>",           // Level of risk allowed values:("LOW","MODERATE","SUBSTANTIAL","SEVERE","CRITICAL" or None) 
+                "percentage": <integer>,               // Percentage of health (0-100)
+                "estimated_size": "<string>",          // Estimated size of the crop or area affected
+                "stage": "<string or None>",           // Disease stage or None if healthy
                 "symptoms": [
-                    "<string>",
-                    "<string>"
+                "<string>",                            // Symptom 1
+                "<string>"                             // Symptom 2
                 ],
                 "image_feedback": {
-                    "focus": "<string>",
-                    "distance": "<string or null>"
+                    "focus": "<string>",                // Description of the focus of the image, allowed values:( good,mediocre,bad)
+                    "distance": "<string or null>"      //[Nullable] The overall grade quality of estimated distance from the captured image lens to the crop. Returns null in cases where a non_plant has been detected. Allowed values:( "good" , "mediocre" , "bad" , null)
                 }
                 }
                 Provide concise answers, focus on factual information.

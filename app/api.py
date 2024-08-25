@@ -44,7 +44,7 @@ async def analyze_leaf(request: ImageRequest):
         leaf_analysis_dict = leaf_analysis_result
 
     leaf_analysis = LeafImageAnalysisOutput(**leaf_analysis_dict)
-    
+
     crew_inputs = {
         "disease_name": leaf_analysis.disease_name,
         "crop_type": leaf_analysis.crop_type,
