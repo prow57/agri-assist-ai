@@ -18,7 +18,7 @@ class MobileNumberScreen extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://your-api-url/api/auth/send-otp'),
+        Uri.parse('https://agriback-plum.vercel.app/api/verify/send-otp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': phone}),
       );
