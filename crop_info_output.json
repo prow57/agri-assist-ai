@@ -1,0 +1,113 @@
+[
+  {
+    "crop_name": "Wheat",
+    "scientific_name": "Triticum spp.",
+    "description": "Wheat is among the oldest and most important of the cereal crops, cultivated worldwide for its grain, a staple food in many cultures. It has been a fundamental food source for thousands of years and plays a critical role in human diet and agriculture.",
+    "planting_information": {
+      "optimal_planting_time": "Autumn for Winter Wheat, Spring for Spring Wheat",
+      "geographic_location": [
+        {
+          "region": "North America, Europe, Asia, and Australia",
+          "climate_type": "Temperate",
+          "soil_type": "Loamy, well-draining",
+          "recommended_varieties": [
+            "Hard Red Winter",
+            "Soft Red Winter",
+            "Hard Red Spring",
+            "Durum"
+          ]
+        }
+      ],
+      "seeding_rate": "120-150 kg/ha",
+      "planting_depth": "2-3 cm"
+    },
+    "growth_cycle": {
+      "germination_period": "7-10 days",
+      "vegetative_stage": "30-40 days",
+      "flowering_period": "20-25 days",
+      "maturation_period": "30-40 days"
+    },
+    "pests_and_diseases": [
+      {
+        "name": "Rust",
+        "type": "Fungal",
+        "symptoms": "Yellow-orange spots on leaves",
+        "prevention": "Resistant varieties, proper spacing",
+        "treatment": "Fungicide application"
+      },
+      {
+        "name": "Aphids",
+        "type": "Insect",
+        "symptoms": "Curling leaves, honeydew",
+        "prevention": "Natural predators, resistant varieties",
+        "treatment": "Insecticide application"
+      }
+    ],
+    "watering_requirements": {
+      "frequency": "As needed, depending on weather conditions",
+      "method": [
+        "Drip irrigation",
+        "Sprinkler",
+        "Surface irrigation"
+      ],
+      "amount": "Varies with soil type and weather conditions, generally 25-35 mm per week"
+    },
+    "nutrient_requirements": {
+      "fertilizer_type": [
+        {
+          "name": "Nitrogen",
+          "application_rate": "50-100 kg/ha at planting, with possible additional top dressing"
+        },
+        {
+          "name": "Phosphorus",
+          "application_rate": "40-70 kg/ha at planting"
+        },
+        {
+          "name": "Potassium",
+          "application_rate": "Varies based on soil test results"
+        }
+      ],
+      "soil_pH": "5.5-7.5"
+    },
+    "harvesting_information": {
+      "harvest_time": "Late spring to early summer for Winter Wheat; Summer for Spring Wheat",
+      "indicators": "Grain moisture content 12-14%, change in grain color to golden brown",
+      "methods": "Combine harvesting"
+    },
+    "storage_information": {
+      "conditions": "Cool, dry place, well-ventilated area",
+      "shelf_life": "Up to 1 year",
+      "pests": [
+        "Grain weevils",
+        "Moths"
+      ]
+    },
+    "market_information": {
+      "average_yield": "3-4 tons/ha",
+      "market_price": "Varies by region and market conditions",
+      "demand_trends": "Stable demand, with fluctuations based on global production variations"
+    },
+    "related_crops": [
+      "Barley",
+      "Rye",
+      "Oats"
+    ],
+    "additional_resources": [
+      {
+        "type": "Website",
+        "link": "https://www.ers.usda.gov/webdocs/publications/47116/51556_sb968b.pdf",
+        "title": "Overview of Wheat Farming - USDA ERS"
+      },
+      {
+        "type": "Website",
+        "link": "https://wheatworld.org/wheat-101/",
+        "title": "Wheat 101 | National Associate of Wheat Growers"
+      },
+      {
+        "type": "Website",
+        "link": "https://www.britannica.com/plant/wheat",
+        "title": "Wheat | Production, Types, Nutrition, Uses, & Facts | Britannica"
+      }
+    ]
+  }
+]

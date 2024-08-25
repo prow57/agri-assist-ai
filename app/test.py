@@ -5,7 +5,6 @@ from PIL import Image
 import io
 import json
 import os
-
 # File to store course history
 COURSE_HISTORY_FILE = 'course_history.json'
 
@@ -114,9 +113,77 @@ def display_course_results(results):
     # Save the new course to history
     save_course_history(results)
 
+def display_crop_info(crop_info):
+    st.subheader(crop_info['crop_name'])
+    st.write(f"Scientific Name: {crop_info['scientific_name']}")
+    st.write(f"Description: {crop_info['description']}")
+
+    st.subheader("Planting Information")
+    planting_info = crop_info['planting_information']
+    st.write(f"Optimal Planting Time: {planting_info['optimal_planting_time']}")
+    st.write(f"Seeding Rate: {planting_info['seeding_rate']}")
+    st.write(f"Planting Depth: {planting_info['planting_depth']}")
+
+    st.subheader("Growth Cycle")
+    growth_cycle = crop_info['growth_cycle']
+    st.write(f"Germination Period: {growth_cycle['germination_period']}")
+    st.write(f"Vegetative Stage: {growth_cycle['vegetative_stage']}")
+    st.write(f"Flowering Period: {growth_cycle['flowering_period']}")
+    st.write(f"Maturation Period: {growth_cycle['maturation_period']}")
+
+    st.subheader("Pests and Diseases")
+    for pest_disease in crop_info['pests_and_diseases']:
+        st.write(f"Name: {pest_disease['name']}")
+        st.write(f"Type: {pest_disease['type']}")
+        st.write(f"Symptoms: {pest_disease['symptoms']}")
+        st.write(f"Prevention: {pest_disease['prevention']}")
+        st.write(f"Treatment: {pest_disease['treatment']}")
+        st.write("---")
+
+    st.subheader("Watering Requirements")
+    water_req = crop_info['watering_requirements']
+    st.write(f"Frequency: {water_req['frequency']}")
+    st.write(f"Method: {', '.join(water_req['method'])}")
+    st.write(f"Amount: {water_req['amount']}")
+
+    st.subheader("Nutrient Requirements")
+    nutrient_req = crop_info['nutrient_requirements']
+    st.write(f"Soil pH: {nutrient_req['soil_pH']}")
+    st.write("Fertilizer Types:")
+    for fertilizer in nutrient_req['fertilizer_type']:
+        st.write(f"- {fertilizer['name']}: {fertilizer['application_rate']}")
+
+    st.subheader("Harvesting Information")
+    harvest_info = crop_info['harvesting_information']
+    st.write(f"Harvest Time: {harvest_info['harvest_time']}")
+    st.write(f"Indicators: {harvest_info['indicators']}")
+    st.write(f"Methods: {harvest_info['methods']}")
+
+    st.subheader("Storage Information")
+    storage_info = crop_info['storage_information']
+    st.write(f"Conditions: {storage_info['conditions']}")
+    st.write(f"Shelf Life: {storage_info['shelf_life']}")
+    st.write(f"Pests: {', '.join(storage_info['pests'])}")
+
+    st.subheader("Market Information")
+    market_info = crop_info['market_information']
+    st.write(f"Average Yield: {market_info['average_yield']}")
+    st.write(f"Market Price: {market_info['market_price']}")
+    st.write(f"Demand Trends: {market_info['demand_trends']}")
+
+    st.subheader("Related Crops")
+    st.write(", ".join(crop_info['related_crops']))
+
+    st.subheader("Additional Resources")
+    for resource in crop_info['additional_resources']:
+        st.write(f"Type: {resource['type']}")
+        st.write(f"Link: {resource['link']}")
+        if resource['title']:
+            st.write(f"Title: {resource['title']}")
+        st.write("---")
 st.title("Agricultural Analysis and Course Generation")
 
-tab1, tab2 = st.tabs(["Leaf Analysis", "Course Generation"])
+tab1, tab2, tab3 = st.tabs(["Leaf Analysis", "Course Generation", "Crop Information"])
 
 with tab1:
     st.header("Crop Leaf Analysis")
@@ -155,5 +222,22 @@ with tab2:
             st.write(f"Topic: {course['topic']}")
             st.write(f"Content: {course['content'][:100]}...")  # Show first 100 characters
             st.write("---")
-
+with tab3:
+    st.header("Crop Information")
+    crop_name = st.text_input("Enter crop name:")
+    
+    if st.button('Get Crop Info'):
+        if crop_name:
+            with st.spinner('Fetching crop information...'):
+                try:
+                    response = requests.get(f"http://localhost:8000/crop-info/{crop_name}")
+                    if response.status_code == 200:
+                        crop_info = response.json()
+                        display_crop_info(crop_info)
+                    else:
+                        st.error(f"Error fetching crop info: {response.text}")
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
+        else:
+            st.warning("Please enter a crop name.")
 st.sidebar.info("This application analyzes crop leaf images to identify diseases, provide treatment guidance, and generate agricultural courses.")

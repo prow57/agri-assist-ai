@@ -16,6 +16,7 @@ from fastapi import HTTPException
 from app.crew import main_crew
 from app.tasks import disease_research_task, guidance_generation_task
 from app.validator import *
+from app.librarymaker import CropInfoManager
 # Suppress warnings and set logging level
 warnings.filterwarnings("ignore", message="Overriding of current TracerProvider is not allowed")
 logging.getLogger("opentelemetry").setLevel(logging.ERROR)
@@ -26,7 +27,15 @@ load_dotenv()
 # Initialize FastAPI app
 app = FastAPI()
 leaf_image_analysis_agent = LeafAnalyser()
+crop_info_manager = CropInfoManager()
 
+@app.get("/crop-info/{crop_name}")
+async def get_crop_info(crop_name: str):
+    try:
+        crop_info = crop_info_manager.get_crop_description(crop_name)
+        return JSONResponse(content=crop_info)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching crop info: {str(e)}")
 @app.post("/analyze-leaf/")
 async def analyze_leaf(request: ImageRequest):
     print("step 1:done")
@@ -60,7 +69,7 @@ async def analyze_leaf(request: ImageRequest):
         
         output_leaf_analysis = {"leaf_analysis": leaf_analysis.dict()}
         return JSONResponse(content=output_leaf_analysis)
-
+    
     # Perform disease research and guidance generation
     main_crew_result = main_crew.kickoff(inputs=crew_inputs)
 
