@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:agrifrontend/lib/authentication/signup.dart';
 import 'package:agrifrontend/lib/authentication/mobilenumber.dart';
-import 'package:agrifrontend/lib/preferences/languageselection.dart';
+import 'package:agrifrontend/lib/personalization/languageselection.dart';
 
 class Signin extends StatefulWidget {
   @override
