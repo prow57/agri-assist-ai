@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:agrifrontend/lib/authentication/signup.dart';
+import 'package:agrifrontend/lib/authentication/mobilenumber.dart';
 
 class Signin extends StatefulWidget {
   @override
@@ -117,12 +119,20 @@ class _SigninState extends State<Signin> {
                     TextButton(
                       onPressed: () {
                         // Handle forgot password
+                        Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MobileNumberScreen()),
+                  );
                       },
                       child: Text('Forgot password?'),
                     ),
                     TextButton(
                       onPressed: () {
                         // Handle registration
+                         Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Signup()),
+                  );
                       },
                       child: Text('Register here'),
                     ),
