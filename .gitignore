@@ -1,6 +1,7 @@
 venv
 .env
-
+crop_info_output.json
+course_history.json
 __pycache__
 # Node.js
 node_modules/
