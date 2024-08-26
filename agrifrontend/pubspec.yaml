@@ -27,6 +27,8 @@ dependencies:
   flutter_cache_manager: ^3.3.0
   flutter_map: ^4.0.0
   latlong2: ^0.8.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   
 
 dev_dependencies:
@@ -34,6 +36,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
   flutter_native_splash: ^2.0.5
+  hive_generator: ^1.1.0
+  build_runner: ^2.3.3
 
 flutter:
   uses-material-design: true

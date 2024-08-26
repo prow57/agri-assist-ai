@@ -1,14 +1,16 @@
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/history_page.dart';
+import 'package:agrifrontend/AI%20pages/leaf%20scan/models/healthy_analysis.dart';
+import 'package:agrifrontend/AI%20pages/leaf%20scan/models/leaf_identification.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
-import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
-import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
-import 'package:agrifrontend/home/settings_page.dart';
 
 class LeafAnalysisScreen extends StatefulWidget {
   const LeafAnalysisScreen({super.key});
@@ -20,12 +22,12 @@ class LeafAnalysisScreen extends StatefulWidget {
 class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   File? _image;
   final ImagePicker picker = ImagePicker();
-  Map<String, dynamic>? _result;
+  dynamic _result;  // Can be LeafIdentificationResult or LeafHealthAnalysisResult
   bool _isLoading = false;
   String _errorMessage = '';
   int _selectedIndex = 0;
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(String endpoint) async {
     try {
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -36,7 +38,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           _errorMessage = '';
           _isLoading = true;
         });
-        await _analyzeImage(_image!);
+        await _analyzeImage(_image!, endpoint);
       } else {
         setState(() {
           _errorMessage = 'No image selected';
@@ -47,16 +49,17 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         _isLoading = false;
         _errorMessage = 'Error picking image: $e\n$stackTrace';
       });
+      _showSnackBar('Failed to pick image.');
     }
   }
 
-  Future<void> _analyzeImage(File image) async {
+  Future<void> _analyzeImage(File image, String endpoint) async {
     try {
       final bytes = await image.readAsBytes();
       final base64Image = base64Encode(bytes);
 
       final response = await http.post(
-        Uri.parse('http://37.187.29.19:6932/analyze-leaf/'),
+        Uri.parse(endpoint),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"image": base64Image}),
       );
@@ -64,15 +67,21 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
-          _result = data;
+          if (endpoint.contains('identify')) {
+            _result = LeafIdentificationResult.fromJson(data);
+          } else if (endpoint.contains('health-analysis')) {
+            _result = LeafHealthAnalysisResult.fromJson(data);
+          }
           _isLoading = false;
         });
+        _showSnackBar('Analysis completed successfully.');
       } else {
         setState(() {
           _result = null;
           _isLoading = false;
           _errorMessage = "Failed to get analysis: ${response.statusCode}";
         });
+        _showSnackBar('Analysis failed. Status: ${response.statusCode}');
       }
     } catch (e, stackTrace) {
       setState(() {
@@ -80,10 +89,11 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         _isLoading = false;
         _errorMessage = 'Error analyzing image: $e\n$stackTrace';
       });
+      _showSnackBar('Error analyzing image.');
     }
   }
 
-  Future<void> _captureImage() async {
+  Future<void> _captureImage(String endpoint) async {
     try {
       final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
@@ -94,7 +104,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           _errorMessage = '';
           _isLoading = true;
         });
-        await _analyzeImage(_image!);
+        await _analyzeImage(_image!, endpoint);
       } else {
         setState(() {
           _errorMessage = 'No image captured';
@@ -105,6 +115,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         _isLoading = false;
         _errorMessage = 'Error capturing image: $e\n$stackTrace';
       });
+      _showSnackBar('Failed to capture image.');
     }
   }
 
@@ -154,8 +165,15 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     });
   }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Leaf Diagnosis"),
@@ -191,8 +209,10 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               else if (_errorMessage.isNotEmpty)
                 _buildErrorDisplay(),
               const SizedBox(height: 20),
+              _buildActionButtons(),
+              const SizedBox(height: 20),
               _buildSubmitButton(),
-              if (_result != null) _buildAskQuestionButton(), // Add this line
+              if (_result != null) _buildAskQuestionButton(),
             ],
           ),
         ),
@@ -234,9 +254,17 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           decoration: BoxDecoration(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(12.0),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 8,
+                offset: Offset(2, 4),
+              ),
+            ],
             border: Border.all(color: Colors.green, width: 2),
           ),
-          height: 200,
+          height: 250,
+          width: double.infinity,
           child: _image != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
@@ -244,32 +272,68 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               : const Center(
                   child: Text(
                     'No image selected',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                    style: TextStyle(fontSize: 20, color: Colors.grey),
                   ),
                 ),
         ),
         const SizedBox(height: 10),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            IconButton(
-              icon: const Icon(Icons.image, color: Colors.green),
-              iconSize: 50,
-              onPressed: _isLoading ? null : _pickImage,
-            ),
-            const SizedBox(width: 20),
-            IconButton(
-              icon: const Icon(Icons.camera_alt, color: Colors.green),
-              iconSize: 50,
-              onPressed: _isLoading ? null : _captureImage,
-            ),
-            const SizedBox(width: 20),
-            IconButton(
-              icon: const Icon(Icons.refresh, color: Colors.green),
-              iconSize: 50,
-              onPressed: _isLoading ? null : _resetImage,
-            ),
+            _buildIconButton(Icons.image, "Gallery", Colors.green,
+                () => _pickImage('https://agriback-plum.vercel.app/api/vision/identify')),
+            _buildIconButton(Icons.camera_alt, "Camera", Colors.green,
+                () => _captureImage('https://agriback-plum.vercel.app/api/vision/identify')),
+            _buildIconButton(Icons.refresh, "Reset", Colors.red, _resetImage),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIconButton(
+      IconData icon, String label, Color color, VoidCallback onPressed) {
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(icon, color: color),
+          iconSize: 50,
+          onPressed: _isLoading ? null : onPressed,
+        ),
+        Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton(
+          onPressed: _isLoading
+              ? null
+              : () => _pickImage('https://agriback-plum.vercel.app/api/vision/identify'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          ),
+          child: const Text("Identify Leaf",
+              style: TextStyle(fontSize: 18, color: Colors.white)),
+        ),
+        ElevatedButton(
+          onPressed: _isLoading
+              ? null
+              : () => _pickImage('https://agriback-plum.vercel.app/api/vision/health-analysis'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          ),
+          child: const Text("Analyze Health",
+              style: TextStyle(fontSize: 18, color: Colors.white)),
         ),
       ],
     );
@@ -281,7 +345,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ScanHistoryPage(), // Replace with your actual page
+            builder: (context) => ScanHistoryPage(),
           ),
         );
       },
@@ -300,31 +364,37 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   Widget _buildResultDisplay() {
-    final leafAnalysis = _result?['leaf_analysis'];
-    final diseaseResearch = _result?['disease_research'];
-    final guidanceGeneration = _result?['guidance_generation'];
+    if (_result is LeafIdentificationResult) {
+      final identificationResult = _result as LeafIdentificationResult;
+      final suggestions = identificationResult.data.classification.suggestions;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (leafAnalysis != null)
-          _buildResultCard("Leaf Analysis", [
-            _buildResultRow("Crop Type", leafAnalysis['crop_type']),
-            _buildResultRow("Disease", leafAnalysis['disease_name']),
-            _buildResultRow("Accuracy", leafAnalysis['disease_accuracy']),
-          ]),
-        if (diseaseResearch != null)
-          _buildResultCard("Disease Research", [
-            _buildResultRow("Information", diseaseResearch['disease_information']),
-            _buildResultRow("Prevention", diseaseResearch['disease_prevention']),
-            _buildResultRow("Solution", diseaseResearch['disease_solution']),
-          ]),
-        if (guidanceGeneration != null)
-          _buildResultCard("Guidance Generation", [
-            _buildResultRow("Recommendation", guidanceGeneration['recommendation']),
-          ]),
-      ],
-    );
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: suggestions.map((suggestion) {
+          return _buildResultCard("Identification", [
+            _buildResultRow("Name", suggestion.name),
+            _buildResultRow("Probability", suggestion.probability.toString()),
+            // Add more fields as needed
+          ], Colors.green[100]);
+        }).toList(),
+      );
+    } else if (_result is LeafHealthAnalysisResult) {
+      final healthAnalysisResult = _result as LeafHealthAnalysisResult;
+      final diseaseSuggestions = healthAnalysisResult.data.diseaseSuggestions;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: diseaseSuggestions.map((suggestion) {
+          return _buildResultCard("Health Analysis", [
+            _buildResultRow("Disease", suggestion.name),
+            _buildResultRow("Probability", suggestion.probability.toString()),
+            // Add more fields as needed
+          ], Colors.red[100]);
+        }).toList(),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildResultRow(String title, String value) {
@@ -346,8 +416,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 
-  Widget _buildResultCard(String title, List<Widget> rows) {
+  Widget _buildResultCard(String title, List<Widget> rows, Color? color) {
     return Card(
+      color: color,
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -393,7 +464,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ChatPage(), // Navigate to the chat page
+            builder: (context) => const ChatPage(),
           ),
         );
       },
