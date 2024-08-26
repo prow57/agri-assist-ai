@@ -135,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                   const LeafAnalysisScreen()));
+                                  UploadImagePage()));
                     },
                   ),
                   CustomButton(
