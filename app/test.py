@@ -26,7 +26,7 @@ def encode_image(image):
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 def call_api(endpoint, payload):
-    api_url = f"http://localhost:8000/{endpoint}"  #in prod 37.187.29.19:6932
+    api_url = f"http://37.187.29.19:6932/{endpoint}"  #in prod 37.187.29.19:6932
     response = requests.post(api_url, json=payload)
     return response.json()
 
@@ -230,7 +230,7 @@ with tab3:
         if crop_name and crop_name.strip():
             with st.spinner('Fetching crop information...'):
                 try:
-                    response = requests.get(f"http://localhost:8000/crop-info/{crop_name.strip()}")
+                    response = requests.get(f"http://37.187.29.19:6932/crop-info/{crop_name.strip()}")
                     if response.status_code == 200:
                         crop_info = response.json()
                         display_crop_info(crop_info)
