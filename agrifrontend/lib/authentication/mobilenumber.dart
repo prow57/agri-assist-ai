@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:agrifrontend/lib/authentication/otpverification.dart
+import 'package:agrifrontend/authentication/otpverification.dart';
 import 'package:http/http.dart' as http;
 
 class MobileNumberScreen extends StatelessWidget {
@@ -37,8 +37,8 @@ class MobileNumberScreen extends StatelessWidget {
             SnackBar(content: Text('OTP sent successfully.')),
           );
           Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => OtpVerification()),
+            context,
+            MaterialPageRoute(builder: (context) => OtpVerification(phone: '',)),
           );
         } else {
           // Handle error
@@ -54,7 +54,9 @@ class MobileNumberScreen extends StatelessWidget {
       } else {
         // Handle other errors from the check-phone API
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to verify phone number. Please try again.')),
+          SnackBar(
+              content:
+                  Text('Failed to verify phone number. Please try again.')),
         );
       }
     } catch (error) {
