@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 import 'package:url_launcher/url_launcher.dart';
 
 class FarmingPracticesPage extends StatefulWidget {
@@ -13,13 +14,21 @@ class FarmingPracticesPage extends StatefulWidget {
 
 class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
 
   Map<String, dynamic>? _courseData;
   bool _isLoading = false;
   bool _isError = false;
   final ScrollController _scrollController = ScrollController();
+
+  String _selectedCategory = 'General Knowledge'; // Default value
+
+  // List of categories
+  final List<String> _categories = [
+    'General Knowledge',
+    'Animal Rearing',
+    'Crop Farming',
+  ];
 
   // Define the GlobalKeys for each section
   final GlobalKey _objectivesKey = GlobalKey();
@@ -37,8 +46,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
       _isError = false;
     });
 
-    const url =
-        'https://agriback-plum.vercel.app/api/courses/generate-full-course';
+    const url = 'https://agriback-plum.vercel.app/api/courses/generate-course';
 
     try {
       final response = await http.post(
@@ -48,14 +56,13 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
         },
         body: json.encode({
           'title': _titleController.text,
-          'description': _descriptionController.text,
-          'category': _categoryController.text,
+          'category': _selectedCategory,
         }),
       );
 
       if (response.statusCode == 200) {
         setState(() {
-          _courseData = json.decode(response.body);
+          _courseData = _cleanJsonData(json.decode(response.body));
           _isLoading = false;
         });
       } else {
@@ -81,6 +88,34 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
       });
       print('Error: $e');
     }
+  }
+
+  // Function to clean the JSON data
+  Map<String, dynamic> _cleanJsonData(Map<String, dynamic> courseData) {
+    // Clean the 'content' field if it exists
+    if (courseData.containsKey('content') && courseData['content'] is Map<String, dynamic>) {
+      courseData['content']['sections'] = _cleanSections(courseData['content']['sections']);
+    }
+    return courseData;
+  }
+
+  // Function to clean sections
+  List<Map<String, String>> _cleanSections(List<dynamic> sections) {
+    return sections.map((section) {
+      // Remove '**' from the content
+      String cleanedContent = section['content'].replaceAll('**', '');
+
+      // Add a newline after the title if it's on the same line
+      String title = section['title'];
+      if (cleanedContent.startsWith(title)) {
+        cleanedContent = cleanedContent.replaceFirst(title, '$title\n');
+      }
+
+      return {
+        'title': title,
+        'content': cleanedContent,
+      };
+    }).toList();
   }
 
   void _scrollToSection(GlobalKey sectionKey) {
@@ -119,24 +154,25 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
               TextField(
                 controller: _titleController,
                 decoration: const InputDecoration(
-                  labelText: 'Course Title',
+                  labelText: 'What do you want to know?',
                   prefixIcon: Icon(Icons.title),
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16.0),
-              TextField(
-                controller: _descriptionController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Course Description',
-                  prefixIcon: Icon(Icons.description),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _categoryController,
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                items: _categories.map((category) {
+                  return DropdownMenuItem<String>(
+                    value: category,
+                    child: Text(category),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedCategory = value!;
+                  });
+                },
                 decoration: const InputDecoration(
                   labelText: 'Category',
                   prefixIcon: Icon(Icons.category),
@@ -165,7 +201,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
-                              _courseData?['description'] ?? 'Fill all fields abouve',
+                              _courseData?['description'] ?? 'Fill all fields above',
                               style: const TextStyle(
                                 color: Colors.red,
                                 fontSize: 16,
@@ -211,23 +247,6 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          _courseData!['category'] ?? 'No Category',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: Colors.green,
-          ),
-        ),
-        const SizedBox(height: 20),
-        Text(
-          _courseData!['description'] ?? 'No Description',
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.black54,
           ),
         ),
         const SizedBox(height: 20),
@@ -277,57 +296,151 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
       children: [
         _buildExpansionTile('Objectives', content['objectives'], _objectivesKey),
         _buildExpansionTile('Introduction', content['introduction'], _introductionKey),
-        _buildExpansionTile('Content', content['sections'], _contentKey),
+        _buildExpansionTile('Content', content['sections'], _contentKey, isSectionList: true),
         _buildExpansionTile('Guided Practice', content['guided_practice'], _guidedPracticeKey),
         _buildExpansionTile('Conclusion', content['conclusion'], _conclusionKey),
-        _buildExpansionTile('References', content['references'], _referencesKey),
+        _buildReference('References', content['references'], _referencesKey),
         _buildExpansionTile('Practical Lessons', content['practical_lessons'], _practicalLessonsKey),
         _buildExpansionTile('Assessment', content['assessment'], _assessmentKey),
       ],
     );
   }
 
-  Widget _buildExpansionTile(String title, dynamic sectionContent, GlobalKey sectionKey) {
-    return sectionContent != null && sectionContent.isNotEmpty
-        ? ExpansionTile(
-            key: sectionKey,
-            title: Text(
-              title,
+  Widget _buildExpansionTile(String title, dynamic content, GlobalKey sectionKey, {bool isSectionList = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: ExpansionTile(
+        key: sectionKey,
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        children: isSectionList ? _buildSectionList(content) : [_buildContentText(content)],
+      ),
+    );
+  }
+
+  Widget _buildContentText(dynamic content) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Text(
+        content?.toString() ?? 'No content available',
+        style: const TextStyle(fontSize: 16, color: Colors.black87),
+      ),
+    );
+  }
+
+  List<Widget> _buildSectionList(List<dynamic> sections) {
+    return sections.map((section) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              section['title'] ?? '',
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
-            children: [
-              const SizedBox(height: 10),
-              RichText(
-                text: TextSpan(
-                  children: _buildTextSpans(sectionContent),
-                  style: const TextStyle(color: Colors.black),
+            const SizedBox(height: 4),
+            Text(
+              section['content'] ?? '',
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+            ),
+          ],
+        ),
+      );
+    }).toList();
+  }
+
+    Widget _buildReference(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
+    return sectionContent != null
+        ? Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: ExpansionTile(
+              key: sectionKey, // Attach the GlobalKey here
+              title: Text(
+                sectionTitle,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 10),
-            ],
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: sectionContent is List
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: sectionContent.map<Widget>((item) {
+                            final content = item is Map ? item['link'] : item.toString();
+                            return content != null && content.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                    child: _buildRichTextWithLinks(content),
+                                  )
+                                : const SizedBox.shrink();
+                          }).toList(),
+                        )
+                      : _buildRichTextWithLinks(sectionContent.toString()),
+                ),
+              ],
+            ),
           )
         : const SizedBox.shrink();
   }
 
-  List<TextSpan> _buildTextSpans(dynamic content) {
-    if (content is List) {
-      return content.map<TextSpan>((item) {
-        return TextSpan(
-          text: '$item\n',
-          style: const TextStyle(fontSize: 16, height: 1.5),
-        );
-      }).toList();
-    } else if (content is String) {
-      return [
-        TextSpan(
-          text: '$content\n',
-          style: const TextStyle(fontSize: 16, height: 1.5),
-        ),
-      ];
+  Widget _buildRichTextWithLinks(String text) {
+    final RegExp urlRegex = RegExp(r'((https?|ftp)://[^\s/$.?#].[^\s]*)');
+    final matches = urlRegex.allMatches(text);
+
+    if (matches.isEmpty) {
+      return Text(
+        text,
+        style: const TextStyle(fontSize: 16, color: Colors.black54),
+      );
     }
-    return [];
+
+    final List<TextSpan> textSpans = [];
+    int lastMatchEnd = 0;
+
+    for (final match in matches) {
+      if (match.start > lastMatchEnd) {
+        textSpans.add(TextSpan(text: text.substring(lastMatchEnd, match.start)));
+      }
+
+      final url = match.group(0);
+      if (url != null) {
+        textSpans.add(TextSpan(
+          text: url,
+          style: const TextStyle(color: Colors.blue),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
+              launchUrl(Uri.parse(url));
+            },
+        ));
+      }
+
+      lastMatchEnd = match.end;
+    }
+
+    if (lastMatchEnd < text.length) {
+      textSpans.add(TextSpan(text: text.substring(lastMatchEnd)));
+    }
+
+    return RichText(
+      text: TextSpan(
+        style: const TextStyle(fontSize: 16, color: Colors.black54),
+        children: textSpans,
+      ),
+    );
   }
 }

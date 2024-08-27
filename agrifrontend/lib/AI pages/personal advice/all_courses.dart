@@ -1,9 +1,9 @@
-import 'package:agrifrontend/AI%20pages/personal%20advice/full_course.dart';
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'full_course.dart'; // Import your FullCourse page
 import 'personalized_advice_page.dart';
 
 class AllCoursesPage extends StatefulWidget {
@@ -17,7 +17,14 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   List<dynamic> _courses = [];
   bool _isLoading = true;
   String _errorMessage = '';
-  int _selectedIndex = 1; // Set the index for the Courses tab to be active
+  int _selectedIndex = 1;
+
+  // List of asset images
+  final List<String> _assetImages = [
+    '../../assets/image1.jpg',
+    '../../assets/image2.jpg',
+    '../../assets/image3.jpg',
+  ];
 
   @override
   void initState() {
@@ -55,8 +62,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   }
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex)
-      return; // Ignore tap if already on the selected tab
+    if (index == _selectedIndex) return;
 
     setState(() {
       _selectedIndex = index;
@@ -109,12 +115,12 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
                         itemCount: _courses.length,
                         itemBuilder: (context, index) {
                           final course = _courses[index];
+                          final imageIndex = index % _assetImages.length;
                           return _buildCourseCard(
                             context,
                             course['title'] ?? 'No title available',
-                            course['imagePath'],
-                            course[
-                                'id'], // Assuming 'id' is the identifier for the course
+                            _assetImages[imageIndex], // Use asset image
+                            course['id'], // Assuming 'id' is the identifier for the course
                           );
                         },
                       ),
@@ -154,7 +160,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   Widget _buildCourseCard(
     BuildContext context,
     String title,
-    String? imagePath,
+    String imagePath,
     String courseId,
   ) {
     return GestureDetector(
@@ -179,7 +185,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
             gradient: LinearGradient(
               colors: [
                 Colors.green.withOpacity(0.2),
-                Colors.green.withOpacity(0.1)
+                Colors.green.withOpacity(0.1),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -187,20 +193,15 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.all(16.0),
-            leading: imagePath != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image.network(
-                      imagePath,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.broken_image, size: 80);
-                      },
-                    ),
-                  )
-                : const Icon(Icons.image_not_supported, size: 80),
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.asset(
+                imagePath,
+                width: 100, // Adjust this width as needed
+                height: 250, // Increase this height as needed
+                fit: BoxFit.cover,
+              ),
+            ),
             title: Text(
               title,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
