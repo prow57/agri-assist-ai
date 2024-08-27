@@ -1,1 +1,29 @@
-
+{
+  "name": "agri-assist-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.4",
+    "twilio": "^4.9.0",
+    "africastalking": "^0.5.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "multer": "^1.4.4-lts.1",
+    "path": "^0.12.7",
+    "fs": "^0.0.1-security",
+    "uuid": "^10.0.0",
+    "imaginesdk":"^1.1.0",
+    "bcrypt": "^5.1.0",
+    "express": "^4.19.2",
+    "firebase": "^10.13.0",
+    "firebase-admin": "^12.3.1",
+    "groq-sdk": "^0.5.0"
+  }
+}
