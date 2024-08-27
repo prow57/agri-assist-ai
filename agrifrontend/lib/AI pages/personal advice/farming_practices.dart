@@ -189,6 +189,9 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[700],
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // Border radius
+              ),
                   ),
                 ),
               ),
@@ -255,38 +258,44 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
     );
   }
 
-  Widget _buildTableOfContents() {
-    final tocItems = [
-      {'title': 'Objectives', 'key': _objectivesKey},
-      {'title': 'Introduction', 'key': _introductionKey},
-      {'title': 'Content', 'key': _contentKey},
-      {'title': 'Guided Practice', 'key': _guidedPracticeKey},
-      {'title': 'Conclusion', 'key': _conclusionKey},
-      {'title': 'References', 'key': _referencesKey},
-      {'title': 'Practical Lessons', 'key': _practicalLessonsKey},
-      {'title': 'Assessment', 'key': _assessmentKey},
-    ];
+Widget _buildTableOfContents() {
+  final tocItems = [
+    {'title': 'Objectives', 'key': _objectivesKey},
+    {'title': 'Introduction', 'key': _introductionKey},
+    {'title': 'Content', 'key': _contentKey},
+    {'title': 'Guided Practice', 'key': _guidedPracticeKey},
+    {'title': 'Conclusion', 'key': _conclusionKey},
+    {'title': 'References', 'key': _referencesKey},
+    {'title': 'Practical Lessons', 'key': _practicalLessonsKey},
+    {'title': 'Assessment', 'key': _assessmentKey},
+  ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: tocItems.map((tocItem) {
-        return GestureDetector(
-          onTap: () => _scrollToSection(tocItem['key'] as GlobalKey),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Text(
-              tocItem['title'] as String,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.blue,
-                decoration: TextDecoration.underline,
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: tocItems.map((tocItem) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0), // Vertical spacing between buttons
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () => _scrollToSection(tocItem['key'] as GlobalKey),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.green,
+              backgroundColor: Colors.green.shade50, // Background color
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // Border radius
               ),
             ),
+            child: Text(tocItem['title'] as String),
           ),
-        );
-      }).toList(),
-    );
-  }
+        ),
+      );
+    }).toList(),
+  );
+}
+
+
 
   Widget _buildCollapsibleSections() {
     final content = _courseData!['content'] as Map<String, dynamic>;
@@ -344,9 +353,9 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
             Text(
               section['title'] ?? '',
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Color.fromARGB(221, 85, 135, 85),
               ),
             ),
             const SizedBox(height: 4),
