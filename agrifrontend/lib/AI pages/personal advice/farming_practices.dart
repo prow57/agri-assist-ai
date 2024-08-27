@@ -1,8 +1,8 @@
+import 'package:agrifrontend/AI%20pages/personal%20advice/history_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:url_launcher/url_launcher.dart';
 
 class FarmingPracticesPage extends StatefulWidget {
@@ -22,15 +22,14 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
   final ScrollController _scrollController = ScrollController();
 
   String _selectedCategory = 'General Knowledge'; // Default value
+  List<String> _searchHistory = []; // List to store search history
 
-  // List of categories
   final List<String> _categories = [
     'General Knowledge',
     'Animal Rearing',
     'Crop Farming',
   ];
 
-  // Define the GlobalKeys for each section
   final GlobalKey _objectivesKey = GlobalKey();
   final GlobalKey _introductionKey = GlobalKey();
   final GlobalKey _contentKey = GlobalKey();
@@ -46,7 +45,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
       _isError = false;
     });
 
-    const url = 'https://agriback-plum.vercel.app/api/courses/generate-course';
+    const url = 'https://agriback-plum.vercel.app/api/courses/generate-explore';
 
     try {
       final response = await http.post(
@@ -64,6 +63,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
         setState(() {
           _courseData = _cleanJsonData(json.decode(response.body));
           _isLoading = false;
+          _addToSearchHistory(_titleController.text); // Add search term to history
         });
       } else {
         setState(() {
@@ -90,27 +90,37 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
     }
   }
 
-  // Function to clean the JSON data
+  void _addToSearchHistory(String query) {
+    setState(() {
+      if (!_searchHistory.contains(query)) {
+        _searchHistory.add(query);
+      }
+    });
+  }
+
+  void _navigateToHistoryPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HistoryPage(),
+      ),
+    );
+  }
+
   Map<String, dynamic> _cleanJsonData(Map<String, dynamic> courseData) {
-    // Clean the 'content' field if it exists
     if (courseData.containsKey('content') && courseData['content'] is Map<String, dynamic>) {
       courseData['content']['sections'] = _cleanSections(courseData['content']['sections']);
     }
     return courseData;
   }
 
-  // Function to clean sections
   List<Map<String, String>> _cleanSections(List<dynamic> sections) {
     return sections.map((section) {
-      // Remove '**' from the content
       String cleanedContent = section['content'].replaceAll('**', '');
-
-      // Add a newline after the title if it's on the same line
       String title = section['title'];
       if (cleanedContent.startsWith(title)) {
         cleanedContent = cleanedContent.replaceFirst(title, '$title\n');
       }
-
       return {
         'title': title,
         'content': cleanedContent,
@@ -142,7 +152,23 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
       appBar: AppBar(
         title: const Text('Farming Practices'),
         backgroundColor: Colors.green[800],
-        foregroundColor: Colors.white, // Set the color of the title and icon to white
+        foregroundColor: Colors.white,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'history') {
+                _navigateToHistoryPage();
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                value: 'history',
+                child: const Text('History'),
+              ),
+            ],
+            icon: const Icon(Icons.more_vert),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -190,8 +216,8 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
                     backgroundColor: Colors.green[700],
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0), // Border radius
-              ),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                   ),
                 ),
               ),
@@ -231,7 +257,6 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Table of Contents
         Text(
           'Table of Contents',
           style: const TextStyle(
@@ -242,8 +267,6 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
         const SizedBox(height: 10),
         _buildTableOfContents(),
         const SizedBox(height: 20),
-
-        // Course Content
         Text(
           _courseData!['title'] ?? 'No Title',
           style: const TextStyle(
@@ -258,44 +281,42 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
     );
   }
 
-Widget _buildTableOfContents() {
-  final tocItems = [
-    {'title': 'Objectives', 'key': _objectivesKey},
-    {'title': 'Introduction', 'key': _introductionKey},
-    {'title': 'Content', 'key': _contentKey},
-    {'title': 'Guided Practice', 'key': _guidedPracticeKey},
-    {'title': 'Conclusion', 'key': _conclusionKey},
-    {'title': 'References', 'key': _referencesKey},
-    {'title': 'Practical Lessons', 'key': _practicalLessonsKey},
-    {'title': 'Assessment', 'key': _assessmentKey},
-  ];
+  Widget _buildTableOfContents() {
+    final tocItems = [
+      {'title': 'Objectives', 'key': _objectivesKey},
+      {'title': 'Introduction', 'key': _introductionKey},
+      {'title': 'Content', 'key': _contentKey},
+      {'title': 'Guided Practice', 'key': _guidedPracticeKey},
+      {'title': 'Conclusion', 'key': _conclusionKey},
+      {'title': 'References', 'key': _referencesKey},
+      {'title': 'Practical Lessons', 'key': _practicalLessonsKey},
+      {'title': 'Assessment', 'key': _assessmentKey},
+    ];
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: tocItems.map((tocItem) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0), // Vertical spacing between buttons
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () => _scrollToSection(tocItem['key'] as GlobalKey),
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.green,
-              backgroundColor: Colors.green.shade50, // Background color
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0), // Border radius
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: tocItems.map((tocItem) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => _scrollToSection(tocItem['key'] as GlobalKey),
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.green,
+                backgroundColor: Colors.green.shade50,
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
               ),
+              child: Text(tocItem['title'] as String),
             ),
-            child: Text(tocItem['title'] as String),
           ),
-        ),
-      );
-    }).toList(),
-  );
-}
-
-
+        );
+      }).toList(),
+    );
+  }
 
   Widget _buildCollapsibleSections() {
     final content = _courseData!['content'] as Map<String, dynamic>;
@@ -303,78 +324,71 @@ Widget _buildTableOfContents() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildExpansionTile('Objectives', content['objectives'], _objectivesKey),
-        _buildExpansionTile('Introduction', content['introduction'], _introductionKey),
-        _buildExpansionTile('Content', content['sections'], _contentKey, isSectionList: true),
-        _buildExpansionTile('Guided Practice', content['guided_practice'], _guidedPracticeKey),
-        _buildExpansionTile('Conclusion', content['conclusion'], _conclusionKey),
+        _buildSection('Objectives', content['objectives'], _objectivesKey),
+        _buildSection('Introduction', content['introduction'], _introductionKey),
+        _buildSection('Content', content['sections'], _contentKey),
+        _buildSection('Guided Practice', content['guided_practice'], _guidedPracticeKey),
+        _buildSection('Conclusion', content['conclusion'], _conclusionKey),
         _buildReference('References', content['references'], _referencesKey),
-        _buildExpansionTile('Practical Lessons', content['practical_lessons'], _practicalLessonsKey),
-        _buildExpansionTile('Assessment', content['assessment'], _assessmentKey),
+        _buildSection('Practical Lessons', content['practical_lessons'], _practicalLessonsKey),
+        _buildSection('Assessment', content['assessment'], _assessmentKey),
       ],
     );
   }
 
-  Widget _buildExpansionTile(String title, dynamic content, GlobalKey sectionKey, {bool isSectionList = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: ExpansionTile(
-        key: sectionKey,
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        children: isSectionList ? _buildSectionList(content) : [_buildContentText(content)],
-      ),
-    );
-  }
-
-  Widget _buildContentText(dynamic content) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Text(
-        content?.toString() ?? 'No content available',
-        style: const TextStyle(fontSize: 16, color: Colors.black87),
-      ),
-    );
-  }
-
-  List<Widget> _buildSectionList(List<dynamic> sections) {
-    return sections.map((section) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              section['title'] ?? '',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(221, 85, 135, 85),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              section['content'] ?? '',
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-            ),
-          ],
-        ),
-      );
-    }).toList();
-  }
-
-    Widget _buildReference(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
+  Widget _buildSection(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
     return sectionContent != null
         ? Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: ExpansionTile(
-              key: sectionKey, // Attach the GlobalKey here
+              key: sectionKey,
+              title: Text(
+                sectionTitle,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: sectionContent is List
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: sectionContent.map<Widget>((item) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Text(
+                                item is Map ? item['content'] ?? '' : item.toString(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        )
+                      : Text(
+                          sectionContent.toString(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          )
+        : const SizedBox.shrink();
+  }
+
+  Widget _buildReference(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
+    return sectionContent != null
+        ? Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: ExpansionTile(
+              key: sectionKey,
               title: Text(
                 sectionTitle,
                 style: const TextStyle(
