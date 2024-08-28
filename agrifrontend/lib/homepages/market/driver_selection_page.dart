@@ -25,7 +25,6 @@ class _DriverListPageState extends State<DriverListPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch drivers by market ID
     _futureDrivers = DriverService().fetchDriversByMarket(widget.marketId);
     _futureDrivers.then((drivers) {
       setState(() {
@@ -36,12 +35,11 @@ class _DriverListPageState extends State<DriverListPage> {
     }).catchError((error) {
       setState(() {
         _isLoading = false;
-        _drivers = []; // Handle error by setting an empty list
+        _drivers = [];
         _filteredDrivers = [];
       });
     });
 
-    // Trigger filtering as the user types
     _searchController.addListener(() {
       _filterDrivers();
     });
@@ -64,13 +62,11 @@ class _DriverListPageState extends State<DriverListPage> {
     });
   }
 
-  // Add this method to handle phone dialing
   void _dialNumber(String phoneNumber) async {
     final url = 'tel:$phoneNumber';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      // Handle error or show a message if the phone dialer is not available
       print('Could not open dialer.');
     }
   }
@@ -78,7 +74,7 @@ class _DriverListPageState extends State<DriverListPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+    if (index == _selectedIndex) return;
 
     setState(() {
       _selectedIndex = index;
@@ -125,7 +121,7 @@ class _DriverListPageState extends State<DriverListPage> {
         ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -140,12 +136,12 @@ class _DriverListPageState extends State<DriverListPage> {
               decoration: InputDecoration(
                 labelText: 'Search drivers...',
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.clear),
+                  icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    _filterDrivers(); // Trigger filtering after clearing the text field
+                    _filterDrivers();
                   },
                 ),
                 border: OutlineInputBorder(
@@ -158,9 +154,9 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : _filteredDrivers.isEmpty
-                    ? Center(child: Text('No drivers found'))
+                    ? const Center(child: Text('No drivers found'))
                     : ListView.builder(
                         itemCount: _filteredDrivers.length,
                         itemBuilder: (context, index) {
@@ -171,33 +167,34 @@ class _DriverListPageState extends State<DriverListPage> {
                             elevation: 4,
                             child: ListTile(
                               contentPadding: const EdgeInsets.all(16),
-                              leading: Icon(Icons.person,
-                                  size: 40, color: Colors.green),
+                              leading: const CircleAvatar(
+                                backgroundColor: Colors.green,
+                                child: Icon(Icons.person,
+                                    size: 30, color: Colors.white),
+                              ),
                               title: Text(
                                 '${driver.firstName} ${driver.lastName}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              subtitle: Row(
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  IconButton(
-                                    icon: Icon(Icons.phone, color: Colors.green),
-                                    onPressed: () => _dialNumber(driver.phone1),
-                                  ),
-                                  SizedBox(width: 8), // Add spacing between phone icons
-                                  Expanded(
-                                    child: Text(driver.phone1, style: TextStyle(color: Colors.grey[600])),
-                                  ),
-                                  SizedBox(width: 16), // Add spacing before the second phone number
-                                  IconButton(
-                                    icon: Icon(Icons.phone, color: Colors.green),
-                                    onPressed: () => _dialNumber(driver.phone2),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(driver.phone2, style: TextStyle(color: Colors.grey[600])),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.phone,
+                                          color: Colors.green, size: 16),
+                                      const SizedBox(width: 8),
+                                      Text(driver.phone1),
+                                      const SizedBox(width: 16),
+                                      const Icon(Icons.phone,
+                                          color: Colors.green, size: 16),
+                                      const SizedBox(width: 8),
+                                      Text(driver.phone2),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -212,7 +209,7 @@ class _DriverListPageState extends State<DriverListPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Set the current index
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -225,7 +222,7 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Ai',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
