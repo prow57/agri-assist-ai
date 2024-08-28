@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:agrifrontend/authentication/mobilenumber.dart';
 import 'package:agrifrontend/authentication/signup.dart';
+import 'package:agrifrontend/personalization/community.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:agrifrontend/preferences/community.dart'; // Import the Community page
 
 class Signin extends StatefulWidget {
   @override
