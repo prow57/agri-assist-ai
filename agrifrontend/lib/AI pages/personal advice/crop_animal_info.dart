@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http; // Import the http package
+import 'package:http/http.dart' as http;
 
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
@@ -189,17 +189,26 @@ class CropTabContent extends StatefulWidget {
 class _CropTabContentState extends State<CropTabContent> {
   final TextEditingController _cropController = TextEditingController();
   String cropInfo = "";
+  String warningMessage = "";
+  bool isLoading = false;
 
   Future<void> fetchCropInfo() async {
     final cropName = _cropController.text.trim();
     if (cropName.isEmpty) {
       setState(() {
-        cropInfo = "Please enter a crop name.";
+        warningMessage = "Please enter a crop name.";
+        cropInfo = ""; // Clear the previous info
+        isLoading = false; // Ensure loading state is false
       });
       return;
     }
 
-    final url = 'http://37.187.29.19:6932/crop-info/$cropName';
+    final url = 'http://37.187.29.19:6932/crop-info?name=$cropName';
+
+    setState(() {
+      isLoading = true;
+      warningMessage = ""; // Clear the warning message
+    });
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -257,12 +266,18 @@ class _CropTabContentState extends State<CropTabContent> {
         });
       } else {
         setState(() {
-          cropInfo = "Failed to load crop information.";
+          warningMessage = "Failed to load crop information.";
+          cropInfo = ""; // Clear the previous info
         });
       }
     } catch (e) {
       setState(() {
-        cropInfo = "Error fetching data: $e";
+        warningMessage = "Error fetching data: $e";
+        cropInfo = ""; // Clear the previous info
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
       });
     }
   }
@@ -295,10 +310,30 @@ class _CropTabContentState extends State<CropTabContent> {
             child: Text('Get Crop Info'),
           ),
           SizedBox(height: 16),
-          Text(
-            cropInfo,
-            style: TextStyle(fontSize: 16),
-          ),
+          if (isLoading)
+            Center(
+              child: CircularProgressIndicator(),
+            )
+          else if (warningMessage.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.red[100],
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                warningMessage,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                ),
+              ),
+            )
+          else
+            Text(
+              cropInfo,
+              style: TextStyle(fontSize: 16),
+            ),
         ],
       ),
     );

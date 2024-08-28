@@ -1,6 +1,7 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
+import 'package:agrifrontend/homepages/market/driver_selection_page.dart';
 import 'package:agrifrontend/homepages/market/market_locations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -104,24 +105,27 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
     });
   }
 
-  void _onFloatingButtonPressed(String buttonType) {
-    if (_isPremiumUser) {
-      // Execute premium functionality here
-      if (buttonType == 'location') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MarketLocation()),
-        );
-      } else if (buttonType == 'car') {
-        // Implement car functionality here
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Car functionality is not yet implemented')),
-        );
-      }
-    } else {
-      _showPremiumPopup();
+void _onFloatingButtonPressed(String buttonType) {
+  if (_isPremiumUser) {
+    if (buttonType == 'location') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MarketLocation()),
+      );
+    } else if (buttonType == 'car') {
+      // Navigate to the DriverListPage with the market ID
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DriverListPage(marketId: widget.marketId),
+        ),
+      );
     }
+  } else {
+    _showPremiumPopup();
   }
+}
+
 
   void _showPremiumPopup() {
     showDialog(
