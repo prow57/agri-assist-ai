@@ -2,17 +2,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class OtpVerification extends StatelessWidget {
+class OtpVerificationPage extends StatelessWidget {
   final TextEditingController _otpController = TextEditingController();
   final String phone;
 
-  OtpVerification({required this.phone});
+  OtpVerificationPage({required this.phone});
 
   Future<void> _verifyOtp(BuildContext context) async {
     final otp = _otpController.text;
 
     if (otp.isEmpty) {
-      // Show a snackbar or dialog to ask the user to enter the OTP
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter the OTP.')),
       );
@@ -21,25 +20,22 @@ class OtpVerification extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('https://agriback-plum.vercel.app/api/verify/verify-otp'), // Replace with your actual API endpoint
+        Uri.parse('https://agriback-plum.vercel.app/api/verify/verify-otp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': phone, 'otp': otp}),
       );
 
       if (response.statusCode == 200) {
-        // OTP verified successfully, navigate to the next page (e.g., login or preferences)
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()), // Adjust as needed
+          '/newpassword',
         );
       } else {
-        // Handle error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Invalid OTP. Please try again.')),
         );
       }
     } catch (error) {
-      // Handle network error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Network error. Please check your connection.')),
       );
@@ -55,18 +51,13 @@ class OtpVerification extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo Section
               Image.asset('assets/images/logo.png', height: 100),
               SizedBox(height: 20),
-
-              // OTP Sent Message
               Text(
                 'OTP sent to $phone',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               SizedBox(height: 20),
-
-              // "Enter OTP" Field
               TextField(
                 controller: _otpController,
                 keyboardType: TextInputType.number,
@@ -78,8 +69,6 @@ class OtpVerification extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-
-              // Verify Button
               ElevatedButton(
                 onPressed: () => _verifyOtp(context),
                 style: ElevatedButton.styleFrom(
@@ -94,17 +83,6 @@ class OtpVerification extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class LoginScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Login Screen Placeholder'), // Replace with actual login screen UI
       ),
     );
   }
