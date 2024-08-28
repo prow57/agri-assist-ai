@@ -46,7 +46,8 @@ flutter:
     - assets/crops.jpg
     - assets/pests.jpg
     - assets/weeds.jpg
-    - assets/logo.jpg
+    - assets/logo.png
+    - assets/images/logo.png
 
 flutter_native_splash:
   color: "#ffffff" # Background color of your splash screen
