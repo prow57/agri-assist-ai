@@ -4,16 +4,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 
-class CourseDetailPage extends StatefulWidget {
+class HistoryFullCourse extends StatefulWidget {
   final String courseId;
 
-  const CourseDetailPage({required this.courseId, super.key});
+  const HistoryFullCourse({required this.courseId, super.key});
 
   @override
-  _CourseDetailPageState createState() => _CourseDetailPageState();
+  _HistoryFullCourseState createState() => _HistoryFullCourseState();
 }
 
-class _CourseDetailPageState extends State<CourseDetailPage> {
+class _HistoryFullCourseState extends State<HistoryFullCourse> {
   Map<String, dynamic>? courseData;
   bool _isLoading = true;
   final ScrollController _scrollController = ScrollController();
@@ -35,10 +35,10 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
   }
 
   Future<void> _fetchCourseDetail() async {
-    final url = 'https://agriback-plum.vercel.app/api/courses/generate-full-course/${widget.courseId}';
+    final url = 'https://agriback-plum.vercel.app/api/courses/get-explore/${widget.courseId}';
 
     try {
-      final response = await http.post(Uri.parse(url), headers: {
+      final response = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
       });
 
@@ -103,9 +103,9 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Table of Contents
-                      const Text(
+                      Text(
                         'Table of Contents',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -145,7 +145,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                     ],
                   ),
                 )
-              : const Center(child: Text('No course data available.')),
+              : Center(child: Text('No course data available.')),
       floatingActionButton: FloatingActionButton(
         onPressed: _scrollToTop,
         backgroundColor: Colors.green,
@@ -154,7 +154,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     );
   }
 
-Widget _buildTableOfContents() {
+  Widget _buildTableOfContents() {
   final tocItems = [
     {'title': 'Objectives', 'key': _objectivesKey},
     {'title': 'Introduction', 'key': _introductionKey},

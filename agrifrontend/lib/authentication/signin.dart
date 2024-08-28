@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:agrifrontend/AI%20pages/community/community_page.dart';
 import 'package:agrifrontend/authentication/mobilenumber.dart';
 import 'package:agrifrontend/authentication/signup.dart';
+import 'package:agrifrontend/personalization/community.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
