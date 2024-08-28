@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:agrifrontend/authentication/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+// import 'package:agrifrontend/personalization/preferences.dart'
 class Signup extends StatefulWidget {
   @override
   _SignupState createState() => _SignupState();
