@@ -170,14 +170,14 @@ class _WeatherPageState extends State<WeatherPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Weather Forecast', style: TextStyle(color: Colors.white),),
-        backgroundColor: _isPremiumUser ? Colors.orange[800] : Colors.green[700],
+        backgroundColor: Colors.green[700],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           if (_isPremiumUser)
-            Icon(Icons.star, color: Colors.yellow[700]),
+            const Icon(Icons.star, color: Colors.yellow),
           IconButton(
             icon: Icon(_isPremiumUser ? Icons.star : Icons.star_border, color: Colors.white),
             onPressed: _onPremiumIconPressed,
@@ -274,9 +274,9 @@ class _WeatherPageState extends State<WeatherPage> {
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: _isPremiumUser ? Colors.orange[100] : Colors.lightGreen[100],
+        color: Colors.green[50],
         borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: _isPremiumUser ? Colors.orange : Colors.green, width: 1.0),
+        border: Border.all(color: Colors.green[700]!, width: 1.0),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -476,10 +476,10 @@ class _WeatherPageState extends State<WeatherPage> {
         ),
       ],
       selectedItemColor: Colors.green[800],
-        unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
-        selectedLabelStyle:
-            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      unselectedItemColor: Colors.green[300],
+      showUnselectedLabels: false,
+      selectedLabelStyle:
+          const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     );
   }
 

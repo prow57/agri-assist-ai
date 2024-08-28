@@ -1,5 +1,3 @@
-// Path: lib/ai_pages/personal_advice/personalized_advice_page.dart
-
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/full_course.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/practice_detail.dart';
@@ -22,20 +20,19 @@ class PersonalizedAdvicePage extends StatefulWidget {
 class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   List<dynamic> _courses = [];
   int _selectedIndex = 2;
-  bool isPremiumUser = false; // This will track the user's subscription status
+  bool isPremiumUser = false; // Track the user's subscription status
 
   @override
   void initState() {
     super.initState();
-    _fetchCourses();
-    _checkSubscriptionStatus(); // Check user subscription on page load
+    _fetchCourses(); // Load the courses when the page initializes
+    _checkSubscriptionStatus(); // Check if the user is a premium user
   }
 
   Future<void> _checkSubscriptionStatus() async {
-    // Placeholder implementation, adjust this with actual logic to check if user is premium
-    // For example, fetching user status from a backend service or local storage
+    // Placeholder implementation - replace with actual logic
     setState(() {
-      isPremiumUser = false; // Set this based on actual subscription check logic
+      isPremiumUser = false; // Set based on actual subscription logic
     });
   }
 
@@ -56,33 +53,26 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   }
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+    if (index == _selectedIndex) return; // Ignore if already selected
 
     setState(() {
       _selectedIndex = index;
-
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(),
-          ),
+          MaterialPageRoute(builder: (context) => HomePage()),
         );
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
-          ),
+          MaterialPageRoute(builder: (context) => const AllCoursesPage()),
         );
       } else if (index == 2) {
-        // Already in personalized advice
+        // Already on Personalized Advice page
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => SettingsPage(),
-          ),
+          MaterialPageRoute(builder: (context) => SettingsPage()),
         );
       }
     });
@@ -100,7 +90,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              // Add logic to navigate to subscription page if necessary
+              // Logic to navigate to subscription page
             },
             child: const Text('Go Premium'),
           ),
@@ -178,9 +168,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                   if (isPremiumUser) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const AllCoursesPage(),
-                      ),
+                      MaterialPageRoute(builder: (context) => const AllCoursesPage()),
                     );
                   } else {
                     _showUpgradePrompt();
@@ -229,13 +217,13 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
         showUnselectedLabels: false,
-        selectedLabelStyle:
-            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        selectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  Widget _buildFeatureButton(BuildContext context, String title, String subtitle, IconData icon, bool accessible) {
+  Widget _buildFeatureButton(
+      BuildContext context, String title, String subtitle, IconData icon, bool accessible) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -244,17 +232,9 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             return;
           }
           if (title == 'AI Advice') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AiAdvice()),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const AiAdvice()));
           } else if (title == 'Explore Farming') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FarmingPracticesPage(),
-              ),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const FarmingPracticesPage()));
           }
         },
         child: Container(
@@ -275,10 +255,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
               const SizedBox(height: 8),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16, 
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
@@ -345,9 +322,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                   if (isPremiumUser) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => CourseDetailPage(courseId: courseId),
-                      ),
+                      MaterialPageRoute(builder: (context) => CourseDetailPage(courseId: courseId)),
                     );
                   } else {
                     _showUpgradePrompt();
