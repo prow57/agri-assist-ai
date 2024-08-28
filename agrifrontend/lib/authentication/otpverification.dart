@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'ResetPasswordPage.dart';
 
 class OtpVerification extends StatelessWidget {
   final TextEditingController _otpController = TextEditingController();
@@ -12,7 +13,6 @@ class OtpVerification extends StatelessWidget {
     final otp = _otpController.text;
 
     if (otp.isEmpty) {
-      // Show a snackbar or dialog to ask the user to enter the OTP
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter the OTP.')),
       );
@@ -21,25 +21,23 @@ class OtpVerification extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('https://agriback-plum.vercel.app/api/verify/verify-otp'), // Replace with your actual API endpoint
+        Uri.parse('https://agriback-plum.vercel.app/api/verify/verify-otp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': phone, 'otp': otp}),
       );
 
       if (response.statusCode == 200) {
-        // OTP verified successfully, navigate to the next page (e.g., login or preferences)
-        Navigator.push(
+        // OTP verified successfully, navigate to the Reset Password page
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()), // Adjust as needed
+          MaterialPageRoute(builder: (context) => ResetPasswordPage(phone: phone)),
         );
       } else {
-        // Handle error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Invalid OTP. Please try again.')),
         );
       }
     } catch (error) {
-      // Handle network error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Network error. Please check your connection.')),
       );
@@ -94,17 +92,6 @@ class OtpVerification extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class LoginScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Login Screen Placeholder'), // Replace with actual login screen UI
       ),
     );
   }

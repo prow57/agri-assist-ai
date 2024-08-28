@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'signin.dart';
+import 'signin.dart';  // Import the signin screen
 
 class ResetPasswordPage extends StatefulWidget {
   final String phone;
@@ -23,7 +23,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('https://agriback-plum.vercel.app/api/auth/set-password'),
+          Uri.parse('https://agriback-plum.vercel.app/api/auth/reset-password'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'phone': widget.phone,

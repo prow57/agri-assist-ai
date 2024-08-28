@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'otpverification.dart'; // Import the OTP verification screen
 
 class MobileNumberScreen extends StatelessWidget {
   final TextEditingController _phoneController = TextEditingController();
@@ -33,6 +34,14 @@ class MobileNumberScreen extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('OTP sent successfully.')),
           );
+
+          // Navigate to OTP Verification screen, passing the phone number
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtpVerification(phone: phone),
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to send OTP. Please try again.')),
@@ -44,8 +53,7 @@ class MobileNumberScreen extends StatelessWidget {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to verify phone number. Please try again.')),
+          SnackBar(content: Text('Failed to verify phone number. Please try again.')),
         );
       }
     } catch (error) {
@@ -68,7 +76,6 @@ class MobileNumberScreen extends StatelessWidget {
               SizedBox(height: 50),
               Image.asset('assets/images/logo.png', height: 100),
               SizedBox(height: 40),
-
               Text(
                 'Verify Your Number',
                 style: TextStyle(
@@ -86,7 +93,6 @@ class MobileNumberScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30),
-
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
@@ -99,7 +105,6 @@ class MobileNumberScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30),
-
               ElevatedButton(
                 onPressed: () => _sendOtp(context),
                 style: ElevatedButton.styleFrom(
