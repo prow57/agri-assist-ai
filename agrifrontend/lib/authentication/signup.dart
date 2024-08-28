@@ -13,7 +13,7 @@ class _SignupState extends State<Signup> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _register() async {
@@ -68,6 +68,7 @@ class _SignupState extends State<Signup> {
               SizedBox(height: 50),
               Image.asset('assets/images/logo.png', height: 100),
               SizedBox(height: 40),
+
               Text(
                 'Create Account',
                 style: TextStyle(
@@ -85,6 +86,7 @@ class _SignupState extends State<Signup> {
                 ),
               ),
               SizedBox(height: 30),
+
               Form(
                 key: _formKey,
                 child: Column(
@@ -106,6 +108,7 @@ class _SignupState extends State<Signup> {
                       },
                     ),
                     SizedBox(height: 20),
+
                     TextFormField(
                       controller: _phoneController,
                       decoration: InputDecoration(
@@ -124,6 +127,7 @@ class _SignupState extends State<Signup> {
                       },
                     ),
                     SizedBox(height: 20),
+
                     TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
@@ -142,6 +146,7 @@ class _SignupState extends State<Signup> {
                       },
                     ),
                     SizedBox(height: 20),
+
                     TextFormField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
@@ -160,6 +165,7 @@ class _SignupState extends State<Signup> {
                       },
                     ),
                     SizedBox(height: 30),
+
                     ElevatedButton(
                       onPressed: _register,
                       style: ElevatedButton.styleFrom(
@@ -167,8 +173,8 @@ class _SignupState extends State<Signup> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
                       ),
                       child: Text(
                         'Register',
@@ -176,6 +182,7 @@ class _SignupState extends State<Signup> {
                       ),
                     ),
                     SizedBox(height: 20),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

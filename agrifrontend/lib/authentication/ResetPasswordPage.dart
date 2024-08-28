@@ -23,7 +23,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('https://agriback-plum.vercel.app/api/auth/reset-password'),
+          Uri.parse('https://agriback-plum.vercel.app/api/auth/set-password'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
             'phone': widget.phone,

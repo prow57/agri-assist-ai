@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'package:agrifrontend/authentication/mobilenumber.dart';
-import 'package:agrifrontend/authentication/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:agrifrontend/authentication/signup.dart';
+import 'package:agrifrontend/authentication/mobilenumber.dart';
+import '../personalization/preferences.dart';
 
 class Signin extends StatefulWidget {
   @override
@@ -29,8 +30,16 @@ class _SigninState extends State<Signin> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['message'])),
+          SnackBar(content: Text('Login successful!')),
+        );
+
+        // Navigate to the Personalization page
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PreferencesScreen()),
         );
       } else {
         final data = jsonDecode(response.body);
@@ -57,6 +66,7 @@ class _SigninState extends State<Signin> {
               SizedBox(height: 50),
               Image.asset('assets/images/logo.png', height: 100),
               SizedBox(height: 40),
+
               Text(
                 'Welcome Back',
                 style: TextStyle(
@@ -74,6 +84,7 @@ class _SigninState extends State<Signin> {
                 ),
               ),
               SizedBox(height: 30),
+
               Form(
                 key: _formKey,
                 child: Column(
@@ -96,6 +107,7 @@ class _SigninState extends State<Signin> {
                       },
                     ),
                     SizedBox(height: 20),
+
                     TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
@@ -114,6 +126,7 @@ class _SigninState extends State<Signin> {
                       },
                     ),
                     SizedBox(height: 30),
+
                     ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
@@ -121,8 +134,8 @@ class _SigninState extends State<Signin> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
                       ),
                       child: Text(
                         'Login',
@@ -130,6 +143,7 @@ class _SigninState extends State<Signin> {
                       ),
                     ),
                     SizedBox(height: 20),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -138,7 +152,8 @@ class _SigninState extends State<Signin> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MobileNumberScreen()),
+                                  builder: (context) =>
+                                      MobileNumberScreen()),
                             );
                           },
                           child: Text(
@@ -150,7 +165,8 @@ class _SigninState extends State<Signin> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => Signup()),
+                              MaterialPageRoute(
+                                  builder: (context) => Signup()),
                             );
                           },
                           child: Text(
