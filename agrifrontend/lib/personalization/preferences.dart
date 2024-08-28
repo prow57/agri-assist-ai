@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:agrifrontend/personalization/CommunityPage.dart'; // Import CommunityPage
 
 class PreferencesScreen extends StatefulWidget {
   @override
@@ -24,30 +23,12 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
-              Text(
-                'Personalize Your Experience',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Choose your farming type and interests to get customized content.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
-              SizedBox(height: 30),
 
               // Type of Farming Section
               Text(
@@ -63,30 +44,29 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
               // Farming Type Buttons
               Wrap(
                 spacing: 10,
-                runSpacing: 10,
                 children: farmingTypes.map((type) {
-                  return ChoiceChip(
-                    label: Text(
+                  return ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedFarmingType = type;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: selectedFarmingType == type
+                          ? Colors.blue
+                          : Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    ),
+                    child: Text(
                       type,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: selectedFarmingType == type
-                            ? Colors.white
-                            : Colors.black,
+                        color: Colors.white,
                       ),
-                    ),
-                    selected: selectedFarmingType == type,
-                    onSelected: (bool selected) {
-                      setState(() {
-                        selectedFarmingType = selected ? type : '';
-                      });
-                    },
-                    selectedColor: Colors.green,
-                    backgroundColor: Colors.grey[200],
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   );
                 }).toList(),
@@ -109,64 +89,57 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 spacing: 10,
                 runSpacing: 10,
                 children: preferenceCategories.map((preference) {
-                  return FilterChip(
-                    label: Text(
+                  return ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        if (selectedPreferences.contains(preference)) {
+                          selectedPreferences.remove(preference);
+                        } else {
+                          selectedPreferences.add(preference);
+                        }
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: selectedPreferences.contains(preference)
+                          ? Colors.blue
+                          : Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    ),
+                    child: Text(
                       preference,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: selectedPreferences.contains(preference)
-                            ? Colors.white
-                            : Colors.black,
+                        color: Colors.white,
                       ),
-                    ),
-                    selected: selectedPreferences.contains(preference),
-                    onSelected: (bool selected) {
-                      setState(() {
-                        if (selected) {
-                          selectedPreferences.add(preference);
-                        } else {
-                          selectedPreferences.remove(preference);
-                        }
-                      });
-                    },
-                    selectedColor: Colors.green,
-                    backgroundColor: Colors.grey[200],
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   );
                 }).toList(),
               ),
+
               SizedBox(height: 40),
 
               // Save Button
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Community Page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CommunityPage(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+              ElevatedButton(
+                onPressed: () {
+                  // Save preferences and navigate to the next screen
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
-                  child: Text(
-                    'Save Preferences',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                ),
+                child: Text(
+                  'Save Preferences',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),

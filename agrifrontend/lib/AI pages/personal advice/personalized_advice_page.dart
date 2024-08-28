@@ -20,11 +20,20 @@ class PersonalizedAdvicePage extends StatefulWidget {
 class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   List<dynamic> _courses = [];
   int _selectedIndex = 2;
+  bool isPremiumUser = false;
 
   @override
   void initState() {
     super.initState();
     _fetchCourses();
+    _checkSubscriptionStatus();
+  }
+
+  Future<void> _checkSubscriptionStatus() async {
+    // Placeholder implementation - replace with actual logic
+    setState(() {
+      isPremiumUser = false; // Default to non-premium user
+    });
   }
 
   Future<void> _fetchCourses() async {
@@ -44,35 +53,69 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   }
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+    if (index == _selectedIndex) return;
 
     setState(() {
       _selectedIndex = index;
-
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(),
-          ),
+          MaterialPageRoute(builder: (context) => HomePage()),
         );
       } else if (index == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
-          ),
-        );
+        _handlePremiumFeature(() {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AllCoursesPage()),
+          );
+        });
       } else if (index == 2) {
-        //Already in personalized advice
+        // Already on Personalized Advice page
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => SettingsPage(),
-          ),
+          MaterialPageRoute(builder: (context) => SettingsPage()),
         );
       }
+    });
+  }
+
+  void _handlePremiumFeature(VoidCallback onSuccess) {
+    if (isPremiumUser) {
+      onSuccess();
+    } else {
+      _showUpgradePrompt();
+    }
+  }
+
+  void _showUpgradePrompt() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Upgrade to Premium'),
+        content: const Text(
+          'This feature is only available for premium users. Upgrade to access more features.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _upgradeToPremium();
+            },
+            child: const Text('Go Premium'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _upgradeToPremium() {
+    setState(() {
+      isPremiumUser = true; // Upgrade user to premium
     });
   }
 
@@ -95,17 +138,19 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             Row(
               children: [
                 _buildFeatureButton(
-                  context, 
-                  'AI Advice', 
-                  'Get AI advice', 
-                  Icons.lightbulb
+                  context,
+                  'AI Advice',
+                  'Get AI advice',
+                  Icons.lightbulb,
+                  true, // AI Advice is always accessible
                 ),
                 const SizedBox(width: 10.0),
                 _buildFeatureButton(
-                  context, 
-                  'Explore Farming', 
-                  'Explore farming', 
-                  Icons.search
+                  context,
+                  'Explore Farming',
+                  'Explore farming',
+                  Icons.search,
+                  false, // Require premium access
                 ),
               ],
             ),
@@ -136,12 +181,12 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AllCoursesPage(),
-                    ),
-                  );
+                  _handlePremiumFeature(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AllCoursesPage()),
+                    );
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -186,29 +231,25 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
         showUnselectedLabels: false,
-        selectedLabelStyle:
-            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        selectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
 
   Widget _buildFeatureButton(
-      BuildContext context, String title, String subtitle, IconData icon) {
+      BuildContext context, String title, String subtitle, IconData icon, bool accessible) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          if (title == 'AI Advice') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AiAdvice()),
-            );
-          } else if (title == 'Explore Farming') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const FarmingPracticesPage()),
-            );
-          } 
+          if (!accessible) {
+            _handlePremiumFeature(() {
+              if (title == 'Explore Farming') {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const FarmingPracticesPage()));
+              }
+            });
+          } else if (title == 'AI Advice') {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const AiAdvice()));
+          }
         },
         child: Container(
           padding: const EdgeInsets.all(16),
@@ -228,14 +269,11 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
               const SizedBox(height: 8),
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16, 
-                  fontWeight: FontWeight.bold
-                ),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
-                subtitle, 
+                subtitle,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -295,12 +333,12 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CourseDetailPage(courseId: courseId),
-                    ),
-                  );
+                  _handlePremiumFeature(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CourseDetailPage(courseId: courseId)),
+                    );
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,

@@ -1,10 +1,11 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
+import 'package:agrifrontend/homepages/market/driver_selection_page.dart';
 import 'package:agrifrontend/homepages/market/market_locations.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'market_service.dart';
 import 'commodity.dart';
 
@@ -27,12 +28,22 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
   late Future<List<Commodity>> _futureCommodities;
   late String _currentDate;
   String _selectedCategory = 'Animal';
+  bool _isPremiumUser = false; // Track if the user is a premium user
 
   @override
   void initState() {
     super.initState();
     _currentDate = DateFormat('EEEE, MMMM d, yyyy').format(DateTime.now());
     _fetchData();
+    _checkUserPremiumStatus();
+  }
+
+  void _checkUserPremiumStatus() {
+    // Mock logic to determine if the user is premium
+    // Replace this with actual logic (e.g., fetch from server or local storage)
+    setState(() {
+      _isPremiumUser = false; // Default to free user
+    });
   }
 
   void _fetchData() {
@@ -66,21 +77,21 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => AllCoursesPage(),
+            builder: (context) => const AllCoursesPage(),
           ),
         );
       } else if (index == 1) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => AllCoursesPage(),
+            builder: (context) => const AllCoursesPage(),
           ),
         );
       } else if (index == 2) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => PersonalizedAdvicePage(),
+            builder: (context) => const PersonalizedAdvicePage(),
           ),
         );
       } else if (index == 3) {
@@ -94,18 +105,77 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
     });
   }
 
- Widget buildCommodityTile(Commodity commodity) {
-  return ListTile(
-    title: Text(commodity.name),
-    trailing: Text(
-      'MK ${(commodity.price).toString()}',
-      style: const TextStyle(
-        color: Colors.green,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
+void _onFloatingButtonPressed(String buttonType) {
+  if (_isPremiumUser) {
+    if (buttonType == 'location') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MarketLocation()),
+      );
+    } else if (buttonType == 'car') {
+      // Navigate to the DriverListPage with the market ID
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DriverListPage(marketId: widget.marketId),
+        ),
+      );
+    }
+  } else {
+    _showPremiumPopup();
+  }
 }
+
+
+  void _showPremiumPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Upgrade to Premium'),
+          content: const Text(
+              'Upgrade to premium to access these features.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _upgradeToPremium();
+              },
+              child: const Text('Go Premium'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _upgradeToPremium() {
+    setState(() {
+      _isPremiumUser = true; // Mark user as premium
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('You have upgraded to premium!')),
+    );
+  }
+
+  Widget buildCommodityTile(Commodity commodity) {
+    return ListTile(
+      title: Text(commodity.name),
+      trailing: Text(
+        'MK ${(commodity.price).toString()}',
+        style: const TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,20 +238,20 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                         children: [
                           Text(
                             _currentDate,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 24.0, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 10.0),
                           Container(
                             height: 200.0,
                             child: SfCircularChart(
-                              legend: Legend(isVisible: true),
+                              legend: const Legend(isVisible: true),
                               series: <PieSeries>[
                                 PieSeries<Commodity, String>(
                                   dataSource: snapshot.data!,
                                   xValueMapper: (Commodity data, _) => data.name,
                                   yValueMapper: (Commodity data, _) => data.price,
-                                  dataLabelSettings: DataLabelSettings(isVisible: true),
+                                  dataLabelSettings: const DataLabelSettings(isVisible: true),
                                 ),
                               ],
                             ),
@@ -212,15 +282,27 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => MarketLocation()),
-          );
-        },
-        child: const Icon(Icons.location_on, color: Colors.white),
-        backgroundColor: Colors.green,
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            heroTag: "carBtn",
+            onPressed: () {
+              _onFloatingButtonPressed('car');
+            },
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.directions_car, color: Colors.white),
+          ),
+          const SizedBox(height: 16), // Space between the buttons
+          FloatingActionButton(
+            heroTag: "locationBtn",
+            onPressed: () {
+              _onFloatingButtonPressed('location');
+            },
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.location_on, color: Colors.white),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -253,17 +335,3 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
   }
 }
 
-class MarketLocationPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Market Locations'),
-        backgroundColor: Colors.green,
-      ),
-      body: const Center(
-        child: Text('Map of Market Locations Here'),
-      ),
-    );
-  }
-}

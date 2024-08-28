@@ -12,7 +12,7 @@ class _MarketLocationState extends State<MarketLocation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Map of Malawi'),
+        title: const Text('Map of Malawi'),
       ),
       body: FlutterMap(
         options: MapOptions(
@@ -33,7 +33,7 @@ class _MarketLocationState extends State<MarketLocation> {
             markers: [
               Marker(
                 point: LatLng(-13.9626, 33.7741),
-                builder: (ctx) => Icon(
+                builder: (ctx) => const Icon(
                   Icons.location_pin,
                   color: Colors.red,
                   size: 40.0,
@@ -41,7 +41,7 @@ class _MarketLocationState extends State<MarketLocation> {
               ),
               Marker(
                 point: LatLng(-15.7861, 35.0058),
-                builder: (ctx) => Icon(
+                builder: (ctx) => const Icon(
                   Icons.location_pin,
                   color: Colors.red,
                   size: 40.0,

@@ -16,17 +16,19 @@ class ChatPage extends StatelessWidget {
         isBot: true),
   ];
 
+   ChatPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Handle back button press
           },
         ),
-        title: Text("Plant health"),
+        title: const Text("Plant health"),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -35,7 +37,7 @@ class ChatPage extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 return _buildMessageTile(messages[index]);
@@ -46,12 +48,12 @@ class ChatPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   backgroundImage: AssetImage(
                       'assets/logo.png'), // Replace with your profile image path
                   radius: 20,
                 ),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
@@ -65,7 +67,7 @@ class ChatPage extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: () {
                     // Handle send button press
                   },
@@ -92,21 +94,21 @@ class ChatPage extends StatelessWidget {
             ),
             radius: 20,
           ),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "${message.sender} ${message.time}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12.0,
                     color: Colors.grey,
                   ),
                 ),
-                SizedBox(height: 4.0),
+                const SizedBox(height: 4.0),
                 Container(
-                  padding: EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
                     color: message.isBot ? Colors.green[50] : Colors.blue[50],
                     borderRadius: BorderRadius.circular(10.0),

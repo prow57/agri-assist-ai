@@ -103,9 +103,9 @@ class _FullCourseState extends State<FullCourse> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Table of Contents
-                      Text(
+                      const Text(
                         'Table of Contents',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -145,7 +145,7 @@ class _FullCourseState extends State<FullCourse> {
                     ],
                   ),
                 )
-              : Center(child: Text('No course data available.')),
+              : const Center(child: Text('No course data available.')),
       floatingActionButton: FloatingActionButton(
         onPressed: _scrollToTop,
         backgroundColor: Colors.green,
@@ -155,37 +155,41 @@ class _FullCourseState extends State<FullCourse> {
   }
 
   Widget _buildTableOfContents() {
-    final tocItems = [
-      {'title': 'Objectives', 'key': _objectivesKey},
-      {'title': 'Introduction', 'key': _introductionKey},
-      {'title': 'Content', 'key': _contentKey},
-      {'title': 'Guided Practice', 'key': _guidedPracticeKey},
-      {'title': 'Conclusion', 'key': _conclusionKey},
-      {'title': 'References', 'key': _referencesKey},
-      {'title': 'Practical Lessons', 'key': _practicalLessonsKey},
-      {'title': 'Assessment', 'key': _assessmentKey},
-    ];
+  final tocItems = [
+    {'title': 'Objectives', 'key': _objectivesKey},
+    {'title': 'Introduction', 'key': _introductionKey},
+    {'title': 'Content', 'key': _contentKey},
+    {'title': 'Guided Practice', 'key': _guidedPracticeKey},
+    {'title': 'Conclusion', 'key': _conclusionKey},
+    {'title': 'References', 'key': _referencesKey},
+    {'title': 'Practical Lessons', 'key': _practicalLessonsKey},
+    {'title': 'Assessment', 'key': _assessmentKey},
+  ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: tocItems.map((tocItem) {
-        return GestureDetector(
-          onTap: () => _scrollToSection(tocItem['key'] as GlobalKey),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Text(
-              tocItem['title'] as String,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.blue,
-                decoration: TextDecoration.underline,
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: tocItems.map((tocItem) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.0), // Vertical spacing between buttons
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () => _scrollToSection(tocItem['key'] as GlobalKey),
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.green,
+              backgroundColor: Colors.green.shade50, // Background color
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0), // Border radius
               ),
             ),
+            child: Text(tocItem['title'] as String),
           ),
-        );
-      }).toList(),
-    );
-  }
+        ),
+      );
+    }).toList(),
+  );
+}
 
   Widget _buildCollapsibleSections() {
     final content = courseData!['content'] as Map<String, dynamic>;

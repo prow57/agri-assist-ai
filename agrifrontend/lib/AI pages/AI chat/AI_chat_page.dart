@@ -99,16 +99,16 @@ class _ChatPageState extends State<ChatPage> {
                     decoration: BoxDecoration(
                       color: message.isUser ? Colors.green[300] : Colors.grey[300],
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12.0),
-                        topRight: Radius.circular(12.0),
+                        topLeft: const Radius.circular(12.0),
+                        topRight: const Radius.circular(12.0),
                         bottomLeft: message.isUser
-                            ? Radius.circular(12.0)
-                            : Radius.circular(0),
+                            ? const Radius.circular(12.0)
+                            : const Radius.circular(0),
                         bottomRight: message.isUser
-                            ? Radius.circular(0)
-                            : Radius.circular(12.0),
+                            ? const Radius.circular(0)
+                            : const Radius.circular(12.0),
                       ),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: Colors.black26,
                           blurRadius: 5.0,

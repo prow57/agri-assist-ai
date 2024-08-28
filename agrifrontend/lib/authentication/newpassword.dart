@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class NewPassword extends StatelessWidget {
+class NewPasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,11 +10,8 @@ class NewPassword extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo Section
               Image.asset('assets/images/logo.png', height: 100),
               SizedBox(height: 20),
-
-              // "New Password" Field
               TextField(
                 decoration: InputDecoration(
                   labelText: 'New Password',
@@ -25,8 +22,6 @@ class NewPassword extends StatelessWidget {
                 obscureText: true,
               ),
               SizedBox(height: 20),
-
-              // "Confirm New Password" Field
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Confirm New Password',
@@ -37,11 +32,10 @@ class NewPassword extends StatelessWidget {
                 obscureText: true,
               ),
               SizedBox(height: 20),
-
-              // Submit Button
               ElevatedButton(
                 onPressed: () {
                   // Handle password reset logic
+                  Navigator.pushNamed(context, '/signin');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,

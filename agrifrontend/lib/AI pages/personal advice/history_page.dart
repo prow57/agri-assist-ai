@@ -1,19 +1,19 @@
+import 'package:agrifrontend/AI%20pages/personal%20advice/history_full_course.dart';
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'full_course.dart'; // Import your FullCourse page
 import 'personalized_advice_page.dart';
 
-class AllCoursesPage extends StatefulWidget {
-  const AllCoursesPage({super.key});
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
 
   @override
-  _AllCoursesPageState createState() => _AllCoursesPageState();
+  _HistoryPageState createState() => _HistoryPageState();
 }
 
-class _AllCoursesPageState extends State<AllCoursesPage> {
+class _HistoryPageState extends State<HistoryPage> {
   List<dynamic> _courses = [];
   bool _isLoading = true;
   String _errorMessage = '';
@@ -33,7 +33,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   }
 
   Future<void> _fetchCourses() async {
-    const url = 'https://agriback-plum.vercel.app/api/courses/courses';
+    const url = 'https://agriback-plum.vercel.app/api/courses/get-explore';
     try {
       final response = await http.get(
         Uri.parse(url),
@@ -75,7 +75,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
           ),
         );
       } else if (index == 1) {
-        // Already on AllCoursesPage
+        // Already on HistoryPage
       } else if (index == 2) {
         Navigator.pushReplacement(
           context,
@@ -98,7 +98,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('All Courses', style: TextStyle(color: Colors.white)),
+        title: const Text('Previous Courses', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -168,9 +168,12 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => FullCourse(courseId: courseId),
+            builder: (context) => HistoryFullCourse(courseId: courseId),
           ),
         );
+      },
+      onLongPress: () {
+        _showDeleteDialog(context, courseId);
       },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -211,5 +214,53 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
         ),
       ),
     );
+  }
+
+  void _showDeleteDialog(BuildContext context, String courseId) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Course'),
+          content: const Text('Are you sure you want to delete this course?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _deleteCourse(courseId);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteCourse(String courseId) async {
+    const url = 'https://agriback-plum.vercel.app/api/courses/delete-explore/';
+    final response = await http.delete(
+      Uri.parse('$url$courseId'),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _courses.removeWhere((course) => course['id'] == courseId);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Course deleted successfully')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete course: ${response.statusCode}')),
+      );
+    }
   }
 }

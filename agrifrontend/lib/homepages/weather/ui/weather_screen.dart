@@ -22,10 +22,21 @@ class _WeatherPageState extends State<WeatherPage> {
   final cacheManager = DefaultCacheManager();
   double _opacity = 1.0;
 
+  bool _isPremiumUser = false;  // Tracks if the user is a premium user
+
   @override
   void initState() {
     super.initState();
+    _checkUserPremiumStatus(); // Check if user is premium
     _fetchWeatherWithAnimation();
+  }
+
+  void _checkUserPremiumStatus() {
+    // Mock implementation to check if a user is premium
+    // In real case, fetch this from a server or local storage
+    setState(() {
+      _isPremiumUser = false;  // Default to free user
+    });
   }
 
   void _fetchWeatherWithAnimation() async {
@@ -34,13 +45,17 @@ class _WeatherPageState extends State<WeatherPage> {
     });
 
     await Future.delayed(
-        Duration(milliseconds: 300)); // Small delay for smooth animation
+        const Duration(milliseconds: 300)); // Small delay for smooth animation
 
     await _fetchWeather();
 
     setState(() {
       _opacity = 1.0;
     });
+
+    if (!_isPremiumUser) {
+      _showPremiumPopup();  // Show popup if not a premium user
+    }
   }
 
   Future<void> _fetchWeather() async {
@@ -154,24 +169,22 @@ class _WeatherPageState extends State<WeatherPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Weather Forecast', style: TextStyle(color: Colors.white),),
+        title: const Text('Weather Forecast', style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.green[700],
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.location_on, color: Colors.white),
-            onPressed: _selectLocation,
-          ),
+          if (_isPremiumUser)
+            const Icon(Icons.star, color: Colors.yellow),
         ],
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : AnimatedOpacity(
               opacity: _opacity,
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               child: _weatherData != null
                   ? SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
@@ -184,13 +197,15 @@ class _WeatherPageState extends State<WeatherPage> {
                           const SizedBox(height: 20),
                           _buildWeatherDetails(),
                           const SizedBox(height: 20),
-                          _buildWeatherForecast(),
-                          const SizedBox(height: 20),
-                          _buildFarmerRecommendations(),
+                          _buildWeatherForecast(), // Shows full or limited forecast
+                          if (_isPremiumUser) ...[
+                            const SizedBox(height: 20),
+                            _buildFarmerRecommendations(),
+                          ]
                         ],
                       ),
                     )
-                  : Center(child: Text('No weather data available')),
+                  : const Center(child: Text('No weather data available')),
             ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
@@ -202,7 +217,7 @@ class _WeatherPageState extends State<WeatherPage> {
       children: [
         Text(
           _selectedCity,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
           ),
@@ -233,7 +248,7 @@ class _WeatherPageState extends State<WeatherPage> {
           children: [
             Text(
               '${_weatherData!['current']['temp_c']}°C',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 50,
                 fontWeight: FontWeight.bold,
               ),
@@ -255,16 +270,16 @@ class _WeatherPageState extends State<WeatherPage> {
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.lightGreen[100],
+        color: Colors.green[50],
         borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: Colors.green, width: 1.0),
+        border: Border.all(color: Colors.green[700]!, width: 1.0),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -272,7 +287,7 @@ class _WeatherPageState extends State<WeatherPage> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),
@@ -297,10 +312,17 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   Widget _buildWeatherForecast() {
+    // Show all forecast data if user is premium, otherwise show only today
+    final forecastDays = _isPremiumUser 
+        ? _weatherData!['forecast']['forecastday'] as List<dynamic> 
+        : [_weatherData!['forecast']['forecastday'][0]];
+    
+    final numberOfDays = forecastDays.length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Weather Forecast',
           style: TextStyle(
             fontSize: 22,
@@ -308,27 +330,23 @@ class _WeatherPageState extends State<WeatherPage> {
           ),
         ),
         const SizedBox(height: 10),
-        Container(
+        SizedBox(
           height: 250,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            children: _buildForecast(),
+            children: _buildForecast(forecastDays),
           ),
         ),
       ],
     );
   }
 
-  List<Widget> _buildForecast() {
-    if (_weatherData == null || _weatherData!['forecast'] == null) {
-      return [Text('No forecast data available')];
+  List<Widget> _buildForecast(List<dynamic> forecastDays) {
+    if (forecastDays.isEmpty) {
+      return [const Text('No forecast data available')];
     }
 
-    final forecastDays =
-        _weatherData!['forecast']['forecastday'] as List<dynamic>;
-    final numberOfDays = forecastDays.length;
-
-    return List<Widget>.generate(numberOfDays, (index) {
+    return List<Widget>.generate(forecastDays.length, (index) {
       final dayForecast = forecastDays[index];
       final date = DateTime.parse(dayForecast['date']);
       final dayOfWeek = DateFormat('EEEE').format(date);
@@ -350,23 +368,23 @@ class _WeatherPageState extends State<WeatherPage> {
                 children: [
                   Text(
                     dayOfWeek,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Image.network(
                     'https:${dayForecast['day']['condition']['icon']}',
                     height: 100,
                     width: 100,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     '${dayForecast['day']['avgtemp_c']}°C',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     '${dayForecast['day']['condition']['text']}',
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
@@ -405,7 +423,7 @@ class _WeatherPageState extends State<WeatherPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Farmer Recommendations',
           style: TextStyle(
             fontSize: 22,
@@ -415,7 +433,7 @@ class _WeatherPageState extends State<WeatherPage> {
         const SizedBox(height: 10),
         Text(
           _getRecommendation(_weatherData!['current']['condition']['text']),
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
       ],
     );
@@ -454,55 +472,57 @@ class _WeatherPageState extends State<WeatherPage> {
         ),
       ],
       selectedItemColor: Colors.green[800],
-        unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
-        selectedLabelStyle:
-            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      unselectedItemColor: Colors.green[300],
+      showUnselectedLabels: false,
+      selectedLabelStyle:
+          const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     );
   }
-}
 
-class CustomButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
+  void _onPremiumIconPressed() {
+    if (!_isPremiumUser) {
+      _showPremiumPopup();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You are already a premium user!')),
+      );
+    }
+  }
 
-  const CustomButton({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        elevation: 8,
-        shadowColor: Colors.grey.withOpacity(0.5),
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 60.0, color: Colors.white),
-          const SizedBox(height: 10.0),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
-              fontWeight: FontWeight.w600,
+  void _showPremiumPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Upgrade to Premium'),
+          content: const Text(
+              'Upgrade to premium to access the full weather forecast and more!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);  // Close the dialog without upgrading
+              },
+              child: const Text('Cancel'),
             ),
-          ),
-        ],
-      ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _upgradeToPremium();
+              },
+              child: const Text('Go Premium'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _upgradeToPremium() {
+    setState(() {
+      _isPremiumUser = true;  // Mark user as premium
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('You have upgraded to premium!')),
     );
   }
 }

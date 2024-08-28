@@ -166,7 +166,7 @@ class _DetailPageState extends State<DetailPage> {
           SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),
