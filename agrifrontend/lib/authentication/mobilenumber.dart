@@ -16,37 +16,21 @@ class MobileNumberScreen extends StatelessWidget {
     }
 
     try {
-      final checkResponse = await http.post(
-        Uri.parse('https://agriback-plum.vercel.app/api/auth/check-phone'),
+      final response = await http.post(
+        Uri.parse('https://agriback-plum.vercel.app/api/verify/send-otp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': phone}),
       );
 
-      if (checkResponse.statusCode == 200) {
-        final otpResponse = await http.post(
-          Uri.parse('https://agriback-plum.vercel.app/api/verify/send-otp'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'phone': phone}),
-        );
-
-        if (otpResponse.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('OTP sent successfully.')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to send OTP. Please try again.')),
-          );
-        }
-      } else if (checkResponse.statusCode == 404) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No account associated with that number.')),
+      if (response.statusCode == 200) {
+        Navigator.pushNamed(
+          context,
+          '/otpverification',
+          arguments: phone,
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text('Failed to verify phone number. Please try again.')),
+          SnackBar(content: Text('Failed to send OTP. Please try again.')),
         );
       }
     } catch (error) {
