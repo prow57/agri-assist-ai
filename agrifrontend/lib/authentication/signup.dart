@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:agrifrontend/authentication/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:agrifrontend/authentication/otpverification.dart'; // Import the OtpVerification page
 
 class Signup extends StatefulWidget {
   @override
@@ -40,9 +41,10 @@ class _SignupState extends State<Signup> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),
         );
+        // Navigate to the OtpVerification page after successful signup
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Signin()),
+          MaterialPageRoute(builder: (context) => OtpVerification(phone: phone)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
