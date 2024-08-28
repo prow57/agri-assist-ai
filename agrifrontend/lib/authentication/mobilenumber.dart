@@ -9,7 +9,6 @@ class MobileNumberScreen extends StatelessWidget {
     final phone = _phoneController.text;
 
     if (phone.isEmpty) {
-      // Show a snackbar or dialog to ask the user to enter a phone number
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter your mobile number.')),
       );
@@ -31,29 +30,26 @@ class MobileNumberScreen extends StatelessWidget {
         );
 
         if (otpResponse.statusCode == 200) {
-          // OTP sent successfully
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('OTP sent successfully.')),
           );
         } else {
-          // Handle error
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to send OTP. Please try again.')),
           );
         }
       } else if (checkResponse.statusCode == 404) {
-        // Handle error from the check-phone API
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('No account associated with that number.')),
         );
       } else {
-        // Handle other errors from the check-phone API
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to verify phone number. Please try again.')),
+          SnackBar(
+              content:
+                  Text('Failed to verify phone number. Please try again.')),
         );
       }
     } catch (error) {
-      // Handle network error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Network error. Please check your connection.')),
       );
@@ -63,26 +59,45 @@ class MobileNumberScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // "Enter Mobile Number" Field
+              SizedBox(height: 50),
+              Image.asset('assets/images/logo.png', height: 100),
+              SizedBox(height: 40),
+              Text(
+                'Verify Your Number',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Enter your mobile number to receive an OTP',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 30),
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
-                  labelText: 'Enter Mobile Number',
+                  labelText: 'Mobile Number',
+                  prefixIcon: Icon(Icons.phone, color: Colors.green),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-
-              // Send OTP Button
+              SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () => _sendOtp(context),
                 style: ElevatedButton.styleFrom(
@@ -92,7 +107,10 @@ class MobileNumberScreen extends StatelessWidget {
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 ),
-                child: Text('Send OTP'),
+                child: Text(
+                  'Send OTP',
+                  style: TextStyle(fontSize: 16),
+                ),
               ),
             ],
           ),
