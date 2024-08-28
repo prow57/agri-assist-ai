@@ -1,6 +1,7 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
+import 'package:agrifrontend/homepages/market/market_locations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -109,7 +110,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
       if (buttonType == 'location') {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MarketLocationPage()),
+          MaterialPageRoute(builder: (context) => MarketLocation()),
         );
       } else if (buttonType == 'car') {
         // Implement car functionality here
@@ -330,17 +331,3 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
   }
 }
 
-class MarketLocationPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Market Locations'),
-        backgroundColor: Colors.green,
-      ),
-      body: const Center(
-        child: Text('Map of Market Locations Here'),
-      ),
-    );
-  }
-}

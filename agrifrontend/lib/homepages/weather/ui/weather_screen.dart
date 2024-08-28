@@ -178,10 +178,6 @@ class _WeatherPageState extends State<WeatherPage> {
         actions: [
           if (_isPremiumUser)
             const Icon(Icons.star, color: Colors.yellow),
-          IconButton(
-            icon: Icon(_isPremiumUser ? Icons.star : Icons.star_border, color: Colors.white),
-            onPressed: _onPremiumIconPressed,
-          ),
         ],
       ),
       body: _isLoading
@@ -334,7 +330,7 @@ class _WeatherPageState extends State<WeatherPage> {
           ),
         ),
         const SizedBox(height: 10),
-        Container(
+        SizedBox(
           height: 250,
           child: ListView(
             scrollDirection: Axis.horizontal,

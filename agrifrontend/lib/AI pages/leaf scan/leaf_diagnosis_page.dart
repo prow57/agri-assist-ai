@@ -1,3 +1,5 @@
+// Path: lib/ai_pages/leaf_scan/leaf_analysis_screen.dart
+
 import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/history_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/models/healthy_analysis.dart';
@@ -21,7 +23,7 @@ class LeafAnalysisScreen extends StatefulWidget {
 class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   File? _image;
   final ImagePicker picker = ImagePicker();
-  dynamic _result;  // Can be LeafIdentificationResult or LeafHealthAnalysisResult
+  dynamic _result; // Can be LeafIdentificationResult, LeafHealthAnalysisResult, or free tier result
   bool _isLoading = false;
   String _errorMessage = '';
   int _selectedIndex = 0;
@@ -40,7 +42,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/identify');
+          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         setState(() {
@@ -69,7 +71,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/identify');
+          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         setState(() {
@@ -86,50 +88,78 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   Future<void> _analyzeImage(File image, String endpoint) async {
-  try {
-    setState(() {
-      _isLoading = true;
-    });
-
-    final bytes = await image.readAsBytes();
-    final base64Image = base64Encode(bytes);
-
-    final response = await http.post(
-      Uri.parse(endpoint),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"image": base64Image}),
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-
+    try {
       setState(() {
-        if (endpoint.contains('identify')) {
-          _result = LeafIdentificationResult.fromJson(data);
-        } else if (endpoint.contains('health-analysis')) {
-          _result = LeafHealthAnalysisResult.fromJson(data);
-        }
-        _isLoading = false;
+        _isLoading = true;
       });
-      _showSnackBar('Analysis completed successfully.');
-    } else {
+
+      final bytes = await image.readAsBytes();
+      final base64Image = base64Encode(bytes);
+
+      final response = await http.post(
+        Uri.parse(endpoint),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"image": base64Image}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        setState(() {
+          if (endpoint.contains('identify')) {
+            _result = LeafIdentificationResult.fromJson(data);
+          } else if (endpoint.contains('health-analysis')) {
+            _result = LeafHealthAnalysisResult.fromJson(data);
+          } else {
+            // Handle free tier response
+            _result = data['leaf_analysis'];
+          }
+          _isLoading = false;
+        });
+        _showSnackBar('Analysis completed successfully.');
+        if (!_isPremiumUser) _showUpgradePrompt(); // Show prompt for free-tier users
+      } else {
+        setState(() {
+          _result = null;
+          _isLoading = false;
+          _errorMessage = "Failed to get analysis: ${response.statusCode}";
+        });
+        _showSnackBar('Analysis failed. Status: ${response.statusCode}');
+      }
+    } catch (e, stackTrace) {
       setState(() {
         _result = null;
         _isLoading = false;
-        _errorMessage = "Failed to get analysis: ${response.statusCode}";
+        _errorMessage = 'Error analyzing image: $e\n$stackTrace';
       });
-      _showSnackBar('Analysis failed. Status: ${response.statusCode}');
+      _showSnackBar('Error analyzing image.');
     }
-  } catch (e, stackTrace) {
-    setState(() {
-      _result = null;
-      _isLoading = false;
-      _errorMessage = 'Error analyzing image: $e\n$stackTrace';
-    });
-    _showSnackBar('Error analyzing image.');
   }
-}
 
+  void _showUpgradePrompt() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Upgrade to Premium'),
+        content: const Text(
+          'Upgrade to premium to access more detailed analysis features and exclusive content.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Add logic to navigate to subscription or upgrade page if necessary
+            },
+            child: const Text('Go Premium'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _resetImage() {
     setState(() {
@@ -196,7 +226,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               child: const Text("Analyze Health"),
               onPressed: () {
                 Navigator.of(context).pop();
-                _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/health-analyis');
+                _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/health-analysis');
               },
             ),
           ],
@@ -442,6 +472,18 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             _buildResultRow("Probability", suggestion.probability.toString()),
           ], Colors.red[100]);
         }).toList(),
+      );
+    } else if (_result != null) {
+      // Handling the free-tier result structure
+      return _buildResultCard(
+        "Free Tier Analysis",
+        [
+          _buildResultRow("Crop Type", _result['crop_type']),
+          _buildResultRow("Disease Name", _result['disease_name']),
+          _buildResultRow("Risk Level", _result['level_of_risk']),
+          _buildResultRow("Description", _result['description']),
+        ],
+        Colors.blue[100],
       );
     } else {
       return Container();
