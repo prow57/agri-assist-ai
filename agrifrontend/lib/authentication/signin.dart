@@ -3,6 +3,7 @@ import 'package:agrifrontend/authentication/mobilenumber.dart';
 import 'package:agrifrontend/authentication/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:agrifrontend/preferences/community.dart'; // Import the Community page
 
 class Signin extends StatefulWidget {
   @override
@@ -31,6 +32,12 @@ class _SigninState extends State<Signin> {
         final data = jsonDecode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),
+        );
+
+        // Navigate to the Community page after successful login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Community()),
         );
       } else {
         final data = jsonDecode(response.body);
