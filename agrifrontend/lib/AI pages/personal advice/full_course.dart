@@ -103,9 +103,9 @@ class _FullCourseState extends State<FullCourse> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Table of Contents
-                      Text(
+                      const Text(
                         'Table of Contents',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -145,7 +145,7 @@ class _FullCourseState extends State<FullCourse> {
                     ],
                   ),
                 )
-              : Center(child: Text('No course data available.')),
+              : const Center(child: Text('No course data available.')),
       floatingActionButton: FloatingActionButton(
         onPressed: _scrollToTop,
         backgroundColor: Colors.green,

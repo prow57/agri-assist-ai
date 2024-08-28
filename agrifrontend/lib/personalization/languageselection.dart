@@ -2,6 +2,8 @@ import 'package:agrifrontend/personalization/preferences.dart';
 import 'package:flutter/material.dart';
 
 class SelectLanguageScreen extends StatelessWidget {
+  const SelectLanguageScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,10 +16,10 @@ class SelectLanguageScreen extends StatelessWidget {
             children: [
               // Logo Section
               Image.asset('assets/images/logo.png', height: 100),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
 
               
-              Text(
+              const Text(
                 'Select Language',
                 style: TextStyle(
                   fontSize: 24,
@@ -25,7 +27,7 @@ class SelectLanguageScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
 
               // English Button
               ElevatedButton(
@@ -33,7 +35,7 @@ class SelectLanguageScreen extends StatelessWidget {
                   // Set language to English and navigate to the next screen
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PreferencesScreen()),
+                    MaterialPageRoute(builder: (context) => const PreferencesScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -41,9 +43,9 @@ class SelectLanguageScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 ),
-                child: Text(
+                child: const Text(
                   'English',
                   style: TextStyle(
                     fontSize: 18,
@@ -52,7 +54,7 @@ class SelectLanguageScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Chichewa Button
               ElevatedButton(
@@ -64,9 +66,9 @@ class SelectLanguageScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 ),
-                child: Text(
+                child: const Text(
                   'Chichewa',
                   style: TextStyle(
                     fontSize: 18,
@@ -75,7 +77,7 @@ class SelectLanguageScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               // Additional Spacing or Branding Message (if needed)
             ],

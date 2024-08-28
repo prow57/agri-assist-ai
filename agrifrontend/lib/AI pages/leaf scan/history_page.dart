@@ -5,6 +5,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 
 class ScanHistoryPage extends StatefulWidget {
+  const ScanHistoryPage({super.key});
+
   @override
   _ScanHistoryPageState createState() => _ScanHistoryPageState();
 }

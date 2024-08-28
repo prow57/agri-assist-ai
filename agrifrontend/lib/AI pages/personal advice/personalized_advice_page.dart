@@ -1,3 +1,5 @@
+// Path: lib/ai_pages/personal_advice/personalized_advice_page.dart
+
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/full_course.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/practice_detail.dart';
@@ -20,11 +22,21 @@ class PersonalizedAdvicePage extends StatefulWidget {
 class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   List<dynamic> _courses = [];
   int _selectedIndex = 2;
+  bool isPremiumUser = false; // This will track the user's subscription status
 
   @override
   void initState() {
     super.initState();
     _fetchCourses();
+    _checkSubscriptionStatus(); // Check user subscription on page load
+  }
+
+  Future<void> _checkSubscriptionStatus() async {
+    // Placeholder implementation, adjust this with actual logic to check if user is premium
+    // For example, fetching user status from a backend service or local storage
+    setState(() {
+      isPremiumUser = false; // Set this based on actual subscription check logic
+    });
   }
 
   Future<void> _fetchCourses() async {
@@ -64,7 +76,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           ),
         );
       } else if (index == 2) {
-        //Already in personalized advice
+        // Already in personalized advice
       } else if (index == 3) {
         Navigator.pushReplacement(
           context,
@@ -74,6 +86,31 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         );
       }
     });
+  }
+
+  void _showUpgradePrompt() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Upgrade to Premium'),
+        content: const Text(
+          'This feature is only available for premium users. Upgrade to access more features.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Add logic to navigate to subscription page if necessary
+            },
+            child: const Text('Go Premium'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -95,17 +132,19 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             Row(
               children: [
                 _buildFeatureButton(
-                  context, 
-                  'AI Advice', 
-                  'Get AI advice', 
-                  Icons.lightbulb
+                  context,
+                  'AI Advice',
+                  'Get AI advice',
+                  Icons.lightbulb,
+                  true, // AI Advice is always accessible
                 ),
                 const SizedBox(width: 10.0),
                 _buildFeatureButton(
-                  context, 
-                  'Explore Farming', 
-                  'Explore farming', 
-                  Icons.search
+                  context,
+                  'Explore Farming',
+                  'Explore farming',
+                  Icons.search,
+                  isPremiumUser, // Restrict based on subscription
                 ),
               ],
             ),
@@ -136,12 +175,16 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AllCoursesPage(),
-                    ),
-                  );
+                  if (isPremiumUser) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AllCoursesPage(),
+                      ),
+                    );
+                  } else {
+                    _showUpgradePrompt();
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -192,11 +235,14 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
     );
   }
 
-  Widget _buildFeatureButton(
-      BuildContext context, String title, String subtitle, IconData icon) {
+  Widget _buildFeatureButton(BuildContext context, String title, String subtitle, IconData icon, bool accessible) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
+          if (!accessible) {
+            _showUpgradePrompt();
+            return;
+          }
           if (title == 'AI Advice') {
             Navigator.push(
               context,
@@ -206,9 +252,10 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const FarmingPracticesPage()),
+                builder: (context) => const FarmingPracticesPage(),
+              ),
             );
-          } 
+          }
         },
         child: Container(
           padding: const EdgeInsets.all(16),
@@ -230,12 +277,12 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                 title,
                 style: const TextStyle(
                   fontSize: 16, 
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                subtitle, 
+                subtitle,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
@@ -295,12 +342,16 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CourseDetailPage(courseId: courseId),
-                    ),
-                  );
+                  if (isPremiumUser) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CourseDetailPage(courseId: courseId),
+                      ),
+                    );
+                  } else {
+                    _showUpgradePrompt();
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,

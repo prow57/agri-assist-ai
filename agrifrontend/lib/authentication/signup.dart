@@ -44,7 +44,7 @@ class _SignupState extends State<Signup> {
         // Navigate to the OtpVerification page after successful signup
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => OtpVerification(phone: phone)),
+          MaterialPageRoute(builder: (context) => OtpVerificationPage(phone: phone)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 
-
 class LeafAnalysisScreen extends StatefulWidget {
   const LeafAnalysisScreen({super.key});
 
@@ -26,8 +25,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   bool _isLoading = false;
   String _errorMessage = '';
   int _selectedIndex = 0;
+  bool _isPremiumUser = false; // Track subscription status
 
-  Future<void> _pickImage(String endpoint) async {
+  Future<void> _pickImage() async {
     try {
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -36,9 +36,12 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           _image = File(pickedFile.path);
           _result = null;
           _errorMessage = '';
-          _isLoading = true;
         });
-        await _analyzeImage(_image!, endpoint);
+        if (_isPremiumUser) {
+          _showAnalysisChoiceDialog();
+        } else {
+          await _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/identify');
+        }
       } else {
         setState(() {
           _errorMessage = 'No image selected';
@@ -53,47 +56,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     }
   }
 
-  Future<void> _analyzeImage(File image, String endpoint) async {
-    try {
-      final bytes = await image.readAsBytes();
-      final base64Image = base64Encode(bytes);
-
-      final response = await http.post(
-        Uri.parse(endpoint),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"image": base64Image}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          if (endpoint.contains('identify')) {
-            _result = LeafIdentificationResult.fromJson(data);
-          } else if (endpoint.contains('health-analysis')) {
-            _result = LeafHealthAnalysisResult.fromJson(data);
-          }
-          _isLoading = false;
-        });
-        _showSnackBar('Analysis completed successfully.');
-      } else {
-        setState(() {
-          _result = null;
-          _isLoading = false;
-          _errorMessage = "Failed to get analysis: ${response.statusCode}";
-        });
-        _showSnackBar('Analysis failed. Status: ${response.statusCode}');
-      }
-    } catch (e, stackTrace) {
-      setState(() {
-        _result = null;
-        _isLoading = false;
-        _errorMessage = 'Error analyzing image: $e\n$stackTrace';
-      });
-      _showSnackBar('Error analyzing image.');
-    }
-  }
-
-  Future<void> _captureImage(String endpoint) async {
+  Future<void> _captureImage() async {
     try {
       final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
@@ -102,9 +65,12 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           _image = File(pickedFile.path);
           _result = null;
           _errorMessage = '';
-          _isLoading = true;
         });
-        await _analyzeImage(_image!, endpoint);
+        if (_isPremiumUser) {
+          _showAnalysisChoiceDialog();
+        } else {
+          await _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/identify');
+        }
       } else {
         setState(() {
           _errorMessage = 'No image captured';
@@ -118,6 +84,52 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       _showSnackBar('Failed to capture image.');
     }
   }
+
+  Future<void> _analyzeImage(File image, String endpoint) async {
+  try {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final bytes = await image.readAsBytes();
+    final base64Image = base64Encode(bytes);
+
+    final response = await http.post(
+      Uri.parse(endpoint),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"image": base64Image}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      setState(() {
+        if (endpoint.contains('identify')) {
+          _result = LeafIdentificationResult.fromJson(data);
+        } else if (endpoint.contains('health-analysis')) {
+          _result = LeafHealthAnalysisResult.fromJson(data);
+        }
+        _isLoading = false;
+      });
+      _showSnackBar('Analysis completed successfully.');
+    } else {
+      setState(() {
+        _result = null;
+        _isLoading = false;
+        _errorMessage = "Failed to get analysis: ${response.statusCode}";
+      });
+      _showSnackBar('Analysis failed. Status: ${response.statusCode}');
+    }
+  } catch (e, stackTrace) {
+    setState(() {
+      _result = null;
+      _isLoading = false;
+      _errorMessage = 'Error analyzing image: $e\n$stackTrace';
+    });
+    _showSnackBar('Error analyzing image.');
+  }
+}
+
 
   void _resetImage() {
     setState(() {
@@ -165,6 +177,41 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     });
   }
 
+  void _showAnalysisChoiceDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Choose Analysis Type"),
+          content: const Text("Would you like to identify the plant or analyze its health?"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Identify Plant"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/identify');
+              },
+            ),
+            TextButton(
+              child: const Text("Analyze Health"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/health-analyis');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _togglePremiumStatus() {
+    setState(() {
+      _isPremiumUser = true;
+    });
+    _showSnackBar('You are now a premium user!');
+  }
+
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
@@ -184,6 +231,12 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             Navigator.of(context).pop();
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.star, color: Colors.yellow),
+            onPressed: _togglePremiumStatus,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -210,9 +263,10 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                 _buildErrorDisplay(),
               const SizedBox(height: 20),
               _buildActionButtons(),
-              const SizedBox(height: 20),
-              _buildSubmitButton(),
-              if (_result != null) _buildAskQuestionButton(),
+              if (_isPremiumUser) ...[
+                const SizedBox(height: 20),
+                _buildSubmitButton(),
+              ],
             ],
           ),
         ),
@@ -280,10 +334,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildIconButton(Icons.image, "Gallery", Colors.green,
-                () => _pickImage('https://agriback-plum.vercel.app/api/vision/identify')),
-            _buildIconButton(Icons.camera_alt, "Camera", Colors.green,
-                () => _captureImage('https://agriback-plum.vercel.app/api/vision/identify')),
+            _buildIconButton(Icons.image, "Gallery", Colors.green, _pickImage),
+            _buildIconButton(Icons.camera_alt, "Camera", Colors.green, _captureImage),
             _buildIconButton(Icons.refresh, "Reset", Colors.red, _resetImage),
           ],
         ),
@@ -312,7 +364,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         ElevatedButton(
           onPressed: _isLoading
               ? null
-              : () => _pickImage('https://agriback-plum.vercel.app/api/vision/identify'),
+              : _pickImage,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -322,19 +374,20 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           child: const Text("Identify Leaf",
               style: TextStyle(fontSize: 18, color: Colors.white)),
         ),
-        ElevatedButton(
-          onPressed: _isLoading
-              ? null
-              : () => _pickImage('https://agriback-plum.vercel.app/api/vision/health-analysis'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        if (_isPremiumUser)
+          ElevatedButton(
+            onPressed: _isLoading
+                ? null
+                : _pickImage,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+            child: const Text("Analyze Health",
+                style: TextStyle(fontSize: 18, color: Colors.white)),
           ),
-          child: const Text("Analyze Health",
-              style: TextStyle(fontSize: 18, color: Colors.white)),
-        ),
       ],
     );
   }
@@ -374,7 +427,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           return _buildResultCard("Identification", [
             _buildResultRow("Name", suggestion.name),
             _buildResultRow("Probability", suggestion.probability.toString()),
-            // Add more fields as needed
           ], Colors.green[100]);
         }).toList(),
       );
@@ -388,7 +440,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           return _buildResultCard("Health Analysis", [
             _buildResultRow("Disease", suggestion.name),
             _buildResultRow("Probability", suggestion.probability.toString()),
-            // Add more fields as needed
           ], Colors.red[100]);
         }).toList(),
       );
@@ -453,31 +504,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAskQuestionButton() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ChatPage(),
-          ),
-        );
-      },
-      icon: const Icon(Icons.help_outline, size: 24),
-      label: const Text(
-        "Ask a Question",
-        style: TextStyle(fontSize: 18),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
         ),
       ),
     );

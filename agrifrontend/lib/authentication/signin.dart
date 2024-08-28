@@ -1,9 +1,9 @@
 import 'dart:convert';
+import 'package:agrifrontend/AI%20pages/community/community_page.dart';
 import 'package:agrifrontend/authentication/mobilenumber.dart';
 import 'package:agrifrontend/authentication/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:agrifrontend/preferences/community.dart'; // Import the Community page
 
 class Signin extends StatefulWidget {
   @override
@@ -37,7 +37,7 @@ class _SigninState extends State<Signin> {
         // Navigate to the Community page after successful login
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Community()),
+          MaterialPageRoute(builder: (context) => const CommunityChatPage()),
         );
       } else {
         final data = jsonDecode(response.body);

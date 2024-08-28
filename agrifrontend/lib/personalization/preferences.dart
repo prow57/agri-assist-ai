@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PreferencesScreen extends StatefulWidget {
+  const PreferencesScreen({super.key});
+
   @override
   _PreferencesScreenState createState() => _PreferencesScreenState();
 }
@@ -31,7 +33,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
             children: [
 
               // Type of Farming Section
-              Text(
+              const Text(
                 'Select Type of Farming',
                 style: TextStyle(
                   fontSize: 22,
@@ -39,7 +41,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Farming Type Buttons
               Wrap(
@@ -58,11 +60,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     ),
                     child: Text(
                       type,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -71,10 +73,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   );
                 }).toList(),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Preferences Section
-              Text(
+              const Text(
                 'Select Your Interests',
                 style: TextStyle(
                   fontSize: 22,
@@ -82,7 +84,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Preferences Buttons
               Wrap(
@@ -106,11 +108,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     ),
                     child: Text(
                       preference,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -120,7 +122,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 }).toList(),
               ),
 
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Save Button
               ElevatedButton(
@@ -132,9 +134,9 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 ),
-                child: Text(
+                child: const Text(
                   'Save Preferences',
                   style: TextStyle(
                     fontSize: 18,
