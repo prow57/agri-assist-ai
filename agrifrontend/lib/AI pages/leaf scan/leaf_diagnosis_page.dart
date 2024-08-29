@@ -1,9 +1,5 @@
-// Path: lib/ai_pages/leaf_scan/leaf_analysis_screen.dart
-
 import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/history_page.dart';
-import 'package:agrifrontend/AI%20pages/leaf%20scan/models/healthy_analysis.dart';
-import 'package:agrifrontend/AI%20pages/leaf%20scan/models/leaf_identification.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
@@ -23,15 +19,15 @@ class LeafAnalysisScreen extends StatefulWidget {
 class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   File? _image;
   final ImagePicker picker = ImagePicker();
-  dynamic _result; // Can be LeafIdentificationResult, LeafHealthAnalysisResult, or free tier result
+  Map<String, dynamic>? _result; // Stores the result as a Map
   bool _isLoading = false;
   String _errorMessage = '';
   int _selectedIndex = 0;
-  bool _isPremiumUser = false; // Track subscription status
+  bool _isPremiumUser = false;
 
-  Future<void> _pickImage() async {
+  Future<void> _handleImage(ImageSource source) async {
     try {
-      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      final pickedFile = await picker.pickImage(source: source);
 
       if (pickedFile != null) {
         setState(() {
@@ -45,95 +41,80 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
-        setState(() {
-          _errorMessage = 'No image selected';
-        });
+        _showError('No image selected');
       }
     } catch (e, stackTrace) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Error picking image: $e\n$stackTrace';
-      });
-      _showSnackBar('Failed to pick image.');
-    }
-  }
-
-  Future<void> _captureImage() async {
-    try {
-      final pickedFile = await picker.pickImage(source: ImageSource.camera);
-
-      if (pickedFile != null) {
-        setState(() {
-          _image = File(pickedFile.path);
-          _result = null;
-          _errorMessage = '';
-        });
-        if (_isPremiumUser) {
-          _showAnalysisChoiceDialog();
-        } else {
-          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
-        }
-      } else {
-        setState(() {
-          _errorMessage = 'No image captured';
-        });
-      }
-    } catch (e, stackTrace) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Error capturing image: $e\n$stackTrace';
-      });
-      _showSnackBar('Failed to capture image.');
+      _handleError('Error picking image: $e', stackTrace);
     }
   }
 
   Future<void> _analyzeImage(File image, String endpoint) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
 
-      final bytes = await image.readAsBytes();
-      final base64Image = base64Encode(bytes);
+      http.Response response;
 
-      final response = await http.post(
-        Uri.parse(endpoint),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"image": base64Image}),
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        setState(() {
-          if (endpoint.contains('identify')) {
-            _result = LeafIdentificationResult.fromJson(data);
-          } else if (endpoint.contains('health-analysis')) {
-            _result = LeafHealthAnalysisResult.fromJson(data);
-          } else {
-            // Handle free tier response
-            _result = data['leaf_analysis'];
-          }
-          _isLoading = false;
-        });
-        _showSnackBar('Analysis completed successfully.');
-        if (!_isPremiumUser) _showUpgradePrompt(); // Show prompt for free-tier users
+      if (_isPremiumUser && _isPremiumEndpoint(endpoint)) {
+        response = await _uploadImage(image, endpoint);
       } else {
-        setState(() {
-          _result = null;
-          _isLoading = false;
-          _errorMessage = "Failed to get analysis: ${response.statusCode}";
-        });
-        _showSnackBar('Analysis failed. Status: ${response.statusCode}');
+        response = await _postBase64Image(image, endpoint);
       }
+
+      _handleResponse(response, endpoint);
     } catch (e, stackTrace) {
-      setState(() {
-        _result = null;
-        _isLoading = false;
-        _errorMessage = 'Error analyzing image: $e\n$stackTrace';
-      });
-      _showSnackBar('Error analyzing image.');
+      _handleError('Error analyzing image: $e', stackTrace);
     }
+  }
+
+  Future<http.Response> _uploadImage(File image, String endpoint) async {
+    final request = http.MultipartRequest('POST', Uri.parse(endpoint));
+    request.files.add(await http.MultipartFile.fromPath('image', image.path));
+    final streamedResponse = await request.send();
+    return await http.Response.fromStream(streamedResponse);
+  }
+
+  Future<http.Response> _postBase64Image(File image, String endpoint) async {
+    final bytes = await image.readAsBytes();
+    final base64Image = base64Encode(bytes);
+
+    return await http.post(
+      Uri.parse(endpoint),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"image": base64Image}),
+    );
+  }
+
+  void _handleResponse(http.Response response, String endpoint) {
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+
+      setState(() {
+        _result = data;
+        _isLoading = false;
+      });
+      _showSnackBar('Analysis completed successfully.');
+      if (!_isPremiumUser) _showUpgradePrompt();
+    } else {
+      _showError("Failed to get analysis: ${response.statusCode}");
+    }
+  }
+
+  void _handleError(String message, StackTrace stackTrace) {
+    setState(() {
+      _result = null;
+      _isLoading = false;
+      _errorMessage = message;
+    });
+    _showSnackBar('Error occurred.');
+  }
+
+  bool _isPremiumEndpoint(String endpoint) {
+    return endpoint.contains('identify') || endpoint.contains('health-analysis');
+  }
+
+  void _showError(String message) {
+    setState(() => _errorMessage = message);
+    _showSnackBar(message);
   }
 
   void _showUpgradePrompt() {
@@ -146,10 +127,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // Add logic to navigate to subscription or upgrade page if necessary
-            },
+            onPressed: () => Navigator.pop(context),
             child: const Text('Go Premium'),
           ),
           TextButton(
@@ -172,39 +150,19 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   void _onItemTapped(int index) {
     if (index == _selectedIndex) return;
 
-    setState(() {
-      _selectedIndex = index;
+    setState(() => _selectedIndex = index);
 
-      if (index == 0) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
-          ),
-        );
-      } else if (index == 1) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PersonalizedAdvicePage(),
-          ),
-        );
-      } else if (index == 2) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ChatPage(),
-          ),
-        );
-      } else if (index == 3) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SettingsPage(),
-          ),
-        );
-      }
-    });
+    final pages = [
+      const AllCoursesPage(),
+      const PersonalizedAdvicePage(),
+      const ChatPage(),
+      SettingsPage(),
+    ];
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => pages[index]),
+    );
   }
 
   void _showAnalysisChoiceDialog() {
@@ -236,9 +194,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   void _togglePremiumStatus() {
-    setState(() {
-      _isPremiumUser = true;
-    });
+    setState(() => _isPremiumUser = true);
     _showSnackBar('You are now a premium user!');
   }
 
@@ -250,16 +206,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Leaf Diagnosis"),
         backgroundColor: Colors.green,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           IconButton(
@@ -276,10 +230,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             children: <Widget>[
               const Text(
                 "Capture or Select a Leaf Image",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -364,8 +315,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildIconButton(Icons.image, "Gallery", Colors.green, _pickImage),
-            _buildIconButton(Icons.camera_alt, "Camera", Colors.green, _captureImage),
+            _buildIconButton(Icons.image, "Gallery", Colors.green, () => _handleImage(ImageSource.gallery)),
+            _buildIconButton(Icons.camera_alt, "Camera", Colors.green, () => _handleImage(ImageSource.camera)),
             _buildIconButton(Icons.refresh, "Reset", Colors.red, _resetImage),
           ],
         ),
@@ -373,8 +324,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 
-  Widget _buildIconButton(
-      IconData icon, String label, Color color, VoidCallback onPressed) {
+  Widget _buildIconButton(IconData icon, String label, Color color, VoidCallback onPressed) {
     return Column(
       children: [
         IconButton(
@@ -392,31 +342,23 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
-          onPressed: _isLoading
-              ? null
-              : _pickImage,
+          onPressed: _isLoading ? null : () => _handleImage(ImageSource.gallery),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           ),
-          child: const Text("Identify Leaf",
-              style: TextStyle(fontSize: 18, color: Colors.white)),
+          child: const Text("Identify Leaf", style: TextStyle(fontSize: 18, color: Colors.white)),
         ),
         if (_isPremiumUser)
           ElevatedButton(
-            onPressed: _isLoading
-                ? null
-                : _pickImage,
+            onPressed: _isLoading ? null : () => _handleImage(ImageSource.gallery),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
-            child: const Text("Analyze Health",
-                style: TextStyle(fontSize: 18, color: Colors.white)),
+            child: const Text("Analyze Health", style: TextStyle(fontSize: 18, color: Colors.white)),
           ),
       ],
     );
@@ -435,9 +377,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       child: const Text(
         "Recent search",
@@ -447,66 +387,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   Widget _buildResultDisplay() {
-    if (_result is LeafIdentificationResult) {
-      final identificationResult = _result as LeafIdentificationResult;
-      final suggestions = identificationResult.data.classification.suggestions;
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: suggestions.map((suggestion) {
-          return _buildResultCard("Identification", [
-            _buildResultRow("Name", suggestion.name),
-            _buildResultRow("Probability", suggestion.probability.toString()),
-          ], Colors.green[100]);
-        }).toList(),
-      );
-    } else if (_result is LeafHealthAnalysisResult) {
-      final healthAnalysisResult = _result as LeafHealthAnalysisResult;
-      final diseaseSuggestions = healthAnalysisResult.data.diseaseSuggestions;
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: diseaseSuggestions.map((suggestion) {
-          return _buildResultCard("Health Analysis", [
-            _buildResultRow("Disease", suggestion.name),
-            _buildResultRow("Probability", suggestion.probability.toString()),
-          ], Colors.red[100]);
-        }).toList(),
-      );
-    } else if (_result != null) {
-      // Handling the free-tier result structure
-      return _buildResultCard(
-        "Free Tier Analysis",
-        [
-          _buildResultRow("Crop Type", _result['crop_type']),
-          _buildResultRow("Disease Name", _result['disease_name']),
-          _buildResultRow("Risk Level", _result['level_of_risk']),
-          _buildResultRow("Description", _result['description']),
-        ],
-        Colors.blue[100],
-      );
-    } else {
-      return Container();
-    }
-  }
-
-  Widget _buildResultRow(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
-    );
+    return _result != null
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _result!.entries.map((entry) {
+              return _buildResultCard(entry.key, [Text(entry.value.toString())], Colors.green[100]);
+            }).toList(),
+          )
+        : Container();
   }
 
   Widget _buildResultCard(String title, List<Widget> rows, Color? color) {
@@ -518,10 +406,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const Divider(color: Colors.green),
             ...rows,
           ],

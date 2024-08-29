@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'ResetPasswordPage.dart';
 
-class OtpVerificationPage extends StatelessWidget {
+class OtpVerification extends StatelessWidget {
   final TextEditingController _otpController = TextEditingController();
   final String phone;
 
-  OtpVerificationPage({required this.phone});
+  OtpVerification({required this.phone});
 
   Future<void> _verifyOtp(BuildContext context) async {
     final otp = _otpController.text;
@@ -26,9 +27,10 @@ class OtpVerificationPage extends StatelessWidget {
       );
 
       if (response.statusCode == 200) {
-        Navigator.pushNamed(
+        // OTP verified successfully, navigate to the Reset Password page
+        Navigator.pushReplacement(
           context,
-          '/newpassword',
+          MaterialPageRoute(builder: (context) => ResetPasswordPage(phone: phone)),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -51,13 +53,18 @@ class OtpVerificationPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Logo Section
               Image.asset('assets/images/logo.png', height: 100),
               SizedBox(height: 20),
+
+              // OTP Sent Message
               Text(
                 'OTP sent to $phone',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               SizedBox(height: 20),
+
+              // "Enter OTP" Field
               TextField(
                 controller: _otpController,
                 keyboardType: TextInputType.number,
@@ -69,6 +76,8 @@ class OtpVerificationPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
+
+              // Verify Button
               ElevatedButton(
                 onPressed: () => _verifyOtp(context),
                 style: ElevatedButton.styleFrom(

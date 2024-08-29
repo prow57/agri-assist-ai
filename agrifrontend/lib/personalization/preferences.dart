@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'CommunityPage.dart'; // Import CommunityPage
 
 class PreferencesScreen extends StatefulWidget {
-  const PreferencesScreen({super.key});
-
   @override
   _PreferencesScreenState createState() => _PreferencesScreenState();
 }
@@ -25,15 +24,33 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      body: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 20),
+              Text(
+                'Personalize Your Experience',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Choose your farming type and interests to get customized content.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 30),
 
               // Type of Farming Section
-              const Text(
+              Text(
                 'Select Type of Farming',
                 style: TextStyle(
                   fontSize: 22,
@@ -41,42 +58,43 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
 
               // Farming Type Buttons
               Wrap(
                 spacing: 10,
+                runSpacing: 10,
                 children: farmingTypes.map((type) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        selectedFarmingType = type;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: selectedFarmingType == type
-                          ? Colors.blue
-                          : Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    ),
-                    child: Text(
+                  return ChoiceChip(
+                    label: Text(
                       type,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: selectedFarmingType == type
+                            ? Colors.white
+                            : Colors.black,
                       ),
+                    ),
+                    selected: selectedFarmingType == type,
+                    onSelected: (bool selected) {
+                      setState(() {
+                        selectedFarmingType = selected ? type : '';
+                      });
+                    },
+                    selectedColor: Colors.green,
+                    backgroundColor: Colors.grey[200],
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
 
               // Preferences Section
-              const Text(
+              Text(
                 'Select Your Interests',
                 style: TextStyle(
                   fontSize: 22,
@@ -84,64 +102,71 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
 
               // Preferences Buttons
               Wrap(
                 spacing: 10,
                 runSpacing: 10,
                 children: preferenceCategories.map((preference) {
-                  return ElevatedButton(
-                    onPressed: () {
+                  return FilterChip(
+                    label: Text(
+                      preference,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: selectedPreferences.contains(preference)
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                    ),
+                    selected: selectedPreferences.contains(preference),
+                    onSelected: (bool selected) {
                       setState(() {
-                        if (selectedPreferences.contains(preference)) {
-                          selectedPreferences.remove(preference);
-                        } else {
+                        if (selected) {
                           selectedPreferences.add(preference);
+                        } else {
+                          selectedPreferences.remove(preference);
                         }
                       });
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: selectedPreferences.contains(preference)
-                          ? Colors.blue
-                          : Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    ),
-                    child: Text(
-                      preference,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    selectedColor: Colors.green,
+                    backgroundColor: Colors.grey[200],
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   );
                 }).toList(),
               ),
-
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
 
               // Save Button
-              ElevatedButton(
-                onPressed: () {
-                  // Save preferences and navigate to the next screen
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navigate to Community Page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CommunityPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                ),
-                child: const Text(
-                  'Save Preferences',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  child: Text(
+                    'Save Preferences',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

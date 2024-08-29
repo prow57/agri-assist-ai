@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:agrifrontend/authentication/otpverification.dart';
 import 'package:http/http.dart' as http;
+import 'otpverification.dart'; // Import the OTP verification screen
 
 class MobileNumberScreen extends StatelessWidget {
   final TextEditingController _phoneController = TextEditingController();
@@ -17,21 +17,43 @@ class MobileNumberScreen extends StatelessWidget {
     }
 
     try {
-      final response = await http.post(
-        Uri.parse('https://agriback-plum.vercel.app/api/verify/send-otp'),
+      final checkResponse = await http.post(
+        Uri.parse('https://agriback-plum.vercel.app/api/auth/check-phone'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': phone}),
       );
 
-      if (response.statusCode == 200) {
-        Navigator.pushNamed(
-          context,
-          '/otpverification',
-          arguments: phone,
+      if (checkResponse.statusCode == 200) {
+        final otpResponse = await http.post(
+          Uri.parse('https://agriback-plum.vercel.app/api/verify/send-otp'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'phone': phone}),
+        );
+
+        if (otpResponse.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('OTP sent successfully.')),
+          );
+
+          // Navigate to OTP Verification screen, passing the phone number
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OtpVerification(phone: phone),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to send OTP. Please try again.')),
+          );
+        }
+      } else if (checkResponse.statusCode == 404) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No account associated with that number.')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send OTP. Please try again.')),
+          SnackBar(content: Text('Failed to verify phone number. Please try again.')),
         );
       }
     } catch (error) {
