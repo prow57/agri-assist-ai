@@ -1,3 +1,4 @@
+import 'package:agrifrontend/authentication/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hive/hive.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'OpenTechZ App',
           theme: themeNotifier.currentTheme,
-          home: const HomePage(),
+          home:  Signin(),
           debugShowCheckedModeBanner: false,
         );
       },

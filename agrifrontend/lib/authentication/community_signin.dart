@@ -1,52 +1,22 @@
 import 'dart:convert';
-import 'package:agrifrontend/home/home_page.dart';
+import 'package:agrifrontend/authentication/community_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:agrifrontend/authentication/signup.dart';
 import 'package:agrifrontend/authentication/mobilenumber.dart';
+import '../personalization/preferences.dart';
 
-class Signin extends StatefulWidget {
+class CommunitySignIn extends StatefulWidget {
   @override
-  _SigninState createState() => _SigninState();
+  _CommunitySignInState createState() => _CommunitySignInState();
 }
 
-class _SigninState extends State<Signin> {
+class _CommunitySignInState extends State<CommunitySignIn> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
-  bool _isPasswordVisible = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkIfPromptedBefore();
-  }
-
-  Future<void> _checkIfPromptedBefore() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool? hasSeenPrompt = prefs.getBool('hasSeenPrompt');
-
-    if (hasSeenPrompt == true) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
-    }
-  }
-
-  Future<void> _setPromptedFlag() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasSeenPrompt', true);
-  }
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
-
-    setState(() {
-      _isLoading = true;
-    });
 
     final phone = _phoneController.text;
     final password = _passwordController.text;
@@ -59,14 +29,16 @@ class _SigninState extends State<Signin> {
       );
 
       if (response.statusCode == 200) {
-        await _setPromptedFlag();
+        final data = jsonDecode(response.body);
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login successful!')),
         );
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(
+              builder: (context) => PreferencesScreen()),
         );
       } else {
         final data = jsonDecode(response.body);
@@ -78,19 +50,7 @@ class _SigninState extends State<Signin> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Network error. Please check your connection.')),
       );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
-  }
-
-  void _skipLogin() async {
-    await _setPromptedFlag();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
   }
 
   @override
@@ -107,7 +67,7 @@ class _SigninState extends State<Signin> {
               const SizedBox(height: 40),
 
               const Text(
-                'Welcome',
+                'Welcome Back to Community',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -152,23 +112,11 @@ class _SigninState extends State<Signin> {
                       decoration: InputDecoration(
                         labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
-                      obscureText: !_isPasswordVisible,
+                      obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password.';
@@ -179,7 +127,7 @@ class _SigninState extends State<Signin> {
                     const SizedBox(height: 30),
 
                     ElevatedButton(
-                      onPressed: _isLoading ? null : _login,
+                      onPressed: _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         shape: RoundedRectangleBorder(
@@ -188,27 +136,8 @@ class _SigninState extends State<Signin> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                       ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                              'Login',
-                              style: TextStyle(fontSize: 16, color: Colors.white), 
-                            ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    ElevatedButton(
-                      onPressed: _skipLogin,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                      ),
                       child: const Text(
-                        'Continue Without Logging In',
+                        'Sign In to Community',
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
@@ -236,7 +165,7 @@ class _SigninState extends State<Signin> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Signup()),
+                                  builder: (context) => CommunitySignUp()),
                             );
                           },
                           child: const Text(

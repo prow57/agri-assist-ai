@@ -51,7 +51,7 @@ class _SignupState extends State<Signup> {
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Network error. Please check your connection.')),
+        const SnackBar(content: Text('Network error. Please check your connection.')),
       );
     }
   }
@@ -65,11 +65,11 @@ class _SignupState extends State<Signup> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Image.asset('assets/images/logo.png', height: 100),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
-              Text(
+              const Text(
                 'Create Account',
                 style: TextStyle(
                   fontSize: 24,
@@ -77,7 +77,7 @@ class _SignupState extends State<Signup> {
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 'Please fill in the details below to sign up',
                 style: TextStyle(
@@ -85,7 +85,7 @@ class _SignupState extends State<Signup> {
                   color: Colors.grey[600],
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               Form(
                 key: _formKey,
@@ -95,7 +95,7 @@ class _SignupState extends State<Signup> {
                       controller: _fullNameController,
                       decoration: InputDecoration(
                         labelText: 'Full Name',
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -107,13 +107,13 @@ class _SignupState extends State<Signup> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     TextFormField(
                       controller: _phoneController,
                       decoration: InputDecoration(
                         labelText: 'Phone Number',
-                        prefixIcon: Icon(Icons.phone),
+                        prefixIcon: const Icon(Icons.phone),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -126,13 +126,13 @@ class _SignupState extends State<Signup> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -145,13 +145,13 @@ class _SignupState extends State<Signup> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     TextFormField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
                         labelText: 'Confirm Password',
-                        prefixIcon: Icon(Icons.lock_outline),
+                        prefixIcon: const Icon(Icons.lock_outline),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
@@ -164,7 +164,7 @@ class _SignupState extends State<Signup> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
                     ElevatedButton(
                       onPressed: _register,
@@ -173,20 +173,20 @@ class _SignupState extends State<Signup> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Register',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Already have an account?"),
+                        const Text("Already have an account?"),
                         TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -194,7 +194,7 @@ class _SignupState extends State<Signup> {
                               MaterialPageRoute(builder: (context) => Signin()),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             'Login here',
                             style: TextStyle(color: Colors.green),
                           ),
@@ -204,7 +204,7 @@ class _SignupState extends State<Signup> {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),

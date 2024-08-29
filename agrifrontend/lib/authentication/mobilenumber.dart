@@ -11,7 +11,7 @@ class MobileNumberScreen extends StatelessWidget {
 
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter your mobile number.')),
+        const SnackBar(content: Text('Please enter your mobile number.')),
       );
       return;
     }
@@ -32,7 +32,7 @@ class MobileNumberScreen extends StatelessWidget {
 
         if (otpResponse.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('OTP sent successfully.')),
+            const SnackBar(content: Text('OTP sent successfully.')),
           );
 
           // Navigate to OTP Verification screen, passing the phone number
@@ -44,21 +44,21 @@ class MobileNumberScreen extends StatelessWidget {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to send OTP. Please try again.')),
+            const SnackBar(content: Text('Failed to send OTP. Please try again.')),
           );
         }
       } else if (checkResponse.statusCode == 404) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No account associated with that number.')),
+          const SnackBar(content: Text('No account associated with that number.')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to verify phone number. Please try again.')),
+          const SnackBar(content: Text('Failed to verify phone number. Please try again.')),
         );
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Network error. Please check your connection.')),
+        const SnackBar(content: Text('Network error. Please check your connection.')),
       );
     }
   }
@@ -73,10 +73,10 @@ class MobileNumberScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               Image.asset('assets/images/logo.png', height: 100),
-              SizedBox(height: 40),
-              Text(
+              const SizedBox(height: 40),
+              const Text(
                 'Verify Your Number',
                 style: TextStyle(
                   fontSize: 24,
@@ -84,7 +84,7 @@ class MobileNumberScreen extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 'Enter your mobile number to receive an OTP',
                 style: TextStyle(
@@ -92,19 +92,19 @@ class MobileNumberScreen extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               TextField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   labelText: 'Mobile Number',
-                  prefixIcon: Icon(Icons.phone, color: Colors.green),
+                  prefixIcon: const Icon(Icons.phone, color: Colors.green),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () => _sendOtp(context),
                 style: ElevatedButton.styleFrom(
@@ -112,11 +112,11 @@ class MobileNumberScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 ),
-                child: Text(
+                child: const Text(
                   'Send OTP',
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
             ],

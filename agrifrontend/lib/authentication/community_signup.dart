@@ -1,75 +1,50 @@
 import 'dart:convert';
-import 'package:agrifrontend/home/home_page.dart';
+import 'package:agrifrontend/authentication/community_signin.dart';
+import 'package:agrifrontend/authentication/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:agrifrontend/authentication/signup.dart';
-import 'package:agrifrontend/authentication/mobilenumber.dart';
 
-class Signin extends StatefulWidget {
+class CommunitySignUp extends StatefulWidget {
   @override
-  _SigninState createState() => _SigninState();
+  _CommunitySignUpState createState() => _CommunitySignUpState();
 }
 
-class _SigninState extends State<Signin> {
+class _CommunitySignUpState extends State<CommunitySignUp> {
+  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
-  bool _isPasswordVisible = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _checkIfPromptedBefore();
-  }
-
-  Future<void> _checkIfPromptedBefore() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool? hasSeenPrompt = prefs.getBool('hasSeenPrompt');
-
-    if (hasSeenPrompt == true) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
-    }
-  }
-
-  Future<void> _setPromptedFlag() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasSeenPrompt', true);
-  }
-
-  Future<void> _login() async {
+  Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
-
+    final fullName = _fullNameController.text;
     final phone = _phoneController.text;
     final password = _passwordController.text;
 
     try {
       final response = await http.post(
-        Uri.parse('https://agriback-plum.vercel.app/api/auth/login'),
+        Uri.parse('https://agriback-plum.vercel.app/api/auth/signup'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'phone': phone, 'password': password}),
+        body: jsonEncode({
+          'fullName': fullName,
+          'phone': phone,
+          'password': password,
+        }),
       );
 
-      if (response.statusCode == 200) {
-        await _setPromptedFlag();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login successful!')),
-        );
+      final data = jsonDecode(response.body);
 
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'])),
+        );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => Signin()),
         );
       } else {
-        final data = jsonDecode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['error'])),
         );
@@ -78,19 +53,7 @@ class _SigninState extends State<Signin> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Network error. Please check your connection.')),
       );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
-  }
-
-  void _skipLogin() async {
-    await _setPromptedFlag();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
   }
 
   @override
@@ -107,7 +70,7 @@ class _SigninState extends State<Signin> {
               const SizedBox(height: 40),
 
               const Text(
-                'Welcome',
+                'Join the Community',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -116,7 +79,7 @@ class _SigninState extends State<Signin> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Please sign in to continue',
+                'Please fill in the details below to sign up',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -128,6 +91,24 @@ class _SigninState extends State<Signin> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    TextFormField(
+                      controller: _fullNameController,
+                      decoration: InputDecoration(
+                        labelText: 'Full Name',
+                        prefixIcon: const Icon(Icons.person),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your full name.';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
                     TextFormField(
                       controller: _phoneController,
                       decoration: InputDecoration(
@@ -152,23 +133,11 @@ class _SigninState extends State<Signin> {
                       decoration: InputDecoration(
                         labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
-                      obscureText: !_isPasswordVisible,
+                      obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password.';
@@ -176,10 +145,29 @@ class _SigninState extends State<Signin> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 20),
+
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      decoration: InputDecoration(
+                        labelText: 'Confirm Password',
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match.';
+                        }
+                        return null;
+                      },
+                    ),
                     const SizedBox(height: 30),
 
                     ElevatedButton(
-                      onPressed: _isLoading ? null : _login,
+                      onPressed: _register,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         shape: RoundedRectangleBorder(
@@ -188,59 +176,26 @@ class _SigninState extends State<Signin> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 50, vertical: 15),
                       ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                              'Login',
-                              style: TextStyle(fontSize: 16, color: Colors.white), 
-                            ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    ElevatedButton(
-                      onPressed: _skipLogin,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                      ),
                       child: const Text(
-                        'Continue Without Logging In',
+                        'Register',
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
                     const SizedBox(height: 20),
 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        const Text("Already have an account?"),
                         TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MobileNumberScreen()),
+                              MaterialPageRoute(builder: (context) => CommunitySignIn()),
                             );
                           },
                           child: const Text(
-                            'Forgot password?',
-                            style: TextStyle(color: Colors.green),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Signup()),
-                            );
-                          },
-                          child: const Text(
-                            'Register here',
+                            'Login here',
                             style: TextStyle(color: Colors.green),
                           ),
                         ),

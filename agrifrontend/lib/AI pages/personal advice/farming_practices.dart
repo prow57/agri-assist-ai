@@ -102,7 +102,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => HistoryPage(),
+        builder: (context) => const HistoryPage(),
       ),
     );
   }
@@ -161,9 +161,9 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
               }
             },
             itemBuilder: (context) => [
-              PopupMenuItem<String>(
+              const PopupMenuItem<String>(
                 value: 'history',
-                child: const Text('History'),
+                child: Text('History'),
               ),
             ],
             icon: const Icon(Icons.more_vert),
@@ -210,7 +210,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: _fetchCourse,
-                  icon: const Icon(Icons.download),
+                  icon: const Icon(Icons.download, color: Colors.white,),
                   label: const Text('Fetch Course', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[700],
@@ -257,9 +257,9 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Table of Contents',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),

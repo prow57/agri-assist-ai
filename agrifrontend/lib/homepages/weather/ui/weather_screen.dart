@@ -22,7 +22,7 @@ class _WeatherPageState extends State<WeatherPage> {
   final cacheManager = DefaultCacheManager();
   double _opacity = 1.0;
 
-  bool _isPremiumUser = false;  // Tracks if the user is a premium user
+  bool _isPremiumUser = false; // Tracks if the user is a premium user
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _WeatherPageState extends State<WeatherPage> {
     // Mock implementation to check if a user is premium
     // In real case, fetch this from a server or local storage
     setState(() {
-      _isPremiumUser = false;  // Default to free user
+      _isPremiumUser = false; // Default to free user
     });
   }
 
@@ -54,7 +54,7 @@ class _WeatherPageState extends State<WeatherPage> {
     });
 
     if (!_isPremiumUser) {
-      _showPremiumPopup();  // Show popup if not a premium user
+      _showPremiumPopup(); // Show popup if not a premium user
     }
   }
 
@@ -169,15 +169,23 @@ class _WeatherPageState extends State<WeatherPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Weather Forecast', style: TextStyle(color: Colors.white),),
+        title: const Text('Weather Forecast',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green[700],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.location_on, color: Colors.white),
+            onPressed: _selectLocation,
+          ),
           if (_isPremiumUser)
-            const Icon(Icons.star, color: Colors.yellow),
+            IconButton(
+              icon: const Icon(Icons.star, color: Colors.yellow),
+              onPressed: _onPremiumIconPressed,
+            ),
         ],
       ),
       body: _isLoading
@@ -294,112 +302,111 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-Widget _buildWeatherDetails() {
-  return Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: _buildDetailWithIcon(
-                'assets/max-temp.png',
-                'Temp.',
-                '${_weatherData!['current']['feelslike_c']}°',
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: _buildDetailWithIcon(
-                'assets/heavyrain.png',
-                'Rain',
-                '${_weatherData!['current']['precip_mm']} mm',
-              ),
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: _buildDetailWithIcon(
-                'assets/sleet.png',
-                'UV index',
-                '${_weatherData!['current']['uv']}',
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: _buildDetailWithIcon(
-                'assets/windspeed.png',
-                'Air Quality',
-                _weatherData!['current']['air_quality'] != null
-                    ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
-                    : 'N/A',
-              ),
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
-}
-
-Widget _buildDetailWithIcon(String iconPath, String label, String value) {
-  return Container(
-    padding: const EdgeInsets.all(12.0),
-    decoration: BoxDecoration(
-      color: Colors.green[50],
-      borderRadius: BorderRadius.circular(8.0),
-      border: Border.all(color: Colors.green[700]!, width: 1.0),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildWeatherDetails() {
+    return Column(
       children: [
-        Image.asset(
-          iconPath,
-          height: 50, // Adjusted icon size
-          width: 50,
-        ),
-        const SizedBox(width: 8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: _buildDetailWithIcon(
+                  'assets/max-temp.png',
+                  'Temp.',
+                  '${_weatherData!['current']['feelslike_c']}°',
+                ),
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: const TextStyle(fontSize: 16),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: _buildDetailWithIcon(
+                  'assets/heavyrain.png',
+                  'Rain',
+                  '${_weatherData!['current']['precip_mm']} mm',
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: _buildDetailWithIcon(
+                  'assets/sleet.png',
+                  'UV index',
+                  '${_weatherData!['current']['uv']}',
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: _buildDetailWithIcon(
+                  'assets/windspeed.png',
+                  'Air Quality',
+                  _weatherData!['current']['air_quality'] != null
+                      ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
+                      : 'N/A',
+                ),
+              ),
             ),
           ],
         ),
       ],
-    ),
-  );
-}
+    );
+  }
 
+  Widget _buildDetailWithIcon(String iconPath, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: Colors.green[50],
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.green[700]!, width: 1.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            iconPath,
+            height: 50, // Adjusted icon size
+            width: 50,
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildWeatherForecast() {
     // Show all forecast data if user is premium, otherwise show only today
-    final forecastDays = _isPremiumUser 
-        ? _weatherData!['forecast']['forecastday'] as List<dynamic> 
+    final forecastDays = _isPremiumUser
+        ? _weatherData!['forecast']['forecastday'] as List<dynamic>
         : [_weatherData!['forecast']['forecastday'][0]];
-    
+
     final numberOfDays = forecastDays.length;
 
     return Column(
@@ -425,66 +432,68 @@ Widget _buildDetailWithIcon(String iconPath, String label, String value) {
   }
 
   List<Widget> _buildForecast(List<dynamic> forecastDays) {
-  if (forecastDays.isEmpty) {
-    return [const Text('No forecast data available')];
-  }
+    if (forecastDays.isEmpty) {
+      return [const Text('No forecast data available')];
+    }
 
-  return List<Widget>.generate(forecastDays.length, (index) {
-    final dayForecast = forecastDays[index];
-    final date = DateTime.parse(dayForecast['date']);
-    final dayOfWeek = DateFormat('EEEE').format(date);
+    return List<Widget>.generate(forecastDays.length, (index) {
+      final dayForecast = forecastDays[index];
+      final date = DateTime.parse(dayForecast['date']);
+      final dayOfWeek = DateFormat('EEEE').format(date);
 
-    return GestureDetector(
-      onTap: () {
-        _navigateToDetailPage(context, dayForecast);
-      },
-      child: SizedBox(
-        width: 150,
-        child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  dayOfWeek,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-                const SizedBox(height: 8),
-                Image.network(
-                  'https:${dayForecast['day']['condition']['icon']}',
-                  height: 100,
-                  width: 100,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '${dayForecast['day']['avgtemp_c']}°C',
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: Text(
-                    '${dayForecast['day']['condition']['text']}',
-                    style: const TextStyle(fontSize: 16),
-                    // overflow: TextOverflow.fade,
-                    softWrap: true,
+      return GestureDetector(
+        onTap: () {
+          _navigateToDetailPage(context, dayForecast);
+        },
+        child: SizedBox(
+          width: 150,
+          child: Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    dayOfWeek,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Image.network(
+                    'https:${dayForecast['day']['condition']['icon']}',
+                    height: 100,
+                    width: 100,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${dayForecast['day']['avgtemp_c']}°C',
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: Text(
+                      '${dayForecast['day']['condition']['text']}',
+                      style: const TextStyle(fontSize: 16),
+                      // overflow: TextOverflow.fade,
+                      softWrap: true,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  });
-}
-
+      );
+    });
+  }
 
   void _navigateToDetailPage(
       BuildContext context, Map<String, dynamic> dayForecast) {
@@ -591,7 +600,7 @@ Widget _buildDetailWithIcon(String iconPath, String label, String value) {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);  // Close the dialog without upgrading
+                Navigator.pop(context); // Close the dialog without upgrading
               },
               child: const Text('Cancel'),
             ),
@@ -610,7 +619,7 @@ Widget _buildDetailWithIcon(String iconPath, String label, String value) {
 
   void _upgradeToPremium() {
     setState(() {
-      _isPremiumUser = true;  // Mark user as premium
+      _isPremiumUser = true; // Mark user as premium
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('You have upgraded to premium!')),
