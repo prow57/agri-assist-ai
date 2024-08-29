@@ -18,6 +18,7 @@ class DriverService {
                 lastName: driver['last_name'] ?? 'N/A',
                 phone1: driver['phone_1'] ?? 'N/A',
                 phone2: driver['phone_2'] ?? 'N/A',
+                carType: driver['car_type'] ?? 'N/A',
                 marketId: driver['market_id'] ?? 'N/A',
               ))
           .toList();

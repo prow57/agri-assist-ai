@@ -4,6 +4,7 @@ class Driver {
   final String lastName;
   final String phone1;
   final String phone2;
+  final String carType;
   final int marketId;
 
   Driver({
@@ -12,6 +13,7 @@ class Driver {
     required this.lastName,
     required this.phone1,
     required this.phone2,
+    required this.carType,
     required this.marketId,
   });
 
@@ -22,6 +24,7 @@ class Driver {
       lastName: json['last_name'],
       phone1: json['phone_1'],
       phone2: json['phone_2'],
+      carType: json['car_type'],
       marketId: json['market_id'],
     );
   }

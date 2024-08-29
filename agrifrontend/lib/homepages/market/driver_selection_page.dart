@@ -58,7 +58,8 @@ class _DriverListPageState extends State<DriverListPage> {
           return driver.firstName.toLowerCase().contains(query) ||
               driver.lastName.toLowerCase().contains(query) ||
               driver.phone1.toLowerCase().contains(query) ||
-              driver.phone2.toLowerCase().contains(query);
+              driver.phone2.toLowerCase().contains(query) ||
+              driver.carType.toLowerCase().contains(query); // Add carType filtering
         }).toList();
       }
     });
@@ -173,31 +174,47 @@ class _DriverListPageState extends State<DriverListPage> {
                               contentPadding: const EdgeInsets.all(16),
                               leading: Icon(Icons.person,
                                   size: 40, color: Colors.green),
-                              title: Text(
-                                '${driver.firstName} ${driver.lastName}',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              title: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${driver.firstName} ${driver.lastName}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    driver.carType,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
                               subtitle: Row(
                                 children: [
-                                  IconButton(
-                                    icon: Icon(Icons.phone, color: Colors.green),
-                                    onPressed: () => _dialNumber(driver.phone1),
-                                  ),
-                                  SizedBox(width: 8), // Add spacing between phone icons
-                                  Expanded(
-                                    child: Text(driver.phone1, style: TextStyle(color: Colors.grey[600])),
+                                  GestureDetector(
+                                    onTap: () => _dialNumber(driver.phone1),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.phone, color: Colors.green),
+                                        SizedBox(width: 8),
+                                        Text(driver.phone1, style: TextStyle(color: Colors.grey[600])),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(width: 16), // Add spacing before the second phone number
-                                  IconButton(
-                                    icon: Icon(Icons.phone, color: Colors.green),
-                                    onPressed: () => _dialNumber(driver.phone2),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(driver.phone2, style: TextStyle(color: Colors.grey[600])),
+                                  GestureDetector(
+                                    onTap: () => _dialNumber(driver.phone2),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.phone, color: Colors.green),
+                                        SizedBox(width: 8),
+                                        Text(driver.phone2, style: TextStyle(color: Colors.grey[600])),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
