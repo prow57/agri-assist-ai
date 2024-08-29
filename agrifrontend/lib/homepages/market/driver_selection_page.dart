@@ -25,6 +25,7 @@ class _DriverListPageState extends State<DriverListPage> {
   @override
   void initState() {
     super.initState();
+    // Fetch drivers by market ID
     _futureDrivers = DriverService().fetchDriversByMarket(widget.marketId);
     _futureDrivers.then((drivers) {
       setState(() {
@@ -35,11 +36,12 @@ class _DriverListPageState extends State<DriverListPage> {
     }).catchError((error) {
       setState(() {
         _isLoading = false;
-        _drivers = [];
+        _drivers = []; // Handle error by setting an empty list
         _filteredDrivers = [];
       });
     });
 
+    // Trigger filtering as the user types
     _searchController.addListener(() {
       _filterDrivers();
     });
@@ -63,11 +65,13 @@ class _DriverListPageState extends State<DriverListPage> {
     });
   }
 
+  // Add this method to handle phone dialing
   void _dialNumber(String phoneNumber) async {
     final url = 'tel:$phoneNumber';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
+      // Handle error or show a message if the phone dialer is not available
       print('Could not open dialer.');
     }
   }
@@ -75,7 +79,7 @@ class _DriverListPageState extends State<DriverListPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
+    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
 
     setState(() {
       _selectedIndex = index;
@@ -122,7 +126,7 @@ class _DriverListPageState extends State<DriverListPage> {
         ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -137,12 +141,12 @@ class _DriverListPageState extends State<DriverListPage> {
               decoration: InputDecoration(
                 labelText: 'Search drivers...',
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: Icon(Icons.search),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
+                  icon: Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
-                    _filterDrivers();
+                    _filterDrivers(); // Trigger filtering after clearing the text field
                   },
                 ),
                 border: OutlineInputBorder(
@@ -155,9 +159,9 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator())
                 : _filteredDrivers.isEmpty
-                    ? const Center(child: Text('No drivers found'))
+                    ? Center(child: Text('No drivers found'))
                     : ListView.builder(
                         itemCount: _filteredDrivers.length,
                         itemBuilder: (context, index) {
@@ -189,8 +193,7 @@ class _DriverListPageState extends State<DriverListPage> {
                                   ),
                                 ],
                               ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              subtitle: Row(
                                 children: [
                                   GestureDetector(
                                     onTap: () => _dialNumber(driver.phone1),
@@ -226,7 +229,7 @@ class _DriverListPageState extends State<DriverListPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: _selectedIndex, // Set the current index
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -239,7 +242,7 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'AI',
+            label: 'Ai',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
