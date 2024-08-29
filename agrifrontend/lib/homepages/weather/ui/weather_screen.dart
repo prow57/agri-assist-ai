@@ -294,22 +294,105 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Widget _buildWeatherDetails() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+Widget _buildWeatherDetails() {
+  return Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: _buildDetailWithIcon(
+                'assets/max-temp.png',
+                'Temp.',
+                '${_weatherData!['current']['feelslike_c']}°',
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: _buildDetailWithIcon(
+                'assets/heavyrain.png',
+                'Rain',
+                '${_weatherData!['current']['precip_mm']} mm',
+              ),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: _buildDetailWithIcon(
+                'assets/sleet.png',
+                'UV index',
+                '${_weatherData!['current']['uv']}',
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: _buildDetailWithIcon(
+                'assets/windspeed.png',
+                'Air Quality',
+                _weatherData!['current']['air_quality'] != null
+                    ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
+                    : 'N/A',
+              ),
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+Widget _buildDetailWithIcon(String iconPath, String label, String value) {
+  return Container(
+    padding: const EdgeInsets.all(12.0),
+    decoration: BoxDecoration(
+      color: Colors.green[50],
+      borderRadius: BorderRadius.circular(8.0),
+      border: Border.all(color: Colors.green[700]!, width: 1.0),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildDetailBox('Temp.', '${_weatherData!['current']['feelslike_c']}°'),
-        _buildDetailBox('Rain', '${_weatherData!['current']['precip_mm']} mm'),
-        _buildDetailBox('UV index', '${_weatherData!['current']['uv']}'),
-        _buildDetailBox(
-          'Air Quality',
-          _weatherData!['current']['air_quality'] != null
-              ? '${_weatherData!['current']['air_quality']['us-epa-index']}'
-              : 'N/A',
+        Image.asset(
+          iconPath,
+          height: 50, // Adjusted icon size
+          width: 50,
+        ),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
         ),
       ],
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildWeatherForecast() {
     // Show all forecast data if user is premium, otherwise show only today
@@ -342,58 +425,66 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   List<Widget> _buildForecast(List<dynamic> forecastDays) {
-    if (forecastDays.isEmpty) {
-      return [const Text('No forecast data available')];
-    }
+  if (forecastDays.isEmpty) {
+    return [const Text('No forecast data available')];
+  }
 
-    return List<Widget>.generate(forecastDays.length, (index) {
-      final dayForecast = forecastDays[index];
-      final date = DateTime.parse(dayForecast['date']);
-      final dayOfWeek = DateFormat('EEEE').format(date);
+  return List<Widget>.generate(forecastDays.length, (index) {
+    final dayForecast = forecastDays[index];
+    final date = DateTime.parse(dayForecast['date']);
+    final dayOfWeek = DateFormat('EEEE').format(date);
 
-      return GestureDetector(
-        onTap: () {
-          _navigateToDetailPage(context, dayForecast);
-        },
-        child: SizedBox(
-          width: 150,
-          child: Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            elevation: 5,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    dayOfWeek,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Image.network(
-                    'https:${dayForecast['day']['condition']['icon']}',
-                    height: 100,
-                    width: 100,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${dayForecast['day']['avgtemp_c']}°C',
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
+    return GestureDetector(
+      onTap: () {
+        _navigateToDetailPage(context, dayForecast);
+      },
+      child: SizedBox(
+        width: 150,
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  dayOfWeek,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 8),
+                Image.network(
+                  'https:${dayForecast['day']['condition']['icon']}',
+                  height: 100,
+                  width: 100,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${dayForecast['day']['avgtemp_c']}°C',
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Text(
                     '${dayForecast['day']['condition']['text']}',
                     style: const TextStyle(fontSize: 16),
+                    // overflow: TextOverflow.fade,
+                    softWrap: true,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      );
-    });
-  }
+      ),
+    );
+  });
+}
+
 
   void _navigateToDetailPage(
       BuildContext context, Map<String, dynamic> dayForecast) {

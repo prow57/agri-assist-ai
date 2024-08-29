@@ -55,7 +55,6 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     final date = DateTime.parse(widget.dayForecast['date']);
     final dayOfWeek = DateFormat('EEEE').format(date);
-    // final dateFormatted = DateFormat('EEEE, h:mm a').format(date);
 
     return Scaffold(
       appBar: AppBar(
@@ -102,20 +101,19 @@ class _DetailPageState extends State<DetailPage> {
                       Divider(height: 16.0, color: Colors.grey[300]),
                   itemBuilder: (context, index) {
                     final details = [
-                      ['Max Temp', '${widget.dayForecast['day']['maxtemp_c']}°C'],
-                      ['Min Temp', '${widget.dayForecast['day']['mintemp_c']}°C'],
-                      ['Humidity', '${widget.dayForecast['day']['avghumidity']}%'],
-                      ['Wind Speed', '${widget.dayForecast['day']['maxwind_kph']} kph'],
-                      ['Precipitation', '${widget.dayForecast['day']['totalprecip_mm']} mm'],
-                      ['Sunrise', '${widget.dayForecast['astro']['sunrise']}'],
-                      ['Sunset', '${widget.dayForecast['astro']['sunset']}'],
+                      ['Maximum Temperature', '${widget.dayForecast['day']['maxtemp_c']}°C', 'assets/max-temp.png'],
+                      ['Minimum Temperature', '${widget.dayForecast['day']['mintemp_c']}°C', 'assets/fog.png'],
+                      ['Humidity', '${widget.dayForecast['day']['avghumidity']}%', 'assets/humidity.png'],
+                      ['Wind Speed', '${widget.dayForecast['day']['maxwind_kph']} kph', '../../assets/windspeed.png'],
+                      ['Precipitation', '${widget.dayForecast['day']['totalprecip_mm']} mm', '../../assets/heavyrain.png'],
+                      ['Sunrise', '${widget.dayForecast['astro']['sunrise']}', '../../assets/clear.png'],
+                      ['Sunset', '${widget.dayForecast['astro']['sunset']}', '../../assets/sunset.png'],
                     ];
-                    return _buildDetailBox(details[index][0], details[index][1]);
+                    return _buildDetailBox(details[index][0], details[index][1], details[index][2]);
                   },
                 ),
               ),
               SizedBox(height: 20),
-              // Container(
             ],
           ),
         ),
@@ -148,7 +146,7 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget _buildDetailBox(String label, String value) {
+  Widget _buildDetailBox(String label, String value, String iconPath) {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -156,17 +154,29 @@ class _DetailPageState extends State<DetailPage> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.green, width: 1.0),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          Image.asset(
+            iconPath,
+            height: 24,
+            width: 24,
           ),
-          SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 16),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
           ),
         ],
       ),
