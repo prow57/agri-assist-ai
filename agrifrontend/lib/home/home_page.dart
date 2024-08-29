@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   CustomButton(
                     icon: Icons.attach_money,
-                    label: 'Market Prices',
+                    label: 'Market',
                     onPressed: () {
                       Navigator.push(
                           context,
