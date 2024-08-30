@@ -21,9 +21,9 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
 
   // List of asset images
   final List<String> _assetImages = [
-    '../../assets/image1.jpg',
-    '../../assets/image2.jpg',
-    '../../assets/image3.jpg',
+    'assets/image1.jpg',
+    'assets/image2.jpg',
+    'assets/image3.jpg',
   ];
 
   @override
