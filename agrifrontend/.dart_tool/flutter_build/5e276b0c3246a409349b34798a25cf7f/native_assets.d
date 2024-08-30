@@ -1,1 +1,0 @@
- C:\\Users\\MAULIDI\\My\ Projects\\agri-assist-ai\\agrifrontend\\.dart_tool\\flutter_build\\5e276b0c3246a409349b34798a25cf7f\\native_assets.yaml: 
