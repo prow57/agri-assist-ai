@@ -104,10 +104,10 @@ class _DetailPageState extends State<DetailPage> {
                       ['Maximum Temperature', '${widget.dayForecast['day']['maxtemp_c']}°C', 'assets/max-temp.png'],
                       ['Minimum Temperature', '${widget.dayForecast['day']['mintemp_c']}°C', 'assets/fog.png'],
                       ['Humidity', '${widget.dayForecast['day']['avghumidity']}%', 'assets/humidity.png'],
-                      ['Wind Speed', '${widget.dayForecast['day']['maxwind_kph']} kph', '../../assets/windspeed.png'],
-                      ['Precipitation', '${widget.dayForecast['day']['totalprecip_mm']} mm', '../../assets/heavyrain.png'],
-                      ['Sunrise', '${widget.dayForecast['astro']['sunrise']}', '../../assets/clear.png'],
-                      ['Sunset', '${widget.dayForecast['astro']['sunset']}', '../../assets/sunset.png'],
+                      ['Wind Speed', '${widget.dayForecast['day']['maxwind_kph']} kph', 'assets/windspeed.png'],
+                      ['Precipitation', '${widget.dayForecast['day']['totalprecip_mm']} mm', 'assets/heavyrain.png'],
+                      ['Sunrise', '${widget.dayForecast['astro']['sunrise']}', 'assets/clear.png'],
+                      ['Sunset', '${widget.dayForecast['astro']['sunset']}', 'assets/sunset.png'],
                     ];
                     return _buildDetailBox(details[index][0], details[index][1], details[index][2]);
                   },
