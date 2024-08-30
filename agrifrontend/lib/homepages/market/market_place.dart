@@ -193,95 +193,90 @@ void _onFloatingButtonPressed(String buttonType) {
           },
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+body: Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: DropdownButton<String>(
-              value: _selectedCategory,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedCategory = newValue!;
-                  _fetchData();
-                });
-              },
-              items: <String>[
-                'Animal',
-                'Crop',
-                'Animal Products',
-                'Crop Products'
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
+          DropdownButton<String>(
+            value: _selectedCategory,
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedCategory = newValue!;
+                _fetchData();
+              });
+            },
+            items: <String>[
+              'Animal',
+              'Crop',
+              'Animal Products',
+              'Crop Products'
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
           ),
-          Expanded(
-            child: FutureBuilder<List<Commodity>>(
-              future: _futureCommodities,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No data available'));
-                } else {
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _currentDate,
-                            style: const TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 10.0),
-                          Container(
-                            height: 200.0,
-                            child: SfCircularChart(
-                              legend: const Legend(isVisible: true),
-                              series: <PieSeries>[
-                                PieSeries<Commodity, String>(
-                                  dataSource: snapshot.data!,
-                                  xValueMapper: (Commodity data, _) => data.name,
-                                  yValueMapper: (Commodity data, _) => data.price,
-                                  dataLabelSettings: const DataLabelSettings(isVisible: true),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20.0),
-                          const Text(
-                            'Commodities and Prices',
-                            style: TextStyle(
-                                fontSize: 24.0, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 10.0),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              final commodity = snapshot.data![index];
-                              return buildCommodityTile(commodity);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-              },
+          Text(
+            _currentDate,
+            style: const TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.normal,
             ),
           ),
         ],
       ),
+    ),
+    Expanded(
+      child: FutureBuilder<List<Commodity>>(
+        future: _futureCommodities,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No data available'));
+          } else {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10.0),
+                    const Text(
+                      'Commodities and Prices',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10.0),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        final commodity = snapshot.data![index];
+                        return buildCommodityTile(commodity);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        },
+      ),
+    ),
+  ],
+),
+
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
