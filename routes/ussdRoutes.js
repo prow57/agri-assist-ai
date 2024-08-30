@@ -1,95 +1,35 @@
-//routes/ussdRoutes.js
-
 const express = require('express');
 const router = express.Router();
 const ussdUtils = require('../utils/ussdUtils');
 const weatherService = require('../services/weatherService');
 const marketService = require('../services/marketService');
-const aiService = require('../services/aiService');  // Import the AI service
+const aiService = require('../services/aiService');
 
 router.post('/', async (req, res) => {
     const { sessionId, serviceCode, phoneNumber, text } = req.body;
 
     let response = '';
 
-    switch (text) {
-        case '':
-            response = ussdUtils.getMainMenu();
-            break;
-        case '1':
-            response = ussdUtils.getLeafScanInstructions();
-            break;
-        case '2':
-            response = ussdUtils.getSoilOptions();
-            break;
-        case '3':
-            response = ussdUtils.getRegionOptions();
-            break;
-        case '4':
-            response = ussdUtils.getCropOptions();
-            break;
-        case '5':
-            response = ussdUtils.getPersonalizedAdvicePrompt();
-            break;
-        case '6':
-            response = ussdUtils.getCommunityForumOptions();
-            break;
-        default:
-            response = await handleCustomMenuOptions(text, req, aiService, weatherService, marketService);
-            break;
+    if (text === '') {
+        response = ussdUtils.getMainMenu();
+    } else if (text === '1') {
+        response = ussdUtils.getLeafScanInstructions();
+    } else if (text === '2') {
+        response = ussdUtils.getSoilOptions();
+    } else if (text === '3') {
+        response = ussdUtils.getRegionOptions();
+    } else if (text === '4') {
+        response = ussdUtils.getCropOptions();
+    } else if (text === '5') {
+        response = ussdUtils.getPersonalizedAdvicePrompt();
+    } else if (text === '6') {
+        response = ussdUtils.getCommunityForumOptions();
+    } else {
+        response = await ussdUtils.handleSubMenu(text, weatherService, marketService, aiService);
     }
 
     res.set('Content-Type', 'text/plain');
     res.send(response);
 });
-
-async function handleCustomMenuOptions(text, req, aiService, weatherService, marketService) {
-    console.log('weatherService:', weatherService);
-    console.log('fetchWeather function:', weatherService.fetchWeather);
-
-    let response = '';
-
-    if (text.startsWith('2*')) {
-        const soilType = ussdUtils.getSoilType(text.split('*')[1]);
-        response = `END Soil detection advice for ${soilType}`;
-    } else if (text.startsWith('3*')) {
-        const region = ussdUtils.getRegion(text.split('*')[1]);
-        try {
-            console.log(`Fetching weather data for region: ${region}`);
-            const weatherData = await weatherService.fetchWeather(region);
-            const weatherInfo = `Temperature: ${weatherData.current.temp_c}°C, ${weatherData.current.condition.text}, Humidity: ${weatherData.current.humidity}%`;
-            response = `END Weather forecast for the ${region}: ${weatherInfo}`;
-        } catch (error) {
-            console.error('Error fetching weather data:', error);
-            response = `END Unable to fetch weather data at the moment. Please try again later.`;
-        }
-    } else if (text.startsWith('4*')) {
-        const crop = ussdUtils.getCrop(text.split('*')[1]);
-        response = `END Market price for ${crop}: ${marketService.getMarketPrice(crop)}`;
-    } else if (text.startsWith('5*')) {
-        const cropType = ussdUtils.getCropType(text.split('*')[1]);
-        req.body.cropType = cropType;
-        response = `CON Select your soil type:\n1. Sandy\n2. Loamy\n3. Clay`;
-    } else if (text.startsWith('5*1*') || text.startsWith('5*2*') || text.startsWith('5*3*')) {
-        const cropType = req.body.cropType;
-        const soilType = ussdUtils.getSoilType(text.split('*')[2]);
-        req.body.soilType = soilType;
-        response = `CON Select your farming issue:\n1. General\n2. Pests\n3. Disease`;
-    } else if (text.startsWith('5*1*1*') || text.startsWith('5*2*1*') || text.startsWith('5*3*1*')) {
-        const cropType = req.body.cropType;
-        const soilType = req.body.soilType;
-        const farmingIssue = ussdUtils.getFarmingIssue(text.split('*')[3]);
-        const advice = await aiService.getFarmingAdvice(soilType, cropType, farmingIssue);
-        response = `END ${advice}`;
-    } else if (text.startsWith('6*1')) {
-        response = `END To ask a question, send an SMS to 12345 with your question.`;
-    } else if (text.startsWith('6*2')) {
-        response = `END Recent Questions:\n1. Question 1\n2. Question 2\n3. Question 3`;
-    } else {
-        response = `END Invalid selection.`;
-    }
-
-    return response;
-}
 
 module.exports = router;

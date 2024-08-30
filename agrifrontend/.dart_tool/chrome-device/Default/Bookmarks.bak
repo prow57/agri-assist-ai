@@ -1,0 +1,250 @@
+{
+   "checksum": "a235488d4411c17f684a4eb379960960",
+   "roots": {
+      "bookmark_bar": {
+         "children": [ {
+            "date_added": "13272293081938288",
+            "date_last_used": "13365765572738673",
+            "guid": "a4eafb32-6118-4277-8086-aae55e952126",
+            "id": "7",
+            "name": "Gmail",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://accounts.google.com/b/0/AddMailService"
+         }, {
+            "date_added": "13272293082006754",
+            "date_last_used": "13330608122185888",
+            "guid": "5108f142-2165-4a98-a632-1ce10c86604f",
+            "id": "8",
+            "name": "YouTube",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://youtube.com/"
+         }, {
+            "date_added": "13324928508945111",
+            "date_last_used": "13353615530463157",
+            "guid": "1640f78e-d6d5-4514-85d1-571b41386682",
+            "id": "9",
+            "name": "APA7 / Referencing / Study skills / Library / The University of Newcastle, Australia",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://www.newcastle.edu.au/library/study-skills/referencing/apa7#:~:text=APA7%20(American%20Psycholo"
+         }, {
+            "date_added": "13324931289210957",
+            "date_last_used": "13368874060663674",
+            "guid": "215c160a-e3d9-4a4f-b430-c52d4c9c59fe",
+            "id": "10",
+            "name": "GitHub",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://github.com/"
+         }, {
+            "date_added": "13325069050802479",
+            "date_last_used": "0",
+            "guid": "6853ba4a-c857-492d-9632-52bd1815a862",
+            "id": "11",
+            "name": "W3Schools Online Web Tutorials",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://www.w3schools.com/"
+         }, {
+            "date_added": "13325148446856707",
+            "date_last_used": "13367667061011412",
+            "guid": "1273abad-1c87-4a50-a6f7-d8d537ec3dc1",
+            "id": "12",
+            "name": "ChatGPT | OpenAI",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://chat.openai.com/auth/login"
+         }, {
+            "date_added": "13326205708916473",
+            "date_last_used": "13362263292457399",
+            "guid": "41cfd49f-20a5-4f02-95a9-05d7ab3c5aa9",
+            "id": "13",
+            "name": "Classes",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://classroom.google.com/h"
+         }, {
+            "date_added": "13351958017121554",
+            "date_last_used": "0",
+            "guid": "881983b8-0879-45f0-8199-98a361c1221b",
+            "id": "14",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "(432) Java Full-Stack: Hotel Booking App With Spring Boot, Spring Security & Reactjs - YouTube",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://www.youtube.com/watch?v=0XJu4Nnl0Kc"
+         }, {
+            "date_added": "13355164359580624",
+            "date_last_used": "0",
+            "guid": "12c71537-35f6-4c38-863a-3dbff733d486",
+            "id": "15",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Livesports088 - Live Sport Streams, Watch Football Live, NBA and More",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://www.livesports088.com/"
+         }, {
+            "date_added": "13355783784916184",
+            "date_last_used": "0",
+            "guid": "5848ccbd-8663-4e0f-a614-481c7fab3fb9",
+            "id": "16",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Doctor Appointment Booking App with MERN Stack (Part 1/2) - YouTube",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://www.youtube.com/watch?v=3G-8zIiGy24&t=225s"
+         }, {
+            "date_added": "13356652204836402",
+            "date_last_used": "0",
+            "guid": "50f50601-4855-4c67-b7b1-f384773221bb",
+            "id": "17",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Julius AI | Your AI Data Analyst",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://julius.ai/chat"
+         }, {
+            "date_added": "13358380471516463",
+            "date_last_used": "13365931291640794",
+            "guid": "ecae9b85-2f8c-41db-bd34-0e5e780ea8fb",
+            "id": "18",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Gemini",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://gemini.google.com/u/1/app"
+         }, {
+            "date_added": "13359314646764119",
+            "date_last_used": "0",
+            "guid": "80e5dd34-542e-46f1-8f00-64341361deb7",
+            "id": "19",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Student resources - OneDrive",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://onedrive.live.com/?authkey=%21AB65j1yunVAzGmM&id=8920F1BA16365935%2149841&cid=8920F1BA16365935"
+         }, {
+            "date_added": "13360058372225061",
+            "date_last_used": "0",
+            "guid": "6ccb02c5-57f2-4752-ad06-5a9f465554a9",
+            "id": "20",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Google Slides",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://docs.google.com/presentation/u/0/?ec=asw-slides-hero-goto&tgif=d"
+         }, {
+            "date_added": "13360403127660303",
+            "date_last_used": "0",
+            "guid": "3b891ef8-c977-4ddd-bb81-22e1ba35ed9a",
+            "id": "21",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Inbox (27) - comsoc-secratary@unima.ac.mw - University of Malawi Mail",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://mail.google.com/mail/u/2/#inbox"
+         }, {
+            "date_added": "13366902746687598",
+            "date_last_used": "0",
+            "guid": "da0851cf-36e3-43eb-9e27-b233763174a2",
+            "id": "22",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "(365) Build Hotel Management & Booking App With Spring Boot, Spring Security, MSQL & Reactjs - YouTube",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://www.youtube.com/watch?v=J71tNe8O1GA"
+         }, {
+            "date_added": "13368432669408643",
+            "date_last_used": "0",
+            "guid": "7ec4026c-a2ff-4019-a30f-37f118eaf84d",
+            "id": "23",
+            "name": "Inbox (1,244) - maulidiphilip@gmail.com - Gmail",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://mail.google.com/mail/u/0/#inbox"
+         }, {
+            "date_added": "13368452211436198",
+            "date_last_used": "0",
+            "guid": "2864109e-d2ac-4c9f-ae15-abdc8b234fd8",
+            "id": "24",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Spring Initializr",
+            "show_icon": false,
+            "source": "sync",
+            "type": "url",
+            "url": "https://start.spring.io/;"
+         } ],
+         "date_added": "13369214673428851",
+         "date_last_used": "0",
+         "date_modified": "13368452211436198",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "1",
+         "name": "Favorites bar",
+         "source": "unknown",
+         "type": "folder"
+      },
+      "other": {
+         "children": [  ],
+         "date_added": "13369214673428858",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "2",
+         "name": "Other favorites",
+         "source": "unknown",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13369214673428868",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "3",
+         "name": "Mobile favorites",
+         "source": "unknown",
+         "type": "folder"
+      }
+   },
+   "sync_metadata": "CjEKDgiIgQISCAD/Rn6RAQAAEgAqGGZoMmd3RzlpMGVYcjNlNklJNWRacUE9PUgDoAYHEqsBCBgSpgEKHGVXNVhPQ2ZIc2ZHL3VKdWJqaHZuWjdrU3hoTT0SJDI4NjQxMDllLWQyYWMtNGM5Zi1hZTE1LWFiZGM4YjIzNGZkOBgAIAAoADCJiIipljI4gImIqZYyQICJiKmWMkocczFYUFdWcjZTWDh6QVVmWHdHR2d5NlB1bHJJPVoiIiD////WSVpTdlpJUkw1Rk1va1J6eFozMVdVWnVUWGY0PWUPgdHOEqsBCBcSpgEKHFlLQTh0WUZ0MVoxU1cxV1FLTm9jZklML2xzcz0SJDdlYzQwMjZjLWEyZmYtNDAxOS1hMzBmLTM3ZjExOGVhZjg0ZBgAIAAoADCIhdamljI4ho/WppYyQIaP1qaWMkocSmZibUU5Qi9yL1Y2YmYyeVQwdVR4RWtraW4wPVoiIiD///+tVmE0TklqTWJFaTMwcDlWRWphNElIaWdGdzZRPWWLoIzREqoBCBQSpQEKHC9tMEtYenVxck5KY3dscEdIcWttTDdFNHc5Zz0SJDZjY2IwMmM1LTU3ZjItNDc1Mi1hZDA2LTVhOWY0NjU1NTRhORgAIAAoADCShdamljI42N/IhvcxQNjfyIb3MUocVWtaQzB2MWdhYnB5RHQ2SnJnOWVvdzloYkY0PVohIh////5ZSkhmR2E2NmVHL3o4SFZ4aWorT1BWMUxqb2s9ZQmrMKASqgEIEhKlAQocVTVBMVdZeFNzN0U2WDBVK1o5VmhLUkJWdU9VPRIkZWNhZTliODUtMmY4Yy00MWRiLWJkMzQtMGU1ZTc4MGVhOGZiGAAgACgAMJGF1qaWMji77b3m8DFAu+295vAxShxFS2w3MSsrRkV1NlN2WURpM2MyUmZTcmNBcVU9WiEiH///9zhlNWhnOWdhQUNILzBaYWlwRjk3YnRsbFhXYz1lPwPzFhKqAQgTEqUBChxTeWZOS09XcEtFeFcrSVQyTzZ6Tjd3bUFna1U9EiQ4MGU1ZGQzNC01NDJlLTQ2ZjEtOGYwMC02NDM0MTM2MWRlYjcYACAAKAAwjoXWppYyOO3oqaT0MUDt6Kmk9DFKHFFHdER6UlFEdlh3NW1qSElsbXl6R3pXQjlPcz1aISIf///7NE1nWitCc2NNcVdFbWtZdi9pcDFEc2FxQmE0PWUA6hNMEqoBCBESpQEKHEVYeXNNMnlnclF2QStQeVZXWGhKS3Zwd1NROD0SJDUwZjUwNjAxLTQ4NTUtNGM2Ny1iN2IxLWYzODQ3NzMyMjFiYhgAIAAoADCVhdamljI4/d/gruoxQP3f4K7qMUocdnNJbXFqbFJhSFp5MGIxU1BlejFLZEhrc0FZPVohIh///+5TMldBRDY0UEVkNkJ6bkhuY0ZPYWdWOVRCQ1E9ZfETZLQSqgEIFRKlAQocVHZQeE5nTmNKT0IwRURUTkxiYUhraVp1L0tVPRIkM2I4OTFlZjgtYzk3Ny00ZGRkLWJiODEtMjJlMWJhMzVlZDlhGAAgACgAMJCF1qaWMjjd+/qq+DFA3fv6qvgxShxTR0RhaklUcEFzWWdNdzhpN2R6ekFYaUVNYTQ9WiEiH////zdDNzlwekZkb0RkMDNvb1JEbU5mNWd1QW03QT1lmz2FthKpAQgNEqQBChxCYklVSXdkend6VU42VkdtcFQxMWRIM242UUE9EiQ0MWNmZDQ5Zi0yMGE1LTRmMDItOTVhOS0wNWQ3YWIzYzVhYTkYACAAKAAwjYXWppYyOML2rfj4MEDC9q34+DBKHFpFbzdjRG1ZZTJjQnFhRzR4M241RmtWNGU0WT1aICIe/9tBU3AvVmg4U2lsU29UdVBTWFY1ZGdKMFhEWHc9ZQRHWPkSqAEIDBKjAQocaGEwTVE3VFR1QS80cTBwaGd0MG91NFVQTUhNPRIkMTI3M2FiYWQtMWM4Ny00YTUwLWE2ZjctZDhkNTM3ZWMzZGMxGAAgACgAMJOF1qaWMjikgZyA9TBApIGcgPUwShxPRzA4TU96cHlDYWNUdWIxZ0xRSnZ4Rm1xNnM9Wh8iHf9sNkZyVXFkWEJENHR1RjJiWGVPMm9EZmRkN0E9ZcAK7VgSqAEIChKjAQocNXlReG5uQUIyWUVKeEQwRjJCYmYxMGxpSHA4PRIkMjE1YzE2MGEtZTNkOS00YTRmLWI0MzAtYzUyZDRjOWM1OWZlGAAgACgAMP/9m/KXMjid4dWY9DBAneHVmPQwShxLaHhFYjlrZThlZU1EWmh3cXlPSGhXRXN3Ujg9Wh8iHftBcFhMQS9OcnNaQnZUN0NtZk9NSGxQZVFkZmM9ZcClKLoSqgEIEBKlAQocUytuMSt1emw3cmFOcm9PWWxCdUxXWGV2dzVFPRIkNTg0OGNjYmQtODY2My00ZTBmLWE2MTQtNDgxYzdmYWIzZmI5GAAgACgAMIyF1qaWMjjS26SQ5zFA0tukkOcxShw4M21tdmxkdjRTay8rb2xNdFUxelphaHc5V289WiEiH///3DNVcTNBeVM2RFY1RGMxNWtrOWs3UVQyVTFNbz1lOPk5MxKqAQgPEqUBChx5Mk9hNzdPYm1Ta0Y5ci85L2dlTVVBczRMRWs9EiQxMmM3MTUzNy0zNWY2LTRjMzgtODYzYS0zZGJmZjczM2Q0ODYYACAAKAAwiYXWppYyOPH99ejkMUDx/fXo5DFKHCtTWmxEK1R5SnlnakloRU5uVUxIYnFhaHladz1aISIf//+5TC96MGVEMkZlSVMxRkxtL1JOaDZlajl3NFM4PWWUoACEEqgBCAkSowEKHFNLdENqRGhKUGhpc01MWUNXQ21uOEdhWnk3OD0SJDE2NDBmNzhlLWQ2ZDUtNDUxNC04NWQxLTU3MWI0MTM4NjY4MhgAIAAoADCGhdamljI4loysl/QwQJaMrJf0MEocU0xTa0VBTUo2cHNzeUhyanVUZEZ1WmxydnZvPVofIh3vUk5xVUhEMnpobHRhZGlWaUZzN0RPdDcrQ0t3PWUolMTFEqkBCA4SpAEKHG1mTlI1V0dDYW5iTlZYKyt5enFka2Rtak03OD0SJDg4MTk4M2I4LTA4NzktNDVmMC04MTk5LTk4YTM2MWMxMjIxYhgAIAAoADCHhdamljI4t6yC8NgxQLesgvDYMUocbTNSbHlVUHdaTklXZFBqM2t2eDhtdi9DNmtRPVogIh7//3NWdkZtQ3ErNndRcG01VW5Xc0hhUlJBRldJaz1lOPk5MxKJAQgBEoQBChx5eEovNmZ2a2VjcjdrcDVFUXpCNHRXTHBkYkU9EiRiNTJhMTM5OC1mN2RlLTU2NzMtYWJlYS03YmZkNmUzNzQ4MGIYACAAKAAwsN28+7AwOLC8777uL0CwvO++7i9KHGFSQ1dMZ2hGOWI1SW5xS0lEdnVKL2p2UWtGYz1aAGUAAAAAEqcBCAgSogEKHHFjQ1lYTHJoTUplZzJYL21jN3FmOHRTWHFocz0SJDUxMDhmMTQyLTIxNjUtNGE5OC1hNjMyLTFjZTEwYzg2NjA0ZhgAIAAoADCUhdamljI49OjmhpgwQPTo5oaYMEocSnlTZ3BnbzR5VFhWMFRQUEtJOUxKK3FuRTMwPVoeIhwzbVdLdzVkTEJ3UWRPbXFRN2kzV0RSQWQ2cDg9ZTj5OTMSqgEIFhKlAQocbzdvUWZIQlBTd2J5UjA1cmlJbUdFczJkZEM4PRIkZGEwODUxY2YtMzZlMy00M2ViLTllMjctYjIzMzc2MzE3NGEyGAAgACgAMIWF1qaWMjiJo5zGkDJAiaOcxpAyShxvLzNxQVlxbGtqamhPWGRJZkpqT2Y0Tk9nZlU9WiEiH////1pxUGtHQk56eXg4WGVrbXFyNERiUlRtZlN2QT1lOPk5MxKoAQgLEqMBChxMVytqZnRkTGZLZ0xKRE9DMUtDMmJwbUN5RlE9EiQ2ODUzYmE0YS1jODU3LTQ5MmQtOTYzMi01MmJkMTgxNWE4NjIYACAAKAAwi4XWppYyOM6brtr0MEDOm67a9DBKHFozSk1xOU44U2c2M0Z5S3htRDIvRVdSK1Uyaz1aHyId/2szNzIvUGs0WG1YT29hMmxQaXkwN2k5SDJPdz1l6vCM6xKnAQgHEqIBChxCVzhORHkrY1YxdFdsa3hQU0JPNEsxeXVpd1k9EiRhNGVhZmIzMi02MTE4LTQyNzctODA4Ni1hYWU1NWU5NTIxMjYYACAAKAAwioXWppYyOJbo5oaYMECW6OaGmDBKHHNvUUtyektpWEdRRUQ4Vy9lQmRPNnBSRElFND1aHiIcK3ZSQzBRdEFoRjFwYWxmV2YxaXFrUGc1SUlBPWWbPYW2EokBCAIShAEKHFljU1RvbnZFU1B3cUNzNEwyY3JWaHY2OEw5OD0SJGY2ODQ3MmQzLTczNzktNWFlZC05MjMxLTgxMmM3ODZhZjhmZBgAIAAoADCw3bz7sDA4z7zvvu4vQM+8777uL0ocb1BWa2h3QlJiVjY1S0NXUjIrSU9OSFdvT3U4PVoAZQAAAAASiQEIAxKEAQocbmpnRHU4OGVDcnZYcDg2cEQ3ZkhHY3FGcDg4PRIkYjNlMzM0MTItNmVlZi01ZWE2LWI1OWYtMTA2N2M5ZWRkMTU5GAAgACgAMLDdvPuwMDidve++7i9Anb3vvu4vShx5ek5CMDFjbjU0QTdjUlUwdVQrL1BnbVR0VW89WgBlAAAAADAAOAA=",
+   "version": 1
+}

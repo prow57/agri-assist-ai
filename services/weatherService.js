@@ -1,29 +1,31 @@
-const axios = require('axios');
+// services/weatherService.js
 
 async function getWeatherForecast(region) {
-    const regionCoordinates = {
-        'North': { lat: -9.22, lon: 33.93 },
-        'Central': { lat: -13.96, lon: 33.79 },
-        'South': { lat: -15.79, lon: 35.01 }
+    const staticWeatherData = {
+        'North': {
+            temperature: 24,
+            description: 'Partly cloudy',
+            humidity: 65,
+        },
+        'Central': {
+            temperature: 28,
+            description: 'Sunny',
+            humidity: 55,
+        },
+        'South': {
+            temperature: 30,
+            description: 'Thunderstorms',
+            humidity: 70,
+        }
     };
 
-    const { lat, lon } = regionCoordinates[region] || {};
-    const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+    const weather = staticWeatherData[region];
 
-    if (!lat || !lon || !apiKey) {
-        return 'Unable to retrieve weather data at this time.';
+    if (!weather) {
+        return 'Weather data for the selected region is not available.';
     }
 
-    try {
-        const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-        const response = await axios.get(url);
-        const weather = response.data;
-
-        return `Temperature: ${weather.main.temp}°C, ${weather.weather[0].description}, Humidity: ${weather.main.humidity}%`;
-    } catch (error) {
-        console.error(error);
-        return 'Unable to retrieve weather data at this time.';
-    }
+    return `Temperature: ${weather.temperature}°C, ${weather.description}, Humidity: ${weather.humidity}%`;
 }
 
 module.exports = {
