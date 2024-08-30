@@ -21,9 +21,9 @@ class _HistoryPageState extends State<HistoryPage> {
 
   // List of asset images
   final List<String> _assetImages = [
-    '../../assets/image1.jpg',
-    '../../assets/image2.jpg',
-    '../../assets/image3.jpg',
+    'assets/image1.jpg',
+    'assets/image2.jpg',
+    'assets/image3.jpg',
   ];
 
   @override
@@ -98,7 +98,7 @@ class _HistoryPageState extends State<HistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Previous Courses', style: TextStyle(color: Colors.white)),
+        title: const Text('Previously Searched Courses', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
       ),

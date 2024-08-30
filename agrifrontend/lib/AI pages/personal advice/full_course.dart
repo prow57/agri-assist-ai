@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class FullCourse extends StatefulWidget {
   final String courseId;
@@ -102,14 +103,6 @@ class _FullCourseState extends State<FullCourse> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Table of Contents
-                      const Text(
-                        'Table of Contents',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       const SizedBox(height: 10),
                       _buildTableOfContents(),
                       const SizedBox(height: 20),
@@ -154,7 +147,7 @@ class _FullCourseState extends State<FullCourse> {
     );
   }
 
-  Widget _buildTableOfContents() {
+Widget _buildTableOfContents() {
   final tocItems = [
     {'title': 'Objectives', 'key': _objectivesKey},
     {'title': 'Introduction', 'key': _introductionKey},
@@ -166,30 +159,23 @@ class _FullCourseState extends State<FullCourse> {
     {'title': 'Assessment', 'key': _assessmentKey},
   ];
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
+  return ExpansionTile(
+    title: const Text(
+      'Table of Contents',
+      style: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
     children: tocItems.map((tocItem) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4.0), // Vertical spacing between buttons
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () => _scrollToSection(tocItem['key'] as GlobalKey),
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.green,
-              backgroundColor: Colors.green.shade50, // Background color
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0), // Border radius
-              ),
-            ),
-            child: Text(tocItem['title'] as String),
-          ),
-        ),
+      return ListTile(
+        title: Text(tocItem['title'] as String),
+        onTap: () => _scrollToSection(tocItem['key'] as GlobalKey),
       );
     }).toList(),
   );
 }
+
 
   Widget _buildCollapsibleSections() {
     final content = courseData!['content'] as Map<String, dynamic>;
@@ -199,7 +185,7 @@ class _FullCourseState extends State<FullCourse> {
       children: [
         _buildSection('Objectives', content['objectives'], _objectivesKey),
         _buildSection('Introduction', content['introduction'], _introductionKey),
-        _buildSection('Content', content['sections'], _contentKey),
+        _buildSectionContent('Content', content['sections'], _contentKey),
         _buildSection('Guided Practice', content['guided_practice'], _guidedPracticeKey),
         _buildSection('Conclusion', content['conclusion'], _conclusionKey),
         _buildReference('References', content['references'], _referencesKey),
@@ -209,12 +195,12 @@ class _FullCourseState extends State<FullCourse> {
     );
   }
 
-  Widget _buildSection(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
+Widget _buildSection(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
     return sectionContent != null
         ? Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: ExpansionTile(
-              key: sectionKey,  // Attach the GlobalKey here
+              key: sectionKey,
               title: Text(
                 sectionTitle,
                 style: const TextStyle(
@@ -232,21 +218,29 @@ class _FullCourseState extends State<FullCourse> {
                           children: sectionContent.map<Widget>((item) {
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 4.0),
-                              child: Text(
-                                item is Map ? item['content'] ?? '' : item.toString(),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black54,
+                              child: MarkdownBody(
+                                data: item is Map ? item['content'] ?? '' : item.toString(),
+                                onTapLink: (text, href, title) {
+                                  if (href != null) {
+                                    launchUrl(Uri.parse(href));
+                                  }
+                                },
+                                styleSheet: MarkdownStyleSheet(
+                                  p: const TextStyle(fontSize: 16, color: Colors.black54),
                                 ),
                               ),
                             );
                           }).toList(),
                         )
-                      : Text(
-                          sectionContent.toString(),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black54,
+                      : MarkdownBody(
+                          data: sectionContent.toString(),
+                          onTapLink: (text, href, title) {
+                            if (href != null) {
+                              launchUrl(Uri.parse(href));
+                            }
+                          },
+                          styleSheet: MarkdownStyleSheet(
+                            p: const TextStyle(fontSize: 16, color: Colors.black54),
                           ),
                         ),
                 ),
@@ -255,6 +249,79 @@ class _FullCourseState extends State<FullCourse> {
           )
         : const SizedBox.shrink();
   }
+
+  Widget _buildSectionContent(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
+  return sectionContent != null
+      ? Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: ExpansionTile(
+            key: sectionKey,
+            title: Text(
+              sectionTitle,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: sectionContent is List
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: sectionContent.map<Widget>((item) {
+                          String itemTitle = item is Map ? item['title'] ?? '' : '';
+                          String itemContent = item is Map ? item['content'] ?? '' : item.toString();
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (itemTitle.isNotEmpty)
+                                  MarkdownBody(
+                                    data: itemTitle,
+                                    styleSheet: MarkdownStyleSheet(
+                                      h2: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                                    ),
+                                  ),
+                                if (itemContent.isNotEmpty)
+                                  MarkdownBody(
+                                    data: itemContent,
+                                    styleSheet: MarkdownStyleSheet(
+                                      p: const TextStyle(fontSize: 16, color: Colors.black54),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (sectionContent is Map && sectionContent['title'] != null)
+                            MarkdownBody(
+                              data: sectionContent['title'],
+                              styleSheet: MarkdownStyleSheet(
+                                h2: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                            ),
+                          if (sectionContent is Map && sectionContent['content'] != null)
+                            MarkdownBody(
+                              data: sectionContent['content'],
+                              styleSheet: MarkdownStyleSheet(
+                                p: const TextStyle(fontSize: 16, color: Colors.black54),
+                              ),
+                            ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
+        )
+      : const SizedBox.shrink();
+}
 
   Widget _buildReference(String sectionTitle, dynamic sectionContent, GlobalKey sectionKey) {
     return sectionContent != null
