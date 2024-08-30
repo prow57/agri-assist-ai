@@ -33,6 +33,12 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    Color backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    Color textColor = isDarkMode ? Colors.white : Colors.black;
+    Color subtitleColor = isDarkMode ? Colors.white70 : Colors.grey[600]!;
+    Color iconColor = isDarkMode ? Colors.white : Colors.green;
+    Color inputFillColor = isDarkMode ? Colors.grey[800]! : Colors.grey[200]!;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Community Chat', style: TextStyle(color: Colors.white)),

@@ -1,6 +1,6 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/home/home_page.dart';
-import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart'; // Import other necessary pages
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/theme_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else if (index == 1) {
@@ -62,9 +62,9 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: Container(
         padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.green.shade100, Colors.white],
+            colors: [Colors.green, Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -116,7 +116,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Ai',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -137,13 +137,22 @@ class _SettingsPageState extends State<SettingsPage> {
       required String title,
       required String subtitle,
       Widget? trailing}) {
+    // Determine the color based on the theme
+    Color textColor = Theme.of(context).brightness == Brightness.dark
+        ? Colors.black
+        : Colors.white;
+    Color iconColor = textColor;
+
     return ListTile(
-      leading: Icon(icon, color: Colors.green),
+      leading: Icon(icon, color: iconColor),
       title: Text(
         title,
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
       ),
-      subtitle: Text(subtitle),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(color: textColor),
+      ),
       trailing: trailing,
       onTap: () {
         // Handle settings item tap

@@ -83,6 +83,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDarkMode ? Colors.black : Colors.white;
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -127,69 +131,95 @@ class _HomePageState extends State<HomePage> {
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
                 children: [
-                  CustomButton(
+                  _buildCustomButton(
+                    context,
                     icon: Icons.search,
                     label: 'Scan Leaf',
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const LeafAnalysisScreen()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LeafAnalysisScreen(),
+                        ),
+                      );
                     },
+                    iconColor: iconColor,
+                    textColor: textColor,
                   ),
-                  CustomButton(
+                  _buildCustomButton(
+                    context,
                     icon: Icons.group,
                     label: 'Community',
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>  CommunitySignIn()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CommunitySignIn(),
+                        ),
+                      );
                     },
+                    iconColor: iconColor,
+                    textColor: textColor,
                   ),
-                  CustomButton(
+                  _buildCustomButton(
+                    context,
                     icon: Icons.cloud,
                     label: 'Weather Forecast',
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WeatherPage()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WeatherPage(),
+                        ),
+                      );
                     },
+                    iconColor: iconColor,
+                    textColor: textColor,
                   ),
-                  CustomButton(
+                  _buildCustomButton(
+                    context,
                     icon: Icons.attach_money,
                     label: 'Market',
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MarketSelectionPage()));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MarketSelectionPage(),
+                        ),
+                      );
                     },
+                    iconColor: iconColor,
+                    textColor: textColor,
                   ),
-                  CustomButton(
+                  _buildCustomButton(
+                    context,
                     icon: Icons.person,
                     label: 'Personalized AI',
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const PersonalizedAdvicePage()),
+                          builder: (context) => const PersonalizedAdvicePage(),
+                        ),
                       );
                     },
+                    iconColor: iconColor,
+                    textColor: textColor,
                   ),
-                  CustomButton(
+                  _buildCustomButton(
+                    context,
                     icon: Icons.chat_bubble,
                     label: 'AI chat',
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ChatPage()),
+                          builder: (context) => const ChatPage(),
+                        ),
                       );
                     },
+                    iconColor: iconColor,
+                    textColor: textColor,
                   ),
                 ],
               ),
@@ -226,22 +256,15 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-}
 
-class CustomButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-
-  const CustomButton({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildCustomButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required Color iconColor,
+    required Color textColor,
+  }) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
@@ -256,13 +279,13 @@ class CustomButton extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 60.0, color: Colors.white),
+          Icon(icon, size: 60.0, color: iconColor),
           const SizedBox(height: 10.0),
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: textColor,
               fontSize: 20.0,
               fontWeight: FontWeight.w600,
             ),

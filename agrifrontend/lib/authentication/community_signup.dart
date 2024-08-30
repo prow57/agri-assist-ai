@@ -1,6 +1,11 @@
 import 'dart:convert';
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/authentication/community_signin.dart';
 import 'package:agrifrontend/authentication/signin.dart';
+import 'package:agrifrontend/home/home_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,6 +20,7 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  int _selectedIndex = 0;
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
@@ -56,10 +62,36 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
     }
   }
 
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+
+    setState(() => _selectedIndex = index);
+
+    final pages = [
+      const HomePage(),
+      const PersonalizedAdvicePage(),
+      const ChatPage(),
+      SettingsPage(),
+    ];
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => pages[index]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Determine the color based on the theme
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    Color backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    Color textColor = isDarkMode ? Colors.white : Colors.black;
+    Color subtitleColor = isDarkMode ? Colors.white70 : Colors.grey[600]!;
+    Color iconColor = isDarkMode ? Colors.white : Colors.green;
+    Color inputFillColor = isDarkMode ? Colors.grey[800]! : Colors.grey[200]!;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -69,12 +101,12 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
               Image.asset('assets/images/logo.png', height: 100),
               const SizedBox(height: 40),
 
-              const Text(
+              Text(
                 'Join the Community',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: textColor,
                 ),
               ),
               const SizedBox(height: 10),
@@ -82,7 +114,7 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
                 'Please fill in the details below to sign up',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600],
+                  color: subtitleColor,
                 ),
               ),
               const SizedBox(height: 30),
@@ -95,11 +127,19 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
                       controller: _fullNameController,
                       decoration: InputDecoration(
                         labelText: 'Full Name',
-                        prefixIcon: const Icon(Icons.person),
+                        labelStyle: TextStyle(color: textColor),
+                        prefixIcon: Icon(Icons.person, color: iconColor),
+                        filled: true,
+                        fillColor: inputFillColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: iconColor),
+                        ),
                       ),
+                      style: TextStyle(color: textColor),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your full name.';
@@ -113,12 +153,20 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
                       controller: _phoneController,
                       decoration: InputDecoration(
                         labelText: 'Phone Number',
-                        prefixIcon: const Icon(Icons.phone),
+                        labelStyle: TextStyle(color: textColor),
+                        prefixIcon: Icon(Icons.phone, color: iconColor),
+                        filled: true,
+                        fillColor: inputFillColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: iconColor),
+                        ),
                       ),
                       keyboardType: TextInputType.phone,
+                      style: TextStyle(color: textColor),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your phone number.';
@@ -132,12 +180,20 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock),
+                        labelStyle: TextStyle(color: textColor),
+                        prefixIcon: Icon(Icons.lock, color: iconColor),
+                        filled: true,
+                        fillColor: inputFillColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: iconColor),
+                        ),
                       ),
                       obscureText: true,
+                      style: TextStyle(color: textColor),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password.';
@@ -151,12 +207,20 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
                         labelText: 'Confirm Password',
-                        prefixIcon: const Icon(Icons.lock_outline),
+                        labelStyle: TextStyle(color: textColor),
+                        prefixIcon: Icon(Icons.lock_outline, color: iconColor),
+                        filled: true,
+                        fillColor: inputFillColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: iconColor),
+                        ),
                       ),
                       obscureText: true,
+                      style: TextStyle(color: textColor),
                       validator: (value) {
                         if (value != _passwordController.text) {
                           return 'Passwords do not match.';
@@ -186,7 +250,10 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Already have an account?"),
+                        Text(
+                          "Already have an account?",
+                          style: TextStyle(color: textColor),
+                        ),
                         TextButton(
                           onPressed: () {
                             Navigator.push(
@@ -208,6 +275,33 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Colors.green[800],
+        unselectedItemColor: Colors.green[300],
+        showUnselectedLabels: false,
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }

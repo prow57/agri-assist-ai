@@ -1,5 +1,10 @@
 import 'dart:convert';
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/authentication/community_signup.dart';
+import 'package:agrifrontend/home/home_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:agrifrontend/authentication/mobilenumber.dart';
@@ -14,6 +19,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  int _selectedIndex = 0;
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
@@ -37,8 +43,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => PreferencesScreen()),
+          MaterialPageRoute(builder: (context) => PreferencesScreen()),
         );
       } else {
         final data = jsonDecode(response.body);
@@ -53,10 +58,35 @@ class _CommunitySignInState extends State<CommunitySignIn> {
     }
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    final pages = [
+      const HomePage(),
+      const PersonalizedAdvicePage(),
+      const ChatPage(),
+      SettingsPage(),   // Replace with actual page
+    ];
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => pages[index]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    Color backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    Color textColor = isDarkMode ? Colors.white : Colors.black;
+    Color subtitleColor = isDarkMode ? Colors.white70 : Colors.grey[600]!;
+    Color iconColor = isDarkMode ? Colors.white : Colors.green;
+    Color inputFillColor = isDarkMode ? Colors.grey[800]! : Colors.grey[200]!;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -66,12 +96,12 @@ class _CommunitySignInState extends State<CommunitySignIn> {
               Image.asset('assets/images/logo.png', height: 100),
               const SizedBox(height: 40),
 
-              const Text(
+              Text(
                 'Welcome Back to Community',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: textColor,
                 ),
               ),
               const SizedBox(height: 10),
@@ -79,7 +109,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
                 'Please sign in to continue',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600],
+                  color: subtitleColor,
                 ),
               ),
               const SizedBox(height: 30),
@@ -92,12 +122,20 @@ class _CommunitySignInState extends State<CommunitySignIn> {
                       controller: _phoneController,
                       decoration: InputDecoration(
                         labelText: 'Phone Number',
-                        prefixIcon: const Icon(Icons.phone),
+                        labelStyle: TextStyle(color: textColor),
+                        prefixIcon: Icon(Icons.phone, color: iconColor),
+                        filled: true,
+                        fillColor: inputFillColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: iconColor),
+                        ),
                       ),
                       keyboardType: TextInputType.phone,
+                      style: TextStyle(color: textColor),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your phone number.';
@@ -111,12 +149,20 @@ class _CommunitySignInState extends State<CommunitySignIn> {
                       controller: _passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock),
+                        labelStyle: TextStyle(color: textColor),
+                        prefixIcon: Icon(Icons.lock, color: iconColor),
+                        filled: true,
+                        fillColor: inputFillColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide(color: iconColor),
+                        ),
                       ),
                       obscureText: true,
+                      style: TextStyle(color: textColor),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password.';
@@ -133,8 +179,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       ),
                       child: const Text(
                         'Sign In to Community',
@@ -150,9 +195,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MobileNumberScreen()),
+                              MaterialPageRoute(builder: (context) => MobileNumberScreen()),
                             );
                           },
                           child: const Text(
@@ -164,8 +207,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) => CommunitySignUp()),
+                              MaterialPageRoute(builder: (context) => CommunitySignUp()),
                             );
                           },
                           child: const Text(
@@ -182,6 +224,32 @@ class _CommunitySignInState extends State<CommunitySignIn> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Colors.green[800],
+        unselectedItemColor: Colors.green[300],
+        showUnselectedLabels: false,
+        selectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
