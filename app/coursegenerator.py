@@ -139,5 +139,3 @@ class CourseGenerator:
             f"Overall Mood: Positive, empowering, and reflective of local agricultural practices and challenges. "
             f"Ensure the image is respectful of local cultures and accurately represents African farming contexts."
         )
-
-Version 3 of 3
