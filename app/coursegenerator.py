@@ -19,7 +19,7 @@ class CourseGenerator:
 
         content_and_metadata_agent = Agent(
             role="Agricultural Course Creator",
-            goal="Develop comprehensive, engaging, and practical online courses on agricultural topics",
+            goal="Develop comprehensive, engaging, and practical online courses on agricultural topics with detailed content",
             backstory="An expert in agricultural education with a Master's in Instructional Design and a background in developing award-winning e-learning materials for agricultural universities and extension programs. Skilled at creating immersive learning experiences that combine theoretical knowledge with hands-on applications.",
             tools=[self.search_tool, self.scrape_tool],
             verbose=True
@@ -28,7 +28,8 @@ class CourseGenerator:
         topic_selection_task = Task(
             description=(
                 f"Identify a new agricultural topic not present in this list: [{', '.join(history)}]. "
-                "The topic should be comprehensive enough for a full course, focusing on providing farmers with in-depth knowledge and practical skills. "
+                "The topic should be specific and suitable for a detailed course, focusing on providing farmers with in-depth knowledge and practical skills. "
+                "It could cover a specific crop, season, commonly faced problem, specific disease, or insect. "
                 "It should address current challenges or innovations in agriculture, aiming to significantly improve farming practices or sustainability."
             ),
             agent=topic_selection_agent,
@@ -42,20 +43,30 @@ class CourseGenerator:
 
         content_and_metadata_task = Task(
             description=(
-                "Create a detailed and engaging course outline for the selected agricultural topic. The course should be structured as follows:\n"
-                "1. Course Title: A catchy, descriptive title for the course.\n"
-                "2. Course Description: A brief overview of what the course covers and its benefits (100-150 words).\n"
-                "3. Learning Objectives: 3-5 clear, measurable objectives that students will achieve by the end of the course.\n"
-                "4. Course Outline: Divide the course into 5-7 main modules. For each module, provide:\n"
-                "   - Module title\n"
-                "   - Brief description (2-3 sentences)\n"
-                "   - 3-5 key topics covered in bullet points\n"
-                "5. Practical Applications: For each module, include at least one hands-on activity or real-world application.\n"
-                "6. Additional Resources: Suggest 2-3 supplementary materials (e.g., videos, articles, tools) for each module.\n"
-                "7. Assessment Ideas: Propose 2-3 ways to assess student learning throughout the course.\n"
-                "8. Instructor Notes: Brief tips for course delivery or areas that may require special attention.\n\n"
+                "Create a detailed and comprehensive course on the selected agricultural topic. The course should be structured in Markdown format as follows:\n\n"
+                "# [Course Title]\n\n"
+                "## Course Description\n"
+                "[Provide a detailed overview of the course, its importance, and what learners will gain. (150-200 words)]\n\n"
+                "## Learning Objectives\n"
+                "[List 4-6 specific, measurable learning objectives]\n\n"
+                "## Course Outline\n"
+                "[Provide a brief overview of the main sections of the course]\n\n"
+                "## Introduction\n"
+                "[Detailed introduction to the topic, including its significance in agriculture, historical context, and current relevance. (400-500 words)]\n\n"
+                "## [Main Section 1]\n"
+                "[Detailed content for the first main section, including subsections, examples, and practical applications. (800-1000 words)]\n\n"
+                "## [Main Section 2]\n"
+                "[Detailed content for the second main section, including subsections, examples, and practical applications. (800-1000 words)]\n\n"
+                "## [Main Section 3]\n"
+                "[Detailed content for the third main section, including subsections, examples, and practical applications. (800-1000 words)]\n\n"
+                "## Practical Application\n"
+                "[Provide detailed, step-by-step instructions for a hands-on activity or real-world application of the course content. (400-500 words)]\n\n"
+                "## Conclusion\n"
+                "[Summarize key points, reinforce main takeaways, and provide guidance for further learning or implementation. (300-400 words)]\n\n"
+                "## Additional Resources\n"
+                "[List and briefly describe 5-7 supplementary materials (e.g., videos, articles, tools) for further learning]\n\n"
                 "Ensure the content is practical, actionable, and engaging. Use clear, concise language suitable for online learning. "
-                "Include relevant examples and case studies where appropriate. "
+                "Include relevant examples, case studies, and current best practices throughout the course. "
                 "Add 5-7 relevant tags and 3-5 authoritative reference links to credible sources (preferably .edu, .gov, or reputable agricultural organizations)."
             ),
             agent=content_and_metadata_agent,
