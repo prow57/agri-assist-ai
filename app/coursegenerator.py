@@ -41,8 +41,8 @@ class CourseGenerator:
 
         content_and_metadata_task = Task(
             description=(
-                "Create a concise and engaging social media post for the selected agricultural topic. "
-                "The content should be practical, actionable,full detailed markdown structred Sweet engaging social media content"
+                "Create a concise and engaging detailed course for the selected agricultural topic. "
+                "The content should be practical, actionable,full detailed markdown structred Sweet engaging detailed course content"
                 "Include 2-5 relevant tags and 1-3 authoritative reference links to credible sources."
                 "do not include the tags in the content "
             ),
@@ -50,7 +50,7 @@ class CourseGenerator:
             expected_output="""
             A JSON object with the following structure:
 
-                "content": "full detailed markdown structred Sweet engaging social media content , do not include the tags in the content",
+                "content": "full detailed markdown structred Sweet engaging detailed course content , do not include the tags in the content",
                 "tags": ["tag1", "tag2", "tag3", ...],
                 "references": [
                     "Reference link 1 (preferably from .edu, .gov, or reputable agricultural organizations)",

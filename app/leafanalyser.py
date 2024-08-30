@@ -71,7 +71,7 @@ class LeafAnalyser:
                 "crop_type": "<string>",               // Type of the crop
                 "disease_name": "<string or None>",    // Name of the detected disease or None if the crop is healthy
                 "description": "<string>",             // Detailed description of the disease
-                "level_of_risk": "<string>",           // Level of risk allowed values:("LOW","MODERATE","SUBSTANTIAL","SEVERE","CRITICAL" or None) 
+                "level_of_risk": "<string>",           // Level of risk allowed values:("LOW","MODERATE","SUBSTANTIAL","SEVERE","CRITICAL" or None if healthy) 
                 "percentage": <integer>,               // Percentage of health (0-100)
                 "estimated_size": "<string>",          // Estimated size of the crop or area affected
                 "stage": "<string or None>",           // Disease stage or None if healthy
