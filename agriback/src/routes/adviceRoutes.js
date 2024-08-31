@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const { generateText } = require('../services/llamaAIService');
 
-// Get farming advice
+// Get farming advise based on name, current methods and issues
 router.post('/get-advice', async (req, res) => {
   const { type, name, currentMethods, issues } = req.body;
 
