@@ -3,6 +3,7 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -215,6 +216,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       appBar: AppBar(
         title: const Text("Leaf Diagnosis"),
         backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -363,19 +365,33 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 
-  Widget _buildResultDisplay() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Analysis Results:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        Text(_result.toString(), style: const TextStyle(fontSize: 16)),
-      ],
-    );
-  }
+Widget _buildResultDisplay() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'Analysis Results:',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 10),
+      _result != null
+          ? MarkdownBody(
+              data: _result?['result'] ?? 'No results available',
+              styleSheet: MarkdownStyleSheet(
+                p: TextStyle(fontSize: 16),
+                h1: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                h2: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                // Add more style customization if needed
+              ),
+            )
+          : const Text(
+              'No results available',
+              style: TextStyle(fontSize: 16),
+            ),
+    ],
+  );
+}
+
 
   Widget _buildPremiumResultDisplay() {
     return Column(

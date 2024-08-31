@@ -224,7 +224,7 @@ body: Column(
           Text(
             _currentDate,
             style: const TextStyle(
-              fontSize: 18.0,
+              fontSize: 12.0,
               fontWeight: FontWeight.normal,
             ),
           ),
