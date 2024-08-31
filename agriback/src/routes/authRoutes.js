@@ -115,7 +115,7 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// Set Preferences Route
+// Set Preferences Routes
 router.post('/set-preferences', async (req, res) => {
   const { phone, farming_type, interests } = req.body;
 
