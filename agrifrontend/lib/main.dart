@@ -5,7 +5,6 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'scan.dart';
 import 'theme_notifier.dart';
-import 'home/home_page.dart';
 
 void main() async {
   await Hive.initFlutter();

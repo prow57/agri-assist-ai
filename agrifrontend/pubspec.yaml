@@ -51,9 +51,21 @@ flutter:
     - assets/images/logo.png
 
 flutter_native_splash:
-  color: "#ffffff" # Background color of your splash screen
-  image: assets/logo.jpg # Path to your splash image
+  color: "#ffffff"
+  image: assets/logo.jpg
   android: true
   ios: true
   web: true
-  android_gravity: fill # How the image should be positioned
+
+  # Android settings
+  android_gravity: center
+  android_scaleType: centerInside # Scale the image and center it, preserving aspect ratio
+  android_padding: "20%" # Adds padding around the logo
+
+  # iOS settings
+  ios_content_mode: center # Centers the image without scaling
+  ios_padding: "20%" # Adds padding around the logo
+
+  # Web settings
+  web_image_mode: center # Centers the image
+  web_padding: "20%" # Adds padding around the logo

@@ -252,10 +252,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                 _buildErrorDisplay(),
               const SizedBox(height: 20),
               _buildActionButtons(),
-              if (_isPremiumUser) ...[
-                const SizedBox(height: 20),
-                _buildSubmitButton(),
-              ],
             ],
           ),
         ),
@@ -378,9 +374,9 @@ Widget _buildResultDisplay() {
           ? MarkdownBody(
               data: _result?['result'] ?? 'No results available',
               styleSheet: MarkdownStyleSheet(
-                p: TextStyle(fontSize: 16),
-                h1: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                h2: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                p: const TextStyle(fontSize: 16),
+                h1: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                h2: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 // Add more style customization if needed
               ),
             )
@@ -432,16 +428,4 @@ Widget _buildResultDisplay() {
     );
   }
 
-  Widget _buildSubmitButton() {
-    return ElevatedButton.icon(
-      onPressed: () {
-        // Submit for expert analysis or further action
-      },
-      icon: const Icon(Icons.send, color: Colors.white),
-      label: const Text(
-        'Submit for Expert Analysis',
-        style: TextStyle(color: Colors.white),
-      ),
-    );
-  }
 }
