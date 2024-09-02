@@ -23,9 +23,11 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   bool isPremiumUser = false;
 
   final List<String> _imagePaths = [
-  'assets/image1.jpg',
-  'assets/image2.jpg',
-  'assets/image3.jpg',
+  '../../assets/pic1.jpg',
+  '../../assets/pic2.jpg',
+  '../../assets/pic3.jpg',
+  '../../assets/pic4.jpg',
+  '../../assets/pic5.jpg',
 ];
 
 
