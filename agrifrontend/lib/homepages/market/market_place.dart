@@ -5,7 +5,6 @@ import 'package:agrifrontend/homepages/market/driver_selection_page.dart';
 import 'package:agrifrontend/homepages/market/market_locations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'market_service.dart';
 import 'commodity.dart';
 
