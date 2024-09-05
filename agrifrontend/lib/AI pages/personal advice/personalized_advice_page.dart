@@ -144,7 +144,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 50.0),
+            const SizedBox(height: 20.0),
             Row(
               children: [
                 _buildFeatureButton(
@@ -154,7 +154,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                   Icons.lightbulb,
                   true, // AI Advice is always accessible
                 ),
-                const SizedBox(width: 20.0),
+                const SizedBox(width: 30.0),
                 _buildFeatureButton(
                   context,
                   'Explore Farming',
@@ -164,7 +164,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 50.0),
+            const SizedBox(height: 30.0),
             const Text(
               'Recommended for you',
               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
@@ -184,6 +184,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
               context,
               _courses[index]['id'],
               _courses[index]['title'],
+              _courses[index]['description'],
               'Start Lesson',
               imagePath, // Pass the correct image path
             );
@@ -191,7 +192,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         ),
 ),
 
-            const SizedBox(height: 50.0),
+            const SizedBox(height: 20.0),
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -218,7 +219,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 30.0),
+            const SizedBox(height: 10.0),
           ],
         ),
       ),
@@ -299,7 +300,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
     );
   }
 
-Widget _buildCourseCard(BuildContext context, String courseId, String title, String buttonText, String imagePath) {
+Widget _buildCourseCard(BuildContext context, String courseId, String title, String description, String buttonText, String imagePath) {
   return Container(
     width: 180,
     margin: const EdgeInsets.all(8),
@@ -333,6 +334,7 @@ Widget _buildCourseCard(BuildContext context, String courseId, String title, Str
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Spacer(),
           Text(
             title,
             style: const TextStyle(
