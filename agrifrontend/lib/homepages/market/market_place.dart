@@ -28,6 +28,12 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
   late String _currentDate;
   String _selectedCategory = 'Animal';
   bool _isPremiumUser = false; // Track if the user is a premium user
+  String _searchTerm = ''; // Store the search term
+  List<Commodity> _commodities = [];
+  List<Commodity> _filteredCommodities = []; // Filtered commodities
+  int _selectedIndex = 0; // Track the selected index for bottom navigation
+  bool _isLoading = true; // Track loading state
+  String _errorMessage = ''; // Track error message
 
   @override
   void initState() {
@@ -45,86 +51,72 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
     });
   }
 
-  void _fetchData() {
+  void _fetchData() async {
     setState(() {
+      _isLoading = true; // Set loading state
+      _errorMessage = ''; // Clear previous error message
+    });
+
+    try {
       switch (_selectedCategory) {
         case 'Crop':
-          _futureCommodities = MarketService().fetchCropPrices(widget.marketId);
+          _commodities = await MarketService().fetchCropPrices(widget.marketId);
           break;
         case 'Animal':
-          _futureCommodities = MarketService().fetchAnimalPrices(widget.marketId);
+          _commodities =
+              await MarketService().fetchAnimalPrices(widget.marketId);
           break;
         case 'Crop Products':
-          _futureCommodities = MarketService().fetchCropProductPrices(widget.marketId);
+          _commodities =
+              await MarketService().fetchCropProductPrices(widget.marketId);
           break;
         case 'Animal Products':
-          _futureCommodities = MarketService().fetchAnimalProductPrices(widget.marketId);
+          _commodities =
+              await MarketService().fetchAnimalProductPrices(widget.marketId);
           break;
       }
-    });
+      _filterCommodities(); // Update filtered commodities
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load commodities. Please try again later.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false; // Reset loading state
+      });
+    }
   }
 
-  int _selectedIndex = 0;
+  void _filterCommodities() {
+    if (_searchTerm.isNotEmpty) {
+      _filteredCommodities = _commodities.where((commodity) {
+        return commodity.name.toLowerCase().contains(_searchTerm.toLowerCase());
+      }).toList();
+    } else {
+      _filteredCommodities = _commodities;
+    }
+  }
 
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
-
-    setState(() {
-      _selectedIndex = index;
-
-      if (index == 0) {
-        Navigator.pushReplacement(
+  void _onFloatingButtonPressed(String buttonType) {
+    if (_isPremiumUser) {
+      if (buttonType == 'location') {
+        Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
-          ),
+          MaterialPageRoute(builder: (context) => MarketLocation()),
         );
-      } else if (index == 1) {
-        Navigator.pushReplacement(
+      } else if (buttonType == 'car') {
+        // Navigate to the DriverListPage with the market ID
+        Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
-          ),
-        );
-      } else if (index == 2) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PersonalizedAdvicePage(),
-          ),
-        );
-      } else if (index == 3) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SettingsPage(),
+            builder: (context) => DriverListPage(marketId: widget.marketId),
           ),
         );
       }
-    });
-  }
-
-void _onFloatingButtonPressed(String buttonType) {
-  if (_isPremiumUser) {
-    if (buttonType == 'location') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MarketLocation()),
-      );
-    } else if (buttonType == 'car') {
-      // Navigate to the DriverListPage with the market ID
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DriverListPage(marketId: widget.marketId),
-        ),
-      );
+    } else {
+      _showPremiumPopup();
     }
-  } else {
-    _showPremiumPopup();
   }
-}
-
 
   void _showPremiumPopup() {
     showDialog(
@@ -132,8 +124,7 @@ void _onFloatingButtonPressed(String buttonType) {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Upgrade to Premium'),
-          content: const Text(
-              'Upgrade to premium to access these features.'),
+          content: const Text('Upgrade to premium to access these features.'),
           actions: [
             TextButton(
               onPressed: () {
@@ -161,6 +152,44 @@ void _onFloatingButtonPressed(String buttonType) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('You have upgraded to premium!')),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MarketPlacePage(
+                    marketId: widget.marketId,
+                    marketName: widget.marketName,
+                    marketLocation: widget.marketLocation,
+                  )),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AllCoursesPage()),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => PersonalizedAdvicePage()),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SettingsPage()),
+        );
+        break;
+    }
   }
 
   Widget buildCommodityTile(Commodity commodity) {
@@ -192,90 +221,80 @@ void _onFloatingButtonPressed(String buttonType) {
           },
         ),
       ),
-body: Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DropdownButton<String>(
-            value: _selectedCategory,
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedCategory = newValue!;
-                _fetchData();
-              });
-            },
-            items: <String>[
-              'Animal',
-              'Crop',
-              'Animal Products',
-              'Crop Products'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-          Text(
-            _currentDate,
-            style: const TextStyle(
-              fontSize: 12.0,
-              fontWeight: FontWeight.normal,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                DropdownButton<String>(
+                  value: _selectedCategory,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedCategory = newValue!;
+                      _fetchData();
+                    });
+                  },
+                  items: <String>[
+                    'Animal',
+                    'Crop',
+                    'Animal Products',
+                    'Crop Products'
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                Text(
+                  _currentDate,
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  _searchTerm = value; // Update the search term
+                  _filterCommodities(); // Apply search filter
+                });
+              },
+              decoration: InputDecoration(
+                labelText: 'Search Commodities',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : _errorMessage.isNotEmpty
+                  ? Center(child: Text(_errorMessage))
+                  : Expanded(
+                      child: _filteredCommodities.isEmpty
+                          ? Center(child: Text('No commodities found.'))
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(16.0),
+                              itemCount: _filteredCommodities.length,
+                              itemBuilder: (context, index) {
+                                final commodity = _filteredCommodities[index];
+                                return buildCommodityTile(commodity);
+                              },
+                            ),
+                    ),
         ],
       ),
-    ),
-    Expanded(
-      child: FutureBuilder<List<Commodity>>(
-        future: _futureCommodities,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No data available'));
-          } else {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10.0),
-                    const Text(
-                      'Commodities and Prices',
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10.0),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        final commodity = snapshot.data![index];
-                        return buildCommodityTile(commodity);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-        },
-      ),
-    ),
-  ],
-),
-
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -287,7 +306,7 @@ body: Column(
             backgroundColor: Colors.green,
             child: const Icon(Icons.directions_car, color: Colors.white),
           ),
-          const SizedBox(height: 16), // Space between the buttons
+          const SizedBox(height: 16),
           FloatingActionButton(
             heroTag: "locationBtn",
             onPressed: () {
@@ -299,7 +318,7 @@ body: Column(
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: _selectedIndex, // Set the current index
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -312,7 +331,7 @@ body: Column(
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'AI',
+            label: 'Ai',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -328,4 +347,3 @@ body: Column(
     );
   }
 }
-
