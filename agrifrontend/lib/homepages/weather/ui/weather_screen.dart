@@ -173,7 +173,7 @@ class _WeatherPageState extends State<WeatherPage> {
             style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green[700],
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [

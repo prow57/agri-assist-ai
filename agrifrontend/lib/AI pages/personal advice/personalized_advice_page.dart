@@ -138,6 +138,12 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         ),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

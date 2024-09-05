@@ -70,7 +70,7 @@ class _AiAdviceState extends State<AiAdvice> {
         title: const Text('AI Advice', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -207,7 +207,11 @@ class _AiAdviceState extends State<AiAdvice> {
                   ElevatedButton.icon(
                     onPressed: _isLoading ? null : _getAiResponse,
                     style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
                       backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
                     icon: const Icon(Icons.lightbulb_outline),
                     label: const Text('Get Advice'),
@@ -215,7 +219,11 @@ class _AiAdviceState extends State<AiAdvice> {
                   ElevatedButton.icon(
                     onPressed: _clearFields,
                     style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
                       backgroundColor: Colors.redAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
                     icon: const Icon(Icons.clear),
                     label: const Text('Clear'),

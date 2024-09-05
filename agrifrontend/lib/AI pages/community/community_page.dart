@@ -44,7 +44,7 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
         title: const Text('Community Chat', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },

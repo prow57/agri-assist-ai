@@ -154,6 +154,12 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
         title: const Text('Farming Practices'),
         backgroundColor: Colors.green[800],
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {

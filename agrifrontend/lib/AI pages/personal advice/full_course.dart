@@ -93,6 +93,12 @@ class _FullCourseState extends State<FullCourse> {
         title: const Text('Course Details', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

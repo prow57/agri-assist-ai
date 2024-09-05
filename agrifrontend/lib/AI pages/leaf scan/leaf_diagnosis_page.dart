@@ -218,7 +218,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         backgroundColor: Colors.green,
         foregroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
