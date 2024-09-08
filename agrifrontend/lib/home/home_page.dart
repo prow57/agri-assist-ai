@@ -133,13 +133,13 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   _buildCustomButton(
                     context,
-                    icon: Icons.search,
-                    label: 'Scan Leaf',
+                    icon: Icons.chat_bubble,
+                    label: 'AI Chat',
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LeafAnalysisScreen(),
+                          builder: (context) => const ChatPage(),
                         ),
                       );
                     },
@@ -148,13 +148,28 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _buildCustomButton(
                     context,
-                    icon: Icons.group,
-                    label: 'Community',
+                    icon: Icons.person,
+                    label: 'Personalized AI',
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CommunitySignIn(),
+                          builder: (context) => const PersonalizedAdvicePage(),
+                        ),
+                      );
+                    },
+                    iconColor: iconColor,
+                    textColor: textColor,
+                  ),
+                  _buildCustomButton(
+                    context,
+                    icon: Icons.search,
+                    label: 'Scan Leaf',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LeafAnalysisScreen(),
                         ),
                       );
                     },
@@ -193,28 +208,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _buildCustomButton(
                     context,
-                    icon: Icons.person,
-                    label: 'Personalized AI',
+                    icon: Icons.group,
+                    label: 'Community',
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const PersonalizedAdvicePage(),
-                        ),
-                      );
-                    },
-                    iconColor: iconColor,
-                    textColor: textColor,
-                  ),
-                  _buildCustomButton(
-                    context,
-                    icon: Icons.chat_bubble,
-                    label: 'AI chat',
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ChatPage(),
+                          builder: (context) => CommunitySignIn(),
                         ),
                       );
                     },
