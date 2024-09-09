@@ -303,129 +303,181 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             border: Border.all(color: Colors.green, width: 2),
           ),
           height: 250,
-          width: double.infinity,
-          child: _image != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.file(
-                    _image!,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : const Icon(
-                  Icons.image,
-                  color: Colors.grey,
-                  size: 100,
-                ),
+                    width: double.infinity,
+          child: _image == null
+              ? const Icon(Icons.image, size: 100, color: Colors.green)
+              : Image.file(_image!, fit: BoxFit.cover),
         ),
-        if (_image != null)
-          TextButton.icon(
-            icon: const Icon(Icons.clear, color: Colors.red),
-            label: const Text(
-              'Clear Image',
-              style: TextStyle(color: Colors.red),
-            ),
-            onPressed: _resetImage,
-          ),
-      ],
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton.icon(
+        const SizedBox(height: 10),
+        TextButton.icon(
           onPressed: () => _handleImage(ImageSource.camera),
-          icon: const Icon(Icons.camera, color: Colors.white),
+          icon: const Icon(Icons.camera_alt, color: Colors.green),
           label: const Text(
-            'Camera',
-            style: TextStyle(color: Colors.white),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            "Capture Image",
+            style: TextStyle(color: Colors.green),
           ),
         ),
-        ElevatedButton.icon(
+        TextButton.icon(
           onPressed: () => _handleImage(ImageSource.gallery),
-          icon: const Icon(Icons.photo, color: Colors.white),
+          icon: const Icon(Icons.photo, color: Colors.green),
           label: const Text(
-            'Gallery',
-            style: TextStyle(color: Colors.white),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            "Select from Gallery",
+            style: TextStyle(color: Colors.green),
           ),
         ),
       ],
     );
   }
 
-Widget _buildResultDisplay() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'Analysis Results:',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  Widget _buildResultDisplay() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: Colors.green, width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(2, 4),
+          ),
+        ],
       ),
-      const SizedBox(height: 10),
-      _result != null
-          ? MarkdownBody(
-              data: _result?['result'] ?? 'No results available',
-              styleSheet: MarkdownStyleSheet(
-                p: const TextStyle(fontSize: 16),
-                h1: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                h2: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                // Add more style customization if needed
-              ),
-            )
-          : const Text(
-              'No results available',
-              style: TextStyle(fontSize: 16),
-            ),
-    ],
-  );
-}
-
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Analysis Result:",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          _buildResultDetails(),
+        ],
+      ),
+    );
+  }
 
   Widget _buildPremiumResultDisplay() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: Colors.blue, width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(2, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Premium Analysis Result:",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          _buildResultDetails(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultDetails() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Premium Analysis Results:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        if (_result!.containsKey('is_plant'))
+          Text(
+            "Is it a plant? ${_result!['is_plant'] ? 'Yes' : 'No'}",
+            style: const TextStyle(fontSize: 16),
+          ),
         const SizedBox(height: 10),
-        Text(_result.toString(), style: const TextStyle(fontSize: 16)),
-        // Example: Adding an additional chart or detailed info here for premium users
-        const SizedBox(height: 20),
-        ElevatedButton.icon(
-          onPressed: () {
-            // Navigate to additional insights or advice page
-          },
-          icon: const Icon(Icons.insights),
-          label: const Text('View Additional Insights'),
-        ),
+        if (_result!.containsKey('classification'))
+          Text(
+            "Classification: ${_result!['classification']}",
+            style: const TextStyle(fontSize: 16),
+          ),
+        const SizedBox(height: 10),
+        if (_result!.containsKey('disease'))
+          Text(
+            "Disease: ${_result!['disease']}",
+            style: const TextStyle(fontSize: 16),
+          ),
+        const SizedBox(height: 10),
+        if (_result!.containsKey('guidance'))
+          MarkdownBody(
+            data: _result!['guidance'],
+          ),
       ],
     );
   }
 
   Widget _buildErrorDisplay() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '',
-          style: TextStyle(
-              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
-        ),
-        const SizedBox(height: 10),
-        Text(_errorMessage,
-            style: const TextStyle(fontSize: 16, color: Colors.red)),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.red[100],
+        borderRadius: BorderRadius.circular(12.0),
+        border: Border.all(color: Colors.red, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Error:",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            _errorMessage,
+            style: const TextStyle(fontSize: 16, color: Colors.red),
+          ),
+        ],
+      ),
     );
   }
 
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        if (_image != null)
+          ElevatedButton.icon(
+            onPressed: () {
+              _resetImage();
+              _showSnackBar('Image cleared.');
+            },
+            icon: const Icon(Icons.refresh),
+            label: const Text("Clear Image"),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.redAccent,
+            ),
+          ),
+        if (_result == null && !_isLoading)
+          ElevatedButton.icon(
+            onPressed: () {
+              if (_image != null) {
+                if (_isPremiumUser) {
+                  _showAnalysisChoiceDialog();
+                } else {
+                  _analyzeImage(
+                      _image!, 'http://37.187.29.19:6932/analyze-leaf/');
+                }
+              } else {
+                _showSnackBar('Please select an image.');
+              }
+            },
+            icon: const Icon(Icons.search),
+            label: const Text("Analyze"),
+            style: ElevatedButton.styleFrom(primary: Colors.green),
+          ),
+      ],
+    );
+  }
 }
+
+         
