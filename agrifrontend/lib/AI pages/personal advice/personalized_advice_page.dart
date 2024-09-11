@@ -24,13 +24,12 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   bool isPremiumUser = false;
 
   final List<String> _imagePaths = [
-  '../../assets/pic1.jpg',
-  '../../assets/pic2.jpg',
-  '../../assets/pic3.jpg',
-  '../../assets/pic4.jpg',
-  '../../assets/pic5.jpg',
-];
-
+    '../../assets/pic1.jpg',
+    '../../assets/pic2.jpg',
+    '../../assets/pic3.jpg',
+    '../../assets/pic4.jpg',
+    '../../assets/pic5.jpg',
+  ];
 
   @override
   void initState() {
@@ -153,41 +152,36 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           children: [
             const SizedBox(height: 20.0),
             IntrinsicHeight(
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.stretch, // Ensure buttons stretch to fill available height
-    children: [
-      
-         _buildFeatureButton(
-          context,
-          'AI Advice',
-          'Get AI advice',
-          Icons.lightbulb,
-          true, // AI Advice is always accessible
-        ),
-      
-      const SizedBox(width: 20.0),
-      
-         _buildFeatureButton(
-          context,
-          'Explore Farming',
-          '',
-          Icons.search,
-          false, // Require premium access
-        ),
-      
-      const SizedBox(width: 20.0),
-      _buildFeatureButton(
-          context,
-          'Animal & Crop Info',
-          '',
-          Icons.agriculture,
-          true, // Require premium access
-        ),
-    
-    ],
-  ),
-),
-
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment
+                    .stretch, // Ensure buttons stretch to fill available height
+                children: [
+                  _buildFeatureButton(
+                    context,
+                    'AI Advice',
+                    'Get AI advice',
+                    Icons.lightbulb,
+                    true, // AI Advice is always accessible
+                  ),
+                  const SizedBox(width: 20.0),
+                  _buildFeatureButton(
+                    context,
+                    'Explore Farming',
+                    '',
+                    Icons.search,
+                    false, // Require premium access
+                  ),
+                  const SizedBox(width: 20.0),
+                  _buildFeatureButton(
+                    context,
+                    'Animal & Crop Info',
+                    '',
+                    Icons.agriculture,
+                    true, // Require premium access
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 30.0),
             const Text(
               'Recommended for you',
@@ -195,27 +189,27 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             ),
             const SizedBox(height: 30.0),
             Expanded(
-  child: _courses.isEmpty
-      ? const Center(child: CircularProgressIndicator())
-      : ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: _courses.length,
-          itemBuilder: (context, index) {
-            // Get image path based on the index
-            final imagePath = _imagePaths[index % _imagePaths.length];
-            
-            return _buildCourseCard(
-              context,
-              _courses[index]['id'],
-              _courses[index]['title'],
-              _courses[index]['description'],
-              'Start Lesson',
-              imagePath, // Pass the correct image path
-            );
-          },
-        ),
-),
+              child: _courses.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _courses.length,
+                      itemBuilder: (context, index) {
+                        // Get image path based on the index
+                        final imagePath =
+                            _imagePaths[index % _imagePaths.length];
 
+                        return _buildCourseCard(
+                          context,
+                          _courses[index]['id'],
+                          _courses[index]['title'],
+                          _courses[index]['description'],
+                          'Start Lesson',
+                          imagePath, // Pass the correct image path
+                        );
+                      },
+                    ),
+            ),
             const SizedBox(height: 20.0),
             Center(
               child: ElevatedButton(
@@ -223,7 +217,8 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
                   _handlePremiumFeature(() {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const AllCoursesPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const AllCoursesPage()),
                     );
                   });
                 },
@@ -271,27 +266,34 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
         showUnselectedLabels: false,
-        selectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  Widget _buildFeatureButton(
-      BuildContext context, String title, String subtitle, IconData icon, bool accessible) {
+  Widget _buildFeatureButton(BuildContext context, String title,
+      String subtitle, IconData icon, bool accessible) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
           if (!accessible) {
             _handlePremiumFeature(() {
               if (title == 'Explore Farming') {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const FarmingPracticesPage()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FarmingPracticesPage()));
               }
             });
           } else if (title == 'AI Advice') {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const AiAdvice()));
-          }
-          else if (title == 'Animal & Crop Info') {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const CropAnimalInfo()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AiAdvice()));
+          } else if (title == 'Animal & Crop Info') {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const CropAnimalInfo()));
           }
         },
         child: Container(
@@ -312,7 +314,8 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
               const SizedBox(height: 8),
               Text(
                 title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
@@ -327,80 +330,84 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
     );
   }
 
-Widget _buildCourseCard(BuildContext context, String courseId, String title, String description, String buttonText, String imagePath) {
-  return Container(
-    width: 180,
-    margin: const EdgeInsets.all(8),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(15),
-      image: DecorationImage(
-        image: AssetImage(imagePath), // Load image from assets
-        fit: BoxFit.cover,
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2),
-          blurRadius: 8.0,
-          offset: Offset(0, 4),
-        ),
-      ],
-    ),
-    child: Container(
-      padding: const EdgeInsets.all(8),
+  Widget _buildCourseCard(BuildContext context, String courseId, String title,
+      String description, String buttonText, String imagePath) {
+    return Container(
+      width: 180,
+      margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(
-          colors: [
-            Colors.black.withOpacity(0.7),
-            Colors.black.withOpacity(0.2),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+        image: DecorationImage(
+          image: AssetImage(imagePath), // Load image from assets
+          fit: BoxFit.cover,
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Spacer(),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0,
-            ),
-            maxLines: 10, // Limit to 2 lines
-            softWrap: true, // Allow text to wrap
-            overflow: TextOverflow.ellipsis, // Show ellipsis if text overflows
-          ),
-          const Spacer(),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                _handlePremiumFeature(() {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CourseDetailPage(courseId: courseId)),
-                  );
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ),
-              child: Text(
-                buttonText,
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8.0,
+            offset: Offset(0, 4),
           ),
         ],
       ),
-    ),
-  );
-}
-
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(
+            colors: [
+              Colors.black.withOpacity(0.7),
+              Colors.black.withOpacity(0.2),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Spacer(),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+              maxLines: 10, // Limit to 2 lines
+              softWrap: true, // Allow text to wrap
+              overflow:
+                  TextOverflow.ellipsis, // Show ellipsis if text overflows
+            ),
+            const Spacer(),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  _handlePremiumFeature(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              CourseDetailPage(courseId: courseId)),
+                    );
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                ),
+                child: Text(
+                  buttonText,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

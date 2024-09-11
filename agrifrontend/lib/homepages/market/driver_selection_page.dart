@@ -1,3 +1,4 @@
+import 'package:agrifrontend/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 import 'driver_service.dart'; // Import the DriverService
@@ -88,7 +89,7 @@ class _DriverListPageState extends State<DriverListPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const AllCoursesPage(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else if (index == 1) {
