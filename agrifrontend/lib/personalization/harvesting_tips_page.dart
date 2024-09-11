@@ -9,7 +9,7 @@ class HarvestingTipsPage extends StatefulWidget {
   _SoilManagementPageState createState() => _SoilManagementPageState();
 }
 
-class _SoilManagementPageState extends State<SoilManagementPage> {
+class _HarvestingTipsPageState extends State<SoilManagementPage> {
   Map<String, dynamic> content = {};
   bool isLoading = true;
 
