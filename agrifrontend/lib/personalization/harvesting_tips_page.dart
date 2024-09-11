@@ -20,7 +20,7 @@ class _SoilManagementPageState extends State<SoilManagementPage> {
   }
 
   Future<void> _fetchContent() async {
-    final response = await http.get(Uri.parse('https://agriback-plum.vercel.app/api/community/soil-management'));
+    final response = await http.get(Uri.parse('https://agriback-plum.vercel.app/api/community/harvesting-tips'));
     if (response.statusCode == 200) {
       setState(() {
         content = jsonDecode(response.body);
