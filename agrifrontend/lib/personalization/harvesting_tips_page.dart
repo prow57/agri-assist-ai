@@ -1,15 +1,13 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class HarvestingTipsPage extends StatefulWidget {
   @override
-  _SoilManagementPageState createState() => _SoilManagementPageState();
+  _HarvestingTipsPageState createState() => _HarvestingTipsPageState();
 }
 
-class _HarvestingTipsPageState extends State<SoilManagementPage> {
+class _HarvestingTipsPageState extends State<HarvestingTipsPage> {
   Map<String, dynamic> content = {};
   bool isLoading = true;
 
@@ -37,7 +35,7 @@ class _HarvestingTipsPageState extends State<SoilManagementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Soil Management')),
+      appBar: AppBar(title: Text('Harvesting Tips For Malawi Farmers')),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(
@@ -80,6 +78,13 @@ class _HarvestingTipsPageState extends State<SoilManagementPage> {
                       Text(
                         content['conclusion'],
                         style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                      ),
+                    if (content.containsKey('error'))
+                      Center(
+                        child: Text(
+                          content['error'],
+                          style: TextStyle(color: Colors.red, fontSize: 18),
+                        ),
                       ),
                   ],
                 ),
