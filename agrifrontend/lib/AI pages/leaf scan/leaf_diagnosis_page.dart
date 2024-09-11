@@ -454,7 +454,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             icon: const Icon(Icons.refresh),
             label: const Text("Clear Image"),
             style: ElevatedButton.styleFrom(
-              primary: Colors.redAccent,
+              backgroundColor: Colors.redAccent,
             ),
           ),
         if (_result == null && !_isLoading)
@@ -473,7 +473,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             },
             icon: const Icon(Icons.search),
             label: const Text("Analyze"),
-            style: ElevatedButton.styleFrom(primary: Colors.green),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
           ),
       ],
     );
