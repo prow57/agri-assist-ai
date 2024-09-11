@@ -3,6 +3,7 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:agrifrontend/homepages/weather/ui/detail_page.dart';
+import 'package:agrifrontend/homepages/weather/ui/farmer_recommendation.dart';
 import 'package:agrifrontend/homepages/weather/weather_forecasting.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -208,7 +209,7 @@ class _WeatherPageState extends State<WeatherPage> {
                           _buildWeatherForecast(), // Shows full or limited forecast
                           if (_isPremiumUser) ...[
                             const SizedBox(height: 20),
-                            _buildFarmerRecommendations(),
+                            _buildFeatureButton("Get AI Farm Recommendations"),
                           ]
                         ],
                       ),
@@ -519,35 +520,44 @@ class _WeatherPageState extends State<WeatherPage> {
     ));
   }
 
-  Widget _buildFarmerRecommendations() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Farmer Recommendations',
-          style: TextStyle(
-            fontSize: 22,
+Widget _buildFeatureButton(String title) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FarmerRecommendationsPage(
+            city: _selectedCity,
+          ),
+        ),
+      );
+    },
+    child: Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8.0,
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 10),
-        Text(
-          _getRecommendation(_weatherData!['current']['condition']['text']),
-          style: const TextStyle(fontSize: 18),
-        ),
-      ],
-    );
-  }
+      ),
+    ),
+  );
+}
 
-  String _getRecommendation(String condition) {
-    if (condition.contains('rain')) {
-      return 'It is likely to rain. Ensure your crops have proper drainage.';
-    } else if (condition.contains('sunny')) {
-      return 'It will be sunny. Consider watering your crops early in the morning or late in the evening.';
-    } else {
-      return 'Weather is stable. Regular farming activities can continue.';
-    }
-  }
+
 
   BottomNavigationBar _buildBottomNavigationBar() {
     return BottomNavigationBar(
