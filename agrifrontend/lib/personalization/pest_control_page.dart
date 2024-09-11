@@ -1,13 +1,34 @@
 import 'package:flutter/material.dart';
+
+class PestControlPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Pest Control')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Effective methods for controlling pests include using biological pest control, chemical treatments, '
+            'and integrated pest management techniques.',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class SoilManagementPage extends StatefulWidget {
+class PestControlPage extends StatefulWidget {
   @override
   _SoilManagementPageState createState() => _SoilManagementPageState();
 }
 
-class _SoilManagementPageState extends State<SoilManagementPage> {
+class _PestControlPageState extends State<SoilManagementPage> {
   Map<String, dynamic> content = {};
   bool isLoading = true;
 
