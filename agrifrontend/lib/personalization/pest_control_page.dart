@@ -1,15 +1,13 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class PestControlPage extends StatefulWidget {
   @override
-  _SoilManagementPageState createState() => _SoilManagementPageState();
+  _PestControlPageState createState() => _PestControlPageState();
 }
 
-class _PestControlPageState extends State<SoilManagementPage> {
+class _PestControlPageState extends State<PestControlPage> {
   Map<String, dynamic> content = {};
   bool isLoading = true;
 
@@ -20,7 +18,7 @@ class _PestControlPageState extends State<SoilManagementPage> {
   }
 
   Future<void> _fetchContent() async {
-    final response = await http.get(Uri.parse('https://agriback-plum.vercel.app/api/community/soil-management'));
+    final response = await http.get(Uri.parse('https://agriback-plum.vercel.app/api/community/pest-control'));
     if (response.statusCode == 200) {
       setState(() {
         content = jsonDecode(response.body);
@@ -37,7 +35,7 @@ class _PestControlPageState extends State<SoilManagementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Soil Management')),
+      appBar: AppBar(title: Text('Pest Control')),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(
@@ -80,6 +78,13 @@ class _PestControlPageState extends State<SoilManagementPage> {
                       Text(
                         content['conclusion'],
                         style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                      ),
+                    if (content.containsKey('error'))
+                      Center(
+                        child: Text(
+                          content['error'],
+                          style: TextStyle(color: Colors.red, fontSize: 18),
+                        ),
                       ),
                   ],
                 ),
