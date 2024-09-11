@@ -71,7 +71,7 @@ class _FarmerRecommendationsPageState extends State<FarmerRecommendationsPage> {
         padding: const EdgeInsets.all(16.0),
         child: isLoading
             ? const Center(
-                child: CircularProgressIndicator(), // Center the loading indicator
+                child: CircularProgressIndicator(),
               )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +80,7 @@ class _FarmerRecommendationsPageState extends State<FarmerRecommendationsPage> {
                     child: Markdown(
                       data: recommendation, // Render the recommendation as Markdown
                       styleSheet: MarkdownStyleSheet(
-                        p: const TextStyle(fontSize: 18), // Customize text styles if needed
+                        p: const TextStyle(fontSize: 18), 
                       ),
                     ),
                   ),
