@@ -20,33 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  bool _showGreeting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkFirstLaunch();
-  }
-
-  Future<void> _checkFirstLaunch() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isFirstLaunch = prefs.getBool('firstLaunch') ?? true;
-
-    if (isFirstLaunch) {
-      setState(() {
-        _showGreeting = true;
-      });
-
-      // Hide the greeting after 2 seconds
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {
-          _showGreeting = false;
-        });
-      });
-
-      await prefs.setBool('firstLaunch', false);
-    }
-  }
 
   void _onItemTapped(int index) {
     if (index == _selectedIndex) return;
@@ -119,11 +92,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_showGreeting)
-              const Text(
-                'Greetings! Welcome to AgriAssist-AI.',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              ),
             const SizedBox(height: 20.0),
             Expanded(
               child: GridView.count(
