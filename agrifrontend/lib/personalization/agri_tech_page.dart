@@ -8,7 +8,7 @@ class AgriTechPage extends StatefulWidget {
   _SoilManagementPageState createState() => _SoilManagementPageState();
 }
 
-class _SoilManagementPageState extends State<SoilManagementPage> {
+class _AgriTechPageState extends State<SoilManagementPage> {
   Map<String, dynamic> content = {};
   bool isLoading = true;
 
