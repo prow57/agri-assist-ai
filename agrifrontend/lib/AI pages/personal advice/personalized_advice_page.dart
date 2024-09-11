@@ -1,6 +1,7 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/full_course.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/practice_detail.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/crop_animal_info.dart';
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
@@ -151,25 +152,42 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20.0),
-            Row(
-              children: [
-                _buildFeatureButton(
-                  context,
-                  'AI Advice',
-                  'Get AI advice',
-                  Icons.lightbulb,
-                  true, // AI Advice is always accessible
-                ),
-                const SizedBox(width: 30.0),
-                _buildFeatureButton(
-                  context,
-                  'Explore Farming',
-                  'Explore farming',
-                  Icons.search,
-                  false, // Require premium access
-                ),
-              ],
-            ),
+            IntrinsicHeight(
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.stretch, // Ensure buttons stretch to fill available height
+    children: [
+      
+         _buildFeatureButton(
+          context,
+          'AI Advice',
+          'Get AI advice',
+          Icons.lightbulb,
+          true, // AI Advice is always accessible
+        ),
+      
+      const SizedBox(width: 20.0),
+      
+         _buildFeatureButton(
+          context,
+          'Explore Farming',
+          '',
+          Icons.search,
+          false, // Require premium access
+        ),
+      
+      const SizedBox(width: 20.0),
+      _buildFeatureButton(
+          context,
+          'Animal & Crop Info',
+          '',
+          Icons.agriculture,
+          true, // Require premium access
+        ),
+    
+    ],
+  ),
+),
+
             const SizedBox(height: 30.0),
             const Text(
               'Recommended for you',
@@ -243,7 +261,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Ai',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -271,6 +289,9 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             });
           } else if (title == 'AI Advice') {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const AiAdvice()));
+          }
+          else if (title == 'Animal & Crop Info') {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const CropAnimalInfo()));
           }
         },
         child: Container(

@@ -6,14 +6,14 @@ import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-
 class CropAnimalInfo extends StatefulWidget {
+  const CropAnimalInfo({super.key});
   @override
   _CropAnimalInfoState createState() => _CropAnimalInfoState();
 }
 
 class _CropAnimalInfoState extends State<CropAnimalInfo> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -60,12 +60,12 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.green,
-            leading: BackButton(
-              color: Colors.white,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
               onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
+              Navigator.pop(context);
+          },
+        ),
             title: Text(
               'Animal & Crop Information',
               style: TextStyle(color: Colors.white),
@@ -121,7 +121,8 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
             selectedItemColor: Colors.green[800],
             unselectedItemColor: Colors.green[300],
             showUnselectedLabels: false,
-            selectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            selectedLabelStyle:
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -140,7 +141,8 @@ class _AnimalTabContentState extends State<AnimalTabContent> {
   void fetchAnimalInfo() {
     setState(() {
       // Replace with actual data fetching logic
-      animalInfo = "Sample data: Animal analysis information for the given input.";
+      animalInfo =
+          "Sample data: Animal analysis information for the given input.";
     });
   }
 
@@ -203,7 +205,7 @@ class _CropTabContentState extends State<CropTabContent> {
       return;
     }
 
-    final url = 'http://37.187.29.19:6932/crop-info?name=$cropName';
+    final url = 'http://37.187.29.19:6932/crop-info/$cropName';
 
     setState(() {
       isLoading = true;

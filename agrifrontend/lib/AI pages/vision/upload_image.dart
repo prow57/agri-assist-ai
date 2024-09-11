@@ -1,9 +1,9 @@
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:agrifrontend/AI%20pages/vision/plant_identification.dart';
-import 'package:agrifrontend/AI%20pages/vision/chat_page.dart';
 
 class UploadImagePage extends StatefulWidget {
   @override
