@@ -18,7 +18,7 @@ class _IrrigationPageState extends State<IrrigationPage> {
   }
 
   Future<void> _fetchContent() async {
-    final response = await http.get(Uri.parse('https://your-backend.com/api/community/irrigation'));
+    final response = await http.get(Uri.parse('https://agriback-plum.vercel.app/api/community/irrigation'));
     if (response.statusCode == 200) {
       setState(() {
         content = jsonDecode(response.body);
