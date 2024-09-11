@@ -5,7 +5,7 @@ import 'dart:convert';
 
 class AgriTechPage extends StatefulWidget {
   @override
-  _SoilManagementPageState createState() => _SoilManagementPageState();
+  _AgriTechPageState createState() => _AgriTechPageState();
 }
 
 class _AgriTechPageState extends State<SoilManagementPage> {
@@ -36,7 +36,7 @@ class _AgriTechPageState extends State<SoilManagementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Soil Management')),
+      appBar: AppBar(title: Text('Agriculture Technology in Malawi')),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(
