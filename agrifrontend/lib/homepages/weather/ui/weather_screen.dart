@@ -209,7 +209,7 @@ class _WeatherPageState extends State<WeatherPage> {
                           _buildWeatherForecast(), // Shows full or limited forecast
                           if (_isPremiumUser) ...[
                             const SizedBox(height: 20),
-                            _buildFeatureButton("Get AI Farm Recommendations"),
+                            _buildFeatureButton("Get Farm Recommendations"),
                           ]
                         ],
                       ),
