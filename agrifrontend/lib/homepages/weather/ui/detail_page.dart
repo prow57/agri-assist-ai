@@ -79,8 +79,8 @@ class _DetailPageState extends State<DetailPage> {
             children: [
               Image.network(
                 'https:${widget.dayForecast['day']['condition']['icon']}',
-                height: 150,
-                width: 150,
+                height: 100,
+                width: 100,
                 fit: BoxFit.cover,
               ),
               SizedBox(height: 10),
