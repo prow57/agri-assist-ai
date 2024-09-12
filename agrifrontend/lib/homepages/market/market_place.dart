@@ -194,13 +194,31 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
 
   Widget buildCommodityTile(Commodity commodity) {
     return ListTile(
-      title: Text(commodity.name),
-      trailing: Text(
-        'MKW ${(commodity.price).toString()}',
-        style: const TextStyle(
-          color: Colors.green,
-          fontWeight: FontWeight.bold,
-        ),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            commodity.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            commodity.quantity,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+          ),
+          Text(
+            'MKW ${(commodity.price).toString()}',
+            style: const TextStyle(
+              fontSize: 15,
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

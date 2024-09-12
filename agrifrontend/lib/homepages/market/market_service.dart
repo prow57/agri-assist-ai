@@ -25,6 +25,7 @@ class MarketService {
       return data.map((item) => CropCommodity(
         crop_name: item['crop_name'] ?? 'N/A',
         price: double.tryParse(item['price'] ?? '0') ?? 0.0,
+        quantity: item['quantity'] ?? 'N/A',
       )).toList();
     } else {
       throw Exception('Failed to load crop prices');
@@ -39,6 +40,7 @@ class MarketService {
       return data.map((item) => AnimalCommodity(
         animal_name: item['animal_name'] ?? 'N/A',
         price: double.tryParse(item['price'] ?? '0') ?? 0.0,
+        quantity: item['quantity'] ?? 'N/A',
       )).toList();
     } else {
       throw Exception('Failed to load animal prices');
@@ -53,6 +55,7 @@ class MarketService {
       return data.map((item) => CropProductCommodity(
         product_name: item['product_name'] ?? 'N/A',
         price: double.tryParse(item['price'] ?? '0') ?? 0.0,
+        quantity: item['quantity'] ?? 'N/A',
       )).toList();
     } else {
       throw Exception('Failed to load crop product prices');
@@ -67,6 +70,7 @@ class MarketService {
       return data.map((item) => AnimalProductCommodity(
         product_name: item['product_name'] ?? 'N/A',
         price: double.tryParse(item['price'] ?? '0') ?? 0.0,
+        quantity: item['quantity'] ?? 'N/A',
       )).toList();
     } else {
       throw Exception('Failed to load animal product prices');
