@@ -101,23 +101,32 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/logo.png',
-              height: 40,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'AI Chat',
-              style: TextStyle(fontSize: 24),
-            ),
-          ],
+appBar: AppBar(
+  leading: IconButton(
+    icon: Icon(Icons.arrow_back_ios_rounded),
+    onPressed: () {
+      Navigator.pop(context);
+    },
+  ),
+  title: Row(
+    children: [
+      const Expanded(
+        child: Text(
+          'AI Chat',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 24),
         ),
       ),
+      Image.asset(
+        'assets/logo.png',
+        height: 40,
+        fit: BoxFit.contain,
+      ),
+    ],
+  ),
+),
+
+
       body: Column(
         children: [
           Expanded(
