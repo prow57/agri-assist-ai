@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart'; // Import the markdown package
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -51,9 +52,9 @@ class _AgriTechPageState extends State<AgriTechPage> {
                       ),
                     SizedBox(height: 10),
                     if (content.containsKey('introduction'))
-                      Text(
-                        content['introduction'],
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                      MarkdownBody(
+                        data: content['introduction'],  // Render introduction as markdown
+                        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                       ),
                     SizedBox(height: 20),
                     if (content.containsKey('sections'))
@@ -66,18 +67,18 @@ class _AgriTechPageState extends State<AgriTechPage> {
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[700]),
                             ),
                             SizedBox(height: 10),
-                            Text(
-                              section['content'],
-                              style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                            MarkdownBody(
+                              data: section['content'],  // Render section content as markdown
+                              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                             ),
                             SizedBox(height: 20),
                           ],
                         );
                       }).toList(),
                     if (content.containsKey('conclusion'))
-                      Text(
-                        content['conclusion'],
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                      MarkdownBody(
+                        data: content['conclusion'],  // Render conclusion as markdown
+                        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                       ),
                     if (content.containsKey('error'))
                       Center(
