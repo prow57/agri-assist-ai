@@ -196,7 +196,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
     return ListTile(
       title: Text(commodity.name),
       trailing: Text(
-        'MK ${(commodity.price).toString()}',
+        'MKW ${(commodity.price).toString()}',
         style: const TextStyle(
           color: Colors.green,
           fontWeight: FontWeight.bold,
