@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart'; // Import shared preferences
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_markdown/flutter_markdown.dart'; // Import markdown package
 import 'message_model.dart';
 
 class ChatPage extends StatefulWidget {
@@ -19,10 +20,9 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _loadSavedMessages();  // Load saved messages when the page initializes
+    _loadSavedMessages(); // Load saved messages when the page initializes
   }
 
-  // Method to save messages to SharedPreferences
   Future<void> _saveMessages() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> savedMessages = _messages.map((message) => jsonEncode({
@@ -32,7 +32,6 @@ class _ChatPageState extends State<ChatPage> {
     await prefs.setStringList('chatMessages', savedMessages);
   }
 
-  // Method to load saved messages from SharedPreferences
   Future<void> _loadSavedMessages() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? savedMessages = prefs.getStringList('chatMessages');
@@ -59,7 +58,7 @@ class _ChatPageState extends State<ChatPage> {
       _isLoading = true;
     });
 
-    _saveMessages();  // Save messages to SharedPreferences after sending
+    _saveMessages(); // Save messages to SharedPreferences after sending
 
     _fetchAPIResponse(text);
   }
@@ -87,7 +86,7 @@ class _ChatPageState extends State<ChatPage> {
           _isLoading = false;
         });
 
-        _saveMessages();  // Save messages to SharedPreferences after receiving the AI response
+        _saveMessages(); // Save messages to SharedPreferences after receiving the AI response
       } else {
         throw Exception('Failed to load API response');
       }
@@ -136,16 +135,16 @@ class _ChatPageState extends State<ChatPage> {
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: message.isUser ? Colors.green[300] : Colors.grey[300],
+                      color: message.isUser ? Colors.green[400] : Colors.blueGrey[200],
                       borderRadius: BorderRadius.only(
-                        topLeft: const Radius.circular(12.0),
-                        topRight: const Radius.circular(12.0),
+                        topLeft: const Radius.circular(16.0),
+                        topRight: const Radius.circular(16.0),
                         bottomLeft: message.isUser
-                            ? const Radius.circular(12.0)
+                            ? const Radius.circular(16.0)
                             : const Radius.circular(0),
                         bottomRight: message.isUser
                             ? const Radius.circular(0)
-                            : const Radius.circular(12.0),
+                            : const Radius.circular(16.0),
                       ),
                       boxShadow: const [
                         BoxShadow(
@@ -155,13 +154,26 @@ class _ChatPageState extends State<ChatPage> {
                         ),
                       ],
                     ),
-                    child: Text(
-                      message.text,
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black87,
-                      ),
-                    ),
+                    child: message.isUser
+                        ? Text(
+                            message.text,
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600, // Increased font weight
+                              color: Colors.white,
+                              height: 1.5,
+                            ),
+                          )
+                        : MarkdownBody(
+                            data: message.text,
+                            styleSheet: MarkdownStyleSheet(
+                              p: const TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w600, // Increased font weight
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ),
                   ),
                 );
               },
@@ -180,7 +192,7 @@ class _ChatPageState extends State<ChatPage> {
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText: 'Type a message',
+                      hintText: 'Type a message...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                         borderSide: BorderSide.none,
@@ -189,6 +201,10 @@ class _ChatPageState extends State<ChatPage> {
                       fillColor: Colors.grey[200],
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 20.0),
+                    ),
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600, // Increased font weight
                     ),
                   ),
                 ),
