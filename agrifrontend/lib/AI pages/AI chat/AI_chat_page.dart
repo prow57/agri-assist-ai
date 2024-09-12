@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared preferences
 import 'message_model.dart';
 
 class ChatPage extends StatefulWidget {
@@ -15,6 +16,40 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedMessages();  // Load saved messages when the page initializes
+  }
+
+  // Method to save messages to SharedPreferences
+  Future<void> _saveMessages() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> savedMessages = _messages.map((message) => jsonEncode({
+          'text': message.text,
+          'isUser': message.isUser,
+        })).toList();
+    await prefs.setStringList('chatMessages', savedMessages);
+  }
+
+  // Method to load saved messages from SharedPreferences
+  Future<void> _loadSavedMessages() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? savedMessages = prefs.getStringList('chatMessages');
+
+    if (savedMessages != null) {
+      setState(() {
+        _messages.addAll(savedMessages.map((msg) {
+          Map<String, dynamic> messageData = jsonDecode(msg);
+          return Message(
+            text: messageData['text'],
+            isUser: messageData['isUser'],
+          );
+        }).toList());
+      });
+    }
+  }
+
   void _sendMessage(String text) {
     if (text.isEmpty) return;
 
@@ -23,6 +58,8 @@ class _ChatPageState extends State<ChatPage> {
       _controller.clear();
       _isLoading = true;
     });
+
+    _saveMessages();  // Save messages to SharedPreferences after sending
 
     _fetchAPIResponse(text);
   }
@@ -49,6 +86,8 @@ class _ChatPageState extends State<ChatPage> {
           _messages.add(Message(text: aiResponse, isUser: false));
           _isLoading = false;
         });
+
+        _saveMessages();  // Save messages to SharedPreferences after receiving the AI response
       } else {
         throw Exception('Failed to load API response');
       }
