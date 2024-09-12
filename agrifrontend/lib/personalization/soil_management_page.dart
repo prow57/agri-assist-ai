@@ -54,7 +54,9 @@ class _SoilManagementPageState extends State<SoilManagementPage> {
                     if (content.containsKey('introduction'))
                       MarkdownBody(
                         data: content['introduction'],  // Render introduction as markdown
-                        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+                        styleSheet: MarkdownStyleSheet(
+                          p: TextStyle(color: Colors.black, fontSize: 16),  // Set text color to black
+                        ),
                       ),
                     SizedBox(height: 20),
                     if (content.containsKey('sections'))
@@ -69,7 +71,9 @@ class _SoilManagementPageState extends State<SoilManagementPage> {
                             SizedBox(height: 10),
                             MarkdownBody(
                               data: section['content'],  // Render section content as markdown
-                              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+                              styleSheet: MarkdownStyleSheet(
+                                p: TextStyle(color: Colors.black, fontSize: 16),  // Set text color to black
+                              ),
                             ),
                             SizedBox(height: 20),
                           ],
@@ -78,7 +82,9 @@ class _SoilManagementPageState extends State<SoilManagementPage> {
                     if (content.containsKey('conclusion'))
                       MarkdownBody(
                         data: content['conclusion'],  // Render conclusion as markdown
-                        styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
+                        styleSheet: MarkdownStyleSheet(
+                          p: TextStyle(color: Colors.black, fontSize: 16),  // Set text color to black
+                        ),
                       ),
                     if (content.containsKey('error'))
                       Center(
