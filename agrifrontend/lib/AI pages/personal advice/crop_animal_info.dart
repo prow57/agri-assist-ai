@@ -4,6 +4,7 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_pa
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
 
 class CropAnimalInfo extends StatefulWidget {
@@ -61,11 +62,12 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
           appBar: AppBar(
             backgroundColor: Colors.green,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+              icon:
+                  const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
               onPressed: () {
-              Navigator.pop(context);
-          },
-        ),
+                Navigator.pop(context);
+              },
+            ),
             title: Text(
               'Animal & Crop Information',
               style: TextStyle(color: Colors.white),
@@ -190,7 +192,7 @@ class CropTabContent extends StatefulWidget {
 
 class _CropTabContentState extends State<CropTabContent> {
   final TextEditingController _cropController = TextEditingController();
-  String cropInfo = "";
+  Map<String, dynamic>? cropData; // Allow null values to handle no data
   String warningMessage = "";
   bool isLoading = false;
 
@@ -199,7 +201,7 @@ class _CropTabContentState extends State<CropTabContent> {
     if (cropName.isEmpty) {
       setState(() {
         warningMessage = "Please enter a crop name.";
-        cropInfo = ""; // Clear the previous info
+        cropData = null; // Clear the previous data
         isLoading = false; // Ensure loading state is false
       });
       return;
@@ -216,66 +218,19 @@ class _CropTabContentState extends State<CropTabContent> {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
         setState(() {
-          cropInfo = '''
-          Crop Name: ${data['crop_name']}
-          Scientific Name: ${data['scientific_name']}
-          Description: ${data['description']}
-          Planting Information:
-          - Optimal Planting Time: ${data['planting_information']['optimal_planting_time']}
-          - Seeding Rate: ${data['planting_information']['seeding_rate']}
-          - Planting Depth: ${data['planting_information']['planting_depth']}
-          Growth Cycle:
-          - Germination Period: ${data['growth_cycle']['germination_period']}
-          - Vegetative Stage: ${data['growth_cycle']['vegetative_stage']}
-          - Flowering Period: ${data['growth_cycle']['flowering_period']}
-          - Maturation Period: ${data['growth_cycle']['maturation_period']}
-          Pests and Diseases:
-          ${data['pests_and_diseases'].map((item) => '''
-          - ${item['name']} (${item['type']}): ${item['symptoms']}
-            Prevention: ${item['prevention']}
-            Treatment: ${item['treatment']}
-          ''').join('\n')}
-          Watering Requirements:
-          - Frequency: ${data['watering_requirements']['frequency']}
-          - Method: ${data['watering_requirements']['method'].join(', ')}
-          - Amount: ${data['watering_requirements']['amount']}
-          Nutrient Requirements:
-          ${data['nutrient_requirements']['fertilizer_type'].map((item) => '''
-          - ${item['name']}: ${item['application_rate']}
-          ''').join('\n')}
-          - Soil pH: ${data['nutrient_requirements']['soil_pH']}
-          Harvesting Information:
-          - Harvest Time: ${data['harvesting_information']['harvest_time']}
-          - Indicators: ${data['harvesting_information']['indicators']}
-          - Methods: ${data['harvesting_information']['methods']}
-          Storage Information:
-          - Conditions: ${data['storage_information']['conditions']}
-          - Shelf Life: ${data['storage_information']['shelf_life']}
-          - Pests: ${data['storage_information']['pests'].join(', ')}
-          Market Information:
-          - Average Yield: ${data['market_information']['average_yield']}
-          - Market Price: ${data['market_information']['market_price']}
-          - Demand Trends: ${data['market_information']['demand_trends']}
-          Related Crops: ${data['related_crops'].join(', ')}
-          Additional Resources:
-          ${data['additional_resources'].map((item) => '''
-          - ${item['type']}: ${item['link']}
-          ${item['title'] != null ? 'Title: ${item['title']}' : ''}
-          ''').join('\n')}
-          ''';
+          cropData = data; // Assign the fetched data to cropData
         });
       } else {
         setState(() {
           warningMessage = "Failed to load crop information.";
-          cropInfo = ""; // Clear the previous info
+          cropData = null; // Clear the previous data
         });
       }
     } catch (e) {
       setState(() {
         warningMessage = "Error fetching data: $e";
-        cropInfo = ""; // Clear the previous info
+        cropData = null; // Clear the previous data
       });
     } finally {
       setState(() {
@@ -286,58 +241,180 @@ class _CropTabContentState extends State<CropTabContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 10),
-          TextField(
-            controller: _cropController,
-            decoration: InputDecoration(
-              labelText: 'Enter crop name',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: fetchCropInfo,
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            // Assigning the controller to the TextField
+            TextField(
+              controller: _cropController,
+              decoration: InputDecoration(
+                labelText: 'Enter crop name',
+                border: OutlineInputBorder(),
               ),
             ),
-            child: Text('Get Crop Info'),
-          ),
-          SizedBox(height: 16),
-          if (isLoading)
-            Center(
-              child: CircularProgressIndicator(),
-            )
-          else if (warningMessage.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.red[100],
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              child: Text(
-                warningMessage,
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 16,
+            SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: fetchCropInfo,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-            )
-          else
-            Text(
-              cropInfo,
-              style: TextStyle(fontSize: 16),
+              child: Text('Get Crop Info'),
             ),
-        ],
+            SizedBox(height: 16),
+
+            // Show the loader while fetching the crop data
+            if (isLoading)
+              Center(child: CircularProgressIndicator())
+            else if (cropData == null)
+              Text(
+                warningMessage.isNotEmpty
+                    ? warningMessage
+                    : "No data available.",
+                style: TextStyle(color: Colors.red),
+              )
+            else
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Crop Name: ${cropData!["crop_name"]}',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Scientific Name: ${cropData!["scientific_name"]}',
+                    style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    cropData!["description"],
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Planting Information',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildPlantingInfo(cropData!["planting_information"]),
+                  SizedBox(height: 16),
+                  Text(
+                    'Growth Cycle',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildGrowthCycle(cropData!["growth_cycle"]),
+                  SizedBox(height: 16),
+                  Text(
+                    'Pests and Diseases',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildPestsAndDiseases(cropData!["pests_and_diseases"]),
+                  SizedBox(height: 16),
+                  Text(
+                    'Watering Requirements',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildWateringRequirements(
+                      cropData!["watering_requirements"]),
+                  SizedBox(height: 16),
+                  Text(
+                    'Nutrient Requirements',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildNutrientRequirements(
+                      cropData!["nutrient_requirements"]),
+                  SizedBox(height: 16),
+                  MarkdownBody(
+                    data: '### Additional Resources:\n' +
+                        cropData!["additional_resources"]
+                            .map<String>((resource) =>
+                                '[${resource["title"]}](${resource["link"]})')
+                            .join("\n"),
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildPlantingInfo(Map<String, dynamic> plantingInfo) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Optimal Planting Time: ${plantingInfo["optimal_planting_time"]}'),
+        ...plantingInfo["geographic_location"].map<Widget>((location) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Region: ${location["region"]}'),
+              Text('Climate Type: ${location["climate_type"]}'),
+              Text('Soil Type: ${location["soil_type"]}'),
+              Text(
+                  'Recommended Varieties: ${location["recommended_varieties"].join(", ")}'),
+            ],
+          );
+        }).toList(),
+        Text('Seeding Rate: ${plantingInfo["seeding_rate"]}'),
+        Text('Planting Depth: ${plantingInfo["planting_depth"]}'),
+      ],
+    );
+  }
+
+  Widget _buildGrowthCycle(Map<String, dynamic> growthCycle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Germination Period: ${growthCycle["germination_period"]}'),
+        Text('Vegetative Stage: ${growthCycle["vegetative_stage"]}'),
+        Text('Flowering Period: ${growthCycle["flowering_period"]}'),
+        Text('Maturation Period: ${growthCycle["maturation_period"]}'),
+      ],
+    );
+  }
+
+  Widget _buildPestsAndDiseases(List<dynamic> pestsAndDiseases) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: pestsAndDiseases.map<Widget>((pest) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Name: ${pest["name"]} (${pest["type"]})'),
+            Text('Symptoms: ${pest["symptoms"]}'),
+            Text('Prevention: ${pest["prevention"]}'),
+            Text('Treatment: ${pest["treatment"]}'),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildWateringRequirements(Map<String, dynamic> wateringRequirements) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Frequency: ${wateringRequirements["frequency"]}'),
+        Text('Method: ${wateringRequirements["method"].join(", ")}'),
+        Text('Amount: ${wateringRequirements["amount"]}'),
+      ],
+    );
+  }
+
+  Widget _buildNutrientRequirements(Map<String, dynamic> nutrientRequirements) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:
+          nutrientRequirements["fertilizer_type"].map<Widget>((fertilizer) {
+        return Text('${fertilizer["name"]}: ${fertilizer["application_rate"]}');
+      }).toList(),
     );
   }
 }
