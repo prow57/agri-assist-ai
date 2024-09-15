@@ -25,7 +25,7 @@ class CropInfoManager:
     def get_serper_info(self, crop_name):
         url = "https://google.serper.dev/search"
         payload = json.dumps({
-            "q": f"for farmers {crop_name} crop information"
+            "q": f"for farmers {crop_name} crop information in malawi"
         })
         headers = {
             'X-API-KEY': self.serper_api_key,
@@ -43,7 +43,7 @@ class CropInfoManager:
         }
 
         payload = {
-            "model": "gpt-4-turbo-preview",
+            "model": "gpt-4o",
             "response_format": {"type": "json_object"},
             "messages": [
                 {

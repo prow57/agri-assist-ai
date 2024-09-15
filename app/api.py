@@ -52,6 +52,29 @@ async def get_crop_info(crop_name: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching crop info: {str(e)}"
         )
+
+@app.get("/livestock-info/{livestock_name}")
+async def get_livestock_info(livestock_name: str):
+    if not livestock_name or livestock_name.strip() == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Livestock name is required and cannot be empty."
+        )
+    
+    try:
+        livestock_info = livestock_info_manager.get_livestock_description(livestock_name.strip())
+        if not livestock_info:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"No information found for livestock: {livestock_name}"
+            )
+        return JSONResponse(content=livestock_info)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error fetching livestock info: {str(e)}"
+        )
+
 @app.post("/analyze-leaf/")
 async def analyze_leaf(request: ImageRequest):
     try:
