@@ -16,7 +16,8 @@ from fastapi import HTTPException
 from app.crew import main_crew
 from app.tasks import disease_research_task, guidance_generation_task
 from app.validator import *
-from app.librarymaker import CropInfoManager
+from app.croplibrary import CropInfoManager
+from app.livestocklibrary import LivestockInfoManager
 # Suppress warnings and set logging level
 from fastapi import HTTPException, status
 warnings.filterwarnings("ignore", message="Overriding of current TracerProvider is not allowed")
@@ -29,6 +30,7 @@ load_dotenv()
 app = FastAPI()
 leaf_image_analysis_agent = LeafAnalyser()
 crop_info_manager = CropInfoManager()
+livestock_info_manager = LivestockInfoManager()
 
 
 @app.get("/crop-info/{crop_name}")
