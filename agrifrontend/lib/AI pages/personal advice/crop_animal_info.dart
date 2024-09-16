@@ -138,49 +138,181 @@ class AnimalTabContent extends StatefulWidget {
 }
 
 class _AnimalTabContentState extends State<AnimalTabContent> {
-  String animalInfo = "";
+  final TextEditingController _animalController = TextEditingController();
+  Map<String, dynamic>? animalData; // To store fetched animal data
+  String warningMessage = "";
+  bool isLoading = false;
 
-  void fetchAnimalInfo() {
+  Future<void> fetchAnimalInfo() async {
+    final animalName = _animalController.text.trim();
+    if (animalName.isEmpty) {
+      setState(() {
+        warningMessage = "Please enter an animal name.";
+        animalData = null; // Clear the previous data
+        isLoading = false; // Ensure loading state is false
+      });
+      return;
+    }
+
+    final url = 'http://37.187.29.19:6932/livestock-info/$animalName';
+
     setState(() {
-      // Replace with actual data fetching logic
-      animalInfo =
-          "Sample data: Animal analysis information for the given input.";
+      isLoading = true;
+      warningMessage = ""; // Clear the warning message
     });
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          animalData = data; // Assign the fetched data to animalData
+        });
+      } else {
+        setState(() {
+          warningMessage = "Failed to load animal information.";
+          animalData = null; // Clear the previous data
+        });
+      }
+    } catch (e) {
+      setState(() {
+        warningMessage = "Error fetching data: $e";
+        animalData = null; // Clear the previous data
+      });
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 10),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Enter animal name',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: fetchAnimalInfo,
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            // TextField for animal input
+            TextField(
+              controller: _animalController,
+              decoration: InputDecoration(
+                labelText: 'Enter animal name',
+                border: OutlineInputBorder(),
               ),
             ),
-            child: Text('Get Animal Info'),
-          ),
-          SizedBox(height: 16),
-          Text(
-            animalInfo,
-            style: TextStyle(fontSize: 16),
-          ),
-        ],
+            SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: fetchAnimalInfo,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+              child: Text('Get Animal Info'),
+            ),
+            SizedBox(height: 16),
+
+            // Show the loader while fetching the animal data
+            if (isLoading)
+              Center(child: CircularProgressIndicator())
+            else if (animalData == null)
+              Text(
+                warningMessage.isNotEmpty
+                    ? warningMessage
+                    : "No data available.",
+                style: TextStyle(color: Colors.red),
+              )
+            else
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Animal Name: ${animalData!["animal_name"]}',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Scientific Name: ${animalData!["scientific_name"]}',
+                    style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    animalData!["description"],
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Diseases and Prevention',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildDiseasesAndPrevention(animalData!["diseases"]),
+                  SizedBox(height: 16),
+                  Text(
+                    'Nutritional Requirements',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildNutritionalRequirements(animalData!["nutritional_requirements"]),
+                  SizedBox(height: 16),
+                  Text(
+                    'Breeding Information',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildBreedingInformation(animalData!["breeding_information"]),
+                  SizedBox(height: 16),
+                  MarkdownBody(
+                    data: '### Additional Resources:\n' +
+                        animalData!["additional_resources"]
+                            .map<String>((resource) =>
+                                '[${resource["title"]}](${resource["link"]})')
+                            .join("\n"),
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildDiseasesAndPrevention(List<dynamic> diseases) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: diseases.map<Widget>((disease) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Disease: ${disease["name"]} (${disease["type"]})'),
+            Text('Symptoms: ${disease["symptoms"]}'),
+            Text('Prevention: ${disease["prevention"]}'),
+            Text('Treatment: ${disease["treatment"]}'),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildNutritionalRequirements(Map<String, dynamic> nutritionalRequirements) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Daily Intake: ${nutritionalRequirements["daily_intake"]}'),
+        Text('Required Nutrients: ${nutritionalRequirements["required_nutrients"].join(", ")}'),
+      ],
+    );
+  }
+
+  Widget _buildBreedingInformation(Map<String, dynamic> breedingInformation) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Breeding Season: ${breedingInformation["breeding_season"]}'),
+        Text('Gestation Period: ${breedingInformation["gestation_period"]}'),
+        Text('Offspring Count: ${breedingInformation["offspring_count"]}'),
+      ],
     );
   }
 }
