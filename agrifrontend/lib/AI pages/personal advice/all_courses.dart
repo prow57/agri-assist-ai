@@ -101,6 +101,10 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
         title: const Text('All Courses', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -141,7 +145,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

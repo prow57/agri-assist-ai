@@ -25,7 +25,7 @@ class _WeatherPageState extends State<WeatherPage> {
   final cacheManager = DefaultCacheManager();
   double _opacity = 1.0;
 
-  bool _isPremiumUser = false; // Tracks if the user is a premium user
+  bool _isPremiumUser = true; // Tracks if the user is a premium user
 
   @override
   void initState() {
@@ -38,7 +38,7 @@ class _WeatherPageState extends State<WeatherPage> {
     // Mock implementation to check if a user is premium
     // In real case, fetch this from a server or local storage
     setState(() {
-      _isPremiumUser = false; // Default to free user
+      _isPremiumUser = true; // Default to free user
     });
   }
 
@@ -184,11 +184,11 @@ class _WeatherPageState extends State<WeatherPage> {
             icon: const Icon(Icons.location_on, color: Colors.white),
             onPressed: _selectLocation,
           ),
-          if (_isPremiumUser)
-            IconButton(
-              icon: const Icon(Icons.star, color: Colors.yellow),
-              onPressed: _onPremiumIconPressed,
-            ),
+          // if (_isPremiumUser)
+          //   IconButton(
+          //     icon: const Icon(Icons.star, color: Colors.yellow),
+          //     onPressed: _onPremiumIconPressed,
+          //   ),
         ],
       ),
       body: _isLoading

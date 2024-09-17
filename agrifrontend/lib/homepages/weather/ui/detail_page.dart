@@ -44,7 +44,7 @@ class _DetailPageState extends State<DetailPage> {
         case 3:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SettingsPage()),
+            MaterialPageRoute(builder: (context) => const SettingsPage()),
           );
           break;
       }

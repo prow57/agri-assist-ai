@@ -9,8 +9,9 @@ import 'package:agrifrontend/home/settings_page.dart';
 
 class DriverListPage extends StatefulWidget {
   final int marketId;
+  final String marketName;
 
-  const DriverListPage({super.key, required this.marketId});
+  const DriverListPage({super.key, required this.marketId, required this.marketName});
 
   @override
   _DriverListPageState createState() => _DriverListPageState();
@@ -60,7 +61,9 @@ class _DriverListPageState extends State<DriverListPage> {
               driver.lastName.toLowerCase().contains(query) ||
               driver.phone1.toLowerCase().contains(query) ||
               driver.phone2.toLowerCase().contains(query) ||
-              driver.carType.toLowerCase().contains(query); // Add carType filtering
+              driver.carType
+                  .toLowerCase()
+                  .contains(query); // Add carType filtering
         }).toList();
       }
     });
@@ -80,7 +83,8 @@ class _DriverListPageState extends State<DriverListPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex) return; // Ignore tap if already on the selected tab
+    if (index == _selectedIndex)
+      return; // Ignore tap if already on the selected tab
 
     setState(() {
       _selectedIndex = index;
@@ -121,18 +125,19 @@ class _DriverListPageState extends State<DriverListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Drivers',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.green,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+  title: Text(
+    'Drivers in ${widget.marketName}', 
+    style: const TextStyle(color: Colors.white),
+  ),
+  backgroundColor: Colors.green,
+  leading: IconButton(
+    icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+    onPressed: () {
+      Navigator.pop(context);
+    },
+  ),
+),
+
       body: Column(
         children: [
           Padding(
@@ -176,7 +181,8 @@ class _DriverListPageState extends State<DriverListPage> {
                               leading: const Icon(Icons.person,
                                   size: 40, color: Colors.green),
                               title: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     '${driver.firstName} ${driver.lastName}',
@@ -200,20 +206,28 @@ class _DriverListPageState extends State<DriverListPage> {
                                     onTap: () => _dialNumber(driver.phone1),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.phone, color: Colors.green),
+                                        const Icon(Icons.phone,
+                                            color: Colors.green),
                                         const SizedBox(width: 8),
-                                        Text(driver.phone1, style: TextStyle(color: Colors.grey[600])),
+                                        Text(driver.phone1,
+                                            style: TextStyle(
+                                                color: Colors.grey[600])),
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 16), // Add spacing before the second phone number
+                                  const SizedBox(
+                                      width:
+                                          16), // Add spacing before the second phone number
                                   GestureDetector(
                                     onTap: () => _dialNumber(driver.phone2),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.phone, color: Colors.green),
+                                        const Icon(Icons.phone,
+                                            color: Colors.green),
                                         const SizedBox(width: 8),
-                                        Text(driver.phone2, style: TextStyle(color: Colors.grey[600])),
+                                        Text(driver.phone2,
+                                            style: TextStyle(
+                                                color: Colors.grey[600])),
                                       ],
                                     ),
                                   ),

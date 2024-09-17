@@ -151,7 +151,7 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
                           final market = _filteredMarkets[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16),
+                                vertical: 5, horizontal: 14),
                             elevation: 4,
                             child: ListTile(
                               contentPadding: const EdgeInsets.all(16),
@@ -201,7 +201,7 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Ai',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

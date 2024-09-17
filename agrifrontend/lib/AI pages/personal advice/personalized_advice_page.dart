@@ -21,7 +21,7 @@ class PersonalizedAdvicePage extends StatefulWidget {
 class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   List<dynamic> _courses = [];
   int _selectedIndex = 2;
-  bool isPremiumUser = false;
+  bool isPremiumUser = true;
 
   final List<String> _imagePaths = [
     '../../assets/pic1.jpg',
@@ -41,7 +41,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   Future<void> _checkSubscriptionStatus() async {
     // Placeholder implementation - replace with actual logic
     setState(() {
-      isPremiumUser = false; // Default to non-premium user
+      isPremiumUser = true; // Default to non-premium user
     });
   }
 

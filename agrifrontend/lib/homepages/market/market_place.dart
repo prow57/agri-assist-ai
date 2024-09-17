@@ -27,7 +27,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
   late Future<List<Commodity>> _futureCommodities;
   late String _currentDate;
   String _selectedCategory = 'Animal';
-  bool _isPremiumUser = false; // Track if the user is a premium user
+  bool _isPremiumUser = true; // Track if the user is a premium user
   String _searchTerm = ''; // Store the search term
   List<Commodity> _commodities = [];
   List<Commodity> _filteredCommodities = []; // Filtered commodities
@@ -47,7 +47,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
     // Mock logic to determine if the user is premium
     // Replace this with actual logic (e.g., fetch from server or local storage)
     setState(() {
-      _isPremiumUser = false; // Default to free user
+      _isPremiumUser = true; // Default to free user
     });
   }
 
@@ -109,7 +109,10 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DriverListPage(marketId: widget.marketId),
+            builder: (context) => DriverListPage(
+                                        marketId: widget.marketId,
+                                        marketName: widget.marketName,
+                                      ),
           ),
         );
       }

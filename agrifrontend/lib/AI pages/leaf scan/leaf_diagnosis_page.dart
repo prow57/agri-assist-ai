@@ -23,7 +23,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   bool _isLoading = false;
   String _errorMessage = '';
   int _selectedIndex = 0;
-  bool _isPremiumUser = false;
+  bool _isPremiumUser = true;
 
   Future<void> _handleImage(ImageSource source) async {
     try {
@@ -221,12 +221,12 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.star, color: Colors.yellow),
-            onPressed: _togglePremiumStatus,
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.star, color: Colors.yellow),
+        //     onPressed: _togglePremiumStatus,
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -256,21 +256,21 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+     bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book),
             label: 'Courses',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble),
-            label: 'Chat',
+            label: 'AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
