@@ -24,7 +24,7 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(),
+            builder: (context) => const HomePage(),
           ),
         );
       } else if (index == 1) {
@@ -68,18 +68,18 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
                 Navigator.pop(context);
               },
             ),
-            title: Text(
+            title: const Text(
               'Animal & Crop Information',
               style: TextStyle(color: Colors.white),
             ),
-            iconTheme: IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TabBar(
+                const TabBar(
                   tabs: [
                     Tab(text: "Animal"),
                     Tab(text: "Crop"),
@@ -133,6 +133,8 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
 }
 
 class AnimalTabContent extends StatefulWidget {
+  const AnimalTabContent({super.key});
+
   @override
   _AnimalTabContentState createState() => _AnimalTabContentState();
 }
@@ -190,20 +192,20 @@ class _AnimalTabContentState extends State<AnimalTabContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // TextField for animal input
             TextField(
               controller: _animalController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Enter animal name',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             ElevatedButton(
               onPressed: fetchAnimalInfo,
               style: ElevatedButton.styleFrom(
@@ -213,19 +215,19 @@ class _AnimalTabContentState extends State<AnimalTabContent> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              child: Text('Get Animal Info'),
+              child: const Text('Get Animal Info'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Show the loader while fetching the animal data
             if (isLoading)
-              Center(child: CircularProgressIndicator())
+              const Center(child: CircularProgressIndicator())
             else if (animalData == null)
               Text(
                 warningMessage.isNotEmpty
                     ? warningMessage
                     : "No data available.",
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               )
             else
               Column(
@@ -233,36 +235,36 @@ class _AnimalTabContentState extends State<AnimalTabContent> {
                 children: [
                   Text(
                     'Animal Name: ${animalData!["animal_name"]}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     'Scientific Name: ${animalData!["scientific_name"]}',
-                    style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                    style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     animalData!["description"],
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Diseases and Prevention',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildDiseasesAndPrevention(animalData!["diseases"]),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Nutritional Requirements',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildNutritionalRequirements(animalData!["nutritional_requirements"]),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Breeding Information',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildBreedingInformation(animalData!["breeding_information"]),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   MarkdownBody(
                     data: '### Additional Resources:\n' +
                         animalData!["additional_resources"]
@@ -318,6 +320,8 @@ class _AnimalTabContentState extends State<AnimalTabContent> {
 }
 
 class CropTabContent extends StatefulWidget {
+  const CropTabContent({super.key});
+
   @override
   _CropTabContentState createState() => _CropTabContentState();
 }
@@ -375,20 +379,20 @@ class _CropTabContentState extends State<CropTabContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             // Assigning the controller to the TextField
             TextField(
               controller: _cropController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Enter crop name',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             ElevatedButton(
               onPressed: fetchCropInfo,
               style: ElevatedButton.styleFrom(
@@ -398,19 +402,19 @@ class _CropTabContentState extends State<CropTabContent> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
-              child: Text('Get Crop Info'),
+              child: const Text('Get Crop Info'),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Show the loader while fetching the crop data
             if (isLoading)
-              Center(child: CircularProgressIndicator())
+              const Center(child: CircularProgressIndicator())
             else if (cropData == null)
               Text(
                 warningMessage.isNotEmpty
                     ? warningMessage
                     : "No data available.",
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               )
             else
               Column(
@@ -418,50 +422,50 @@ class _CropTabContentState extends State<CropTabContent> {
                 children: [
                   Text(
                     'Crop Name: ${cropData!["crop_name"]}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     'Scientific Name: ${cropData!["scientific_name"]}',
-                    style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                    style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     cropData!["description"],
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Planting Information',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildPlantingInfo(cropData!["planting_information"]),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Growth Cycle',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildGrowthCycle(cropData!["growth_cycle"]),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Pests and Diseases',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildPestsAndDiseases(cropData!["pests_and_diseases"]),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Watering Requirements',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildWateringRequirements(
                       cropData!["watering_requirements"]),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Nutrient Requirements',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   _buildNutrientRequirements(
                       cropData!["nutrient_requirements"]),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   MarkdownBody(
                     data: '### Additional Resources:\n' +
                         cropData!["additional_resources"]

@@ -7,9 +7,9 @@ class FarmerRecommendationsPage extends StatefulWidget {
   final String city;
 
   const FarmerRecommendationsPage({
-    Key? key,
+    super.key,
     required this.city,
-  }) : super(key: key);
+  });
 
   @override
   _FarmerRecommendationsPageState createState() => _FarmerRecommendationsPageState();

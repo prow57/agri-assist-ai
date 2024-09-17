@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class IrrigationPage extends StatefulWidget {
+  const IrrigationPage({super.key});
+
   @override
   _IrrigationPageState createState() => _IrrigationPageState();
 }
@@ -36,9 +38,9 @@ class _IrrigationPageState extends State<IrrigationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Irrigation Techniques')),
+      appBar: AppBar(title: const Text('Irrigation Techniques')),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -48,17 +50,17 @@ class _IrrigationPageState extends State<IrrigationPage> {
                     if (content.containsKey('title'))
                       Text(
                         content['title'],
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     if (content.containsKey('introduction'))
                       MarkdownBody(
                         data: content['introduction'],  // Render introduction as markdown
                         styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(color: Colors.black, fontSize: 16), // Set text color to black
+                          p: const TextStyle(color: Colors.black, fontSize: 16), // Set text color to black
                         ),
                       ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     if (content.containsKey('sections'))
                       ...content['sections'].map<Widget>((section) {
                         return Column(
@@ -68,14 +70,14 @@ class _IrrigationPageState extends State<IrrigationPage> {
                               section['heading'],
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[700]),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             MarkdownBody(
                               data: section['content'],  // Render section content as markdown
                               styleSheet: MarkdownStyleSheet(
-                                p: TextStyle(color: Colors.black, fontSize: 16), // Set text color to black
+                                p: const TextStyle(color: Colors.black, fontSize: 16), // Set text color to black
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                           ],
                         );
                       }).toList(),
@@ -83,14 +85,14 @@ class _IrrigationPageState extends State<IrrigationPage> {
                       MarkdownBody(
                         data: content['conclusion'],  // Render conclusion as markdown
                         styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(color: Colors.black, fontSize: 16), // Set text color to black
+                          p: const TextStyle(color: Colors.black, fontSize: 16), // Set text color to black
                         ),
                       ),
                     if (content.containsKey('error'))
                       Center(
                         child: Text(
                           content['error'],
-                          style: TextStyle(color: Colors.red, fontSize: 18),
+                          style: const TextStyle(color: Colors.red, fontSize: 18),
                         ),
                       ),
                   ],

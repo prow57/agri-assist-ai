@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:agrifrontend/AI%20pages/vision/plant_identification.dart';
 
 class UploadImagePage extends StatefulWidget {
+  const UploadImagePage({super.key});
+
   @override
   _UploadImagePageState createState() => _UploadImagePageState();
 }
@@ -45,12 +47,12 @@ class _UploadImagePageState extends State<UploadImagePage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Handle back button press
           },
         ),
-        title: Text("Upload Image"),
+        title: const Text("Upload Image"),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -75,20 +77,20 @@ class _UploadImagePageState extends State<UploadImagePage> {
                     onPressed: _pickImage,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue, // Button background color
-                      minimumSize: Size(double.infinity, 60), // Increase height
+                      minimumSize: const Size(double.infinity, 60), // Increase height
                     ),
-                    child: Text("Choose Image"),
+                    child: const Text("Choose Image"),
                   ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 ElevatedButton(
                   onPressed: _identifyImage,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green, // Button background color
-                    minimumSize: Size(double.infinity, 60), // Increase height
+                    minimumSize: const Size(double.infinity, 60), // Increase height
                   ),
-                  child: Text("Identify"),
+                  child: const Text("Identify"),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 ElevatedButton(
                   onPressed: () {
                     // Handle Health Analysis button press
@@ -96,27 +98,27 @@ class _UploadImagePageState extends State<UploadImagePage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         Colors.grey[200], // Button background color
-                    minimumSize: Size(double.infinity, 60), // Increase height
+                    minimumSize: const Size(double.infinity, 60), // Increase height
                   ),
-                  child: Text("Health Analysis"),
+                  child: const Text("Health Analysis"),
                 ),
-                SizedBox(height: 8.0),
+                const SizedBox(height: 8.0),
                 ElevatedButton(
                   onPressed: () {
                     // Handle Ask Agri-Assist-AI button press
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ChatPage()));
+                        MaterialPageRoute(builder: (context) => const ChatPage()));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green, // Button background color
-                    minimumSize: Size(double.infinity, 60), // Increase height
+                    minimumSize: const Size(double.infinity, 60), // Increase height
                   ),
-                  child: Text("Ask Agri-Assist-AI"),
+                  child: const Text("Ask Agri-Assist-AI"),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
         ],
       ),
     );

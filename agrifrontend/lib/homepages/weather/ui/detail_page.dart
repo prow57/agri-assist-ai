@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class DetailPage extends StatefulWidget {
   final Map<String, dynamic> dayForecast;
 
-  DetailPage({required this.dayForecast});
+  const DetailPage({super.key, required this.dayForecast});
 
   @override
   _DetailPageState createState() => _DetailPageState();
@@ -60,11 +60,11 @@ class _DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: Text(
           dayOfWeek,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -83,17 +83,17 @@ class _DetailPageState extends State<DetailPage> {
                 width: 100,
                 fit: BoxFit.cover,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 '${widget.dayForecast['day']['avgtemp_c']}°C',
-                style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 '${widget.dayForecast['day']['condition']['text']}',
-                style: TextStyle(fontSize: 20, color: Colors.grey),
+                style: const TextStyle(fontSize: 20, color: Colors.grey),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Expanded(
                 child: ListView.separated(
                   itemCount: 7,
@@ -113,7 +113,7 @@ class _DetailPageState extends State<DetailPage> {
                   },
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -148,7 +148,7 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildDetailBox(String label, String value, String iconPath) {
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.lightGreen[100],
         borderRadius: BorderRadius.circular(8),
@@ -168,9 +168,9 @@ class _DetailPageState extends State<DetailPage> {
               children: [
                 Text(
                   label,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   value,
                   style: const TextStyle(fontSize: 16),

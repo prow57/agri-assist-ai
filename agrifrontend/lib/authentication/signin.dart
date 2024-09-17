@@ -7,6 +7,8 @@ import 'package:agrifrontend/authentication/signup.dart';
 import 'package:agrifrontend/authentication/mobilenumber.dart';
 
 class Signin extends StatefulWidget {
+  const Signin({super.key});
+
   @override
   _SigninState createState() => _SigninState();
 }
@@ -31,7 +33,7 @@ class _SigninState extends State<Signin> {
     if (hasSeenPrompt == true) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     }
   }
@@ -66,7 +68,7 @@ class _SigninState extends State<Signin> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else {
         final data = jsonDecode(response.body);
@@ -89,7 +91,7 @@ class _SigninState extends State<Signin> {
     await _setPromptedFlag();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => const HomePage()),
     );
   }
 

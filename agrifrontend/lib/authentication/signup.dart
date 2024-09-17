@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Signup extends StatefulWidget {
+  const Signup({super.key});
+
   @override
   _SignupState createState() => _SignupState();
 }

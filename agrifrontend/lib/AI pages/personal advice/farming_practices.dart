@@ -23,7 +23,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
   final ScrollController _scrollController = ScrollController();
 
   String _selectedCategory = 'General Knowledge'; // Default value
-  List<String> _searchHistory = []; // List to store search history
+  final List<String> _searchHistory = []; // List to store search history
 
   final List<String> _categories = [
     'General Knowledge',

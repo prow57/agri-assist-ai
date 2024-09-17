@@ -10,6 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class WeatherPage extends StatefulWidget {
+  const WeatherPage({super.key});
+
   @override
   _WeatherPageState createState() => _WeatherPageState();
 }

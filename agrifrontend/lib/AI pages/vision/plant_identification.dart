@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ResultPage extends StatelessWidget {
+  const ResultPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Handle back button press
           },
         ),
-        title: Text("Results"),
+        title: const Text("Results"),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -21,14 +23,14 @@ class ResultPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Plant identification",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               children: [
                 Image.asset(
@@ -36,8 +38,8 @@ class ResultPage extends StatelessWidget {
                   width: 60,
                   height: 60,
                 ),
-                SizedBox(width: 16.0),
-                Column(
+                const SizedBox(width: 16.0),
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Most likely match"),
@@ -50,19 +52,19 @@ class ResultPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildInfoRow(Icons.local_florist, "Common name", "Corn, Maize"),
             _buildInfoRow(Icons.nature, "Family", "Poaceae"),
             _buildInfoRow(Icons.event, "Life cycle", "Annual"),
-            SizedBox(height: 24.0),
-            Text(
+            const SizedBox(height: 24.0),
+            const Text(
               "Health assessment",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             _buildInfoRow(
                 Icons.search, "Disease", "Ustilago maydis\nCorn smut"),
             _buildInfoRow(Icons.search, "Symptoms",
@@ -75,12 +77,12 @@ class ResultPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               backgroundImage: AssetImage(
                   'assets/logo.png'), // Replace with your profile image path
               radius: 20,
             ),
-            SizedBox(width: 8.0),
+            const SizedBox(width: 8.0),
             Expanded(
               child: TextField(
                 decoration: InputDecoration(
@@ -94,13 +96,13 @@ class ResultPage extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.mic),
+              icon: const Icon(Icons.mic),
               onPressed: () {
                 // Handle mic button press
               },
             ),
             IconButton(
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
               onPressed: () {
                 // Handle send button press
               },
@@ -117,20 +119,20 @@ class ResultPage extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
               color: Colors.green[50],
               borderRadius: BorderRadius.circular(8.0),
             ),
             child: Icon(icon, color: Colors.green),
           ),
-          SizedBox(width: 16.0),
+          const SizedBox(width: 16.0),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(subtitle),
             ],

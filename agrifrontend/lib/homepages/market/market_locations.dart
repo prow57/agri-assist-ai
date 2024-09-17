@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 class MarketLocation extends StatefulWidget {
+  const MarketLocation({super.key});
+
   @override
   _MarketLocationState createState() => _MarketLocationState();
 }

@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class CommunitySignUp extends StatefulWidget {
+  const CommunitySignUp({super.key});
+
   @override
   _CommunitySignUpState createState() => _CommunitySignUpState();
 }

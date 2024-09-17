@@ -10,7 +10,7 @@ import 'package:agrifrontend/home/settings_page.dart';
 class DriverListPage extends StatefulWidget {
   final int marketId;
 
-  DriverListPage({required this.marketId});
+  const DriverListPage({super.key, required this.marketId});
 
   @override
   _DriverListPageState createState() => _DriverListPageState();
@@ -20,7 +20,7 @@ class _DriverListPageState extends State<DriverListPage> {
   late Future<List<Driver>> _futureDrivers;
   List<Driver> _drivers = [];
   List<Driver> _filteredDrivers = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   bool _isLoading = true;
 
   @override
@@ -127,7 +127,7 @@ class _DriverListPageState extends State<DriverListPage> {
         ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -142,9 +142,9 @@ class _DriverListPageState extends State<DriverListPage> {
               decoration: InputDecoration(
                 labelText: 'Search drivers...',
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.clear),
+                  icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
                     _filterDrivers(); // Trigger filtering after clearing the text field
@@ -160,9 +160,9 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : _filteredDrivers.isEmpty
-                    ? Center(child: Text('No drivers found'))
+                    ? const Center(child: Text('No drivers found'))
                     : ListView.builder(
                         itemCount: _filteredDrivers.length,
                         itemBuilder: (context, index) {
@@ -173,14 +173,14 @@ class _DriverListPageState extends State<DriverListPage> {
                             elevation: 4,
                             child: ListTile(
                               contentPadding: const EdgeInsets.all(16),
-                              leading: Icon(Icons.person,
+                              leading: const Icon(Icons.person,
                                   size: 40, color: Colors.green),
                               title: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     '${driver.firstName} ${driver.lastName}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -200,19 +200,19 @@ class _DriverListPageState extends State<DriverListPage> {
                                     onTap: () => _dialNumber(driver.phone1),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.phone, color: Colors.green),
-                                        SizedBox(width: 8),
+                                        const Icon(Icons.phone, color: Colors.green),
+                                        const SizedBox(width: 8),
                                         Text(driver.phone1, style: TextStyle(color: Colors.grey[600])),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(width: 16), // Add spacing before the second phone number
+                                  const SizedBox(width: 16), // Add spacing before the second phone number
                                   GestureDetector(
                                     onTap: () => _dialNumber(driver.phone2),
                                     child: Row(
                                       children: [
-                                        Icon(Icons.phone, color: Colors.green),
-                                        SizedBox(width: 8),
+                                        const Icon(Icons.phone, color: Colors.green),
+                                        const SizedBox(width: 8),
                                         Text(driver.phone2, style: TextStyle(color: Colors.grey[600])),
                                       ],
                                     ),

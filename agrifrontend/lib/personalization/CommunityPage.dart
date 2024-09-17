@@ -6,11 +6,13 @@ import 'harvesting_tips_page.dart';
 import 'agri_tech_page.dart';
 
 class CommunityPage extends StatelessWidget {
+  const CommunityPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Community'),
+        title: const Text('Community'),
         backgroundColor: Colors.green,
       ),
       body: Padding(
@@ -18,7 +20,7 @@ class CommunityPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Welcome to the Agriculture Community',
               style: TextStyle(
                 fontSize: 24,
@@ -26,7 +28,7 @@ class CommunityPage extends StatelessWidget {
                 color: Colors.black87,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Here you can find various resources and information to help you in your farming journey.',
               style: TextStyle(
@@ -34,7 +36,7 @@ class CommunityPage extends StatelessWidget {
                 color: Colors.grey[600],
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Expanded(
               child: ListView(
                 children: [
@@ -99,20 +101,20 @@ class CommunityPage extends StatelessWidget {
           child: Row(
             children: [
               Icon(icon, color: Colors.green, size: 40),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
                       description,
                       style: TextStyle(

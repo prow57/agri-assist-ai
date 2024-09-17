@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class HarvestingTipsPage extends StatefulWidget {
+  const HarvestingTipsPage({super.key});
+
   @override
   _HarvestingTipsPageState createState() => _HarvestingTipsPageState();
 }
@@ -36,9 +38,9 @@ class _HarvestingTipsPageState extends State<HarvestingTipsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Harvesting Tips For Malawi Farmers')),
+      appBar: AppBar(title: const Text('Harvesting Tips For Malawi Farmers')),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -48,17 +50,17 @@ class _HarvestingTipsPageState extends State<HarvestingTipsPage> {
                     if (content.containsKey('title'))
                       Text(
                         content['title'],
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     if (content.containsKey('introduction'))
                       MarkdownBody(
                         data: content['introduction'],  // Render introduction as markdown
                         styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(color: Colors.black, fontSize: 16), // Set text to black
+                          p: const TextStyle(color: Colors.black, fontSize: 16), // Set text to black
                         ),
                       ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     if (content.containsKey('sections'))
                       ...content['sections'].map<Widget>((section) {
                         return Column(
@@ -68,14 +70,14 @@ class _HarvestingTipsPageState extends State<HarvestingTipsPage> {
                               section['heading'],
                               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[700]),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             MarkdownBody(
                               data: section['content'],  // Render section content as markdown
                               styleSheet: MarkdownStyleSheet(
-                                p: TextStyle(color: Colors.black, fontSize: 16), // Set text to black
+                                p: const TextStyle(color: Colors.black, fontSize: 16), // Set text to black
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                           ],
                         );
                       }).toList(),
@@ -83,14 +85,14 @@ class _HarvestingTipsPageState extends State<HarvestingTipsPage> {
                       MarkdownBody(
                         data: content['conclusion'],  // Render conclusion as markdown
                         styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(color: Colors.black, fontSize: 16), // Set text to black
+                          p: const TextStyle(color: Colors.black, fontSize: 16), // Set text to black
                         ),
                       ),
                     if (content.containsKey('error'))
                       Center(
                         child: Text(
                           content['error'],
-                          style: TextStyle(color: Colors.red, fontSize: 18),
+                          style: const TextStyle(color: Colors.red, fontSize: 18),
                         ),
                       ),
                   ],

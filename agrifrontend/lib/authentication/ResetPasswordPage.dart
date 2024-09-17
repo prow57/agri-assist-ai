@@ -6,7 +6,7 @@ import 'signin.dart';  // Import the signin screen
 class ResetPasswordPage extends StatefulWidget {
   final String phone;
 
-  ResetPasswordPage({required this.phone});
+  const ResetPasswordPage({super.key, required this.phone});
 
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
@@ -33,7 +33,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Password reset successfully!')),
+            const SnackBar(content: Text('Password reset successfully!')),
           );
 
           // Navigate to login screen
@@ -43,12 +43,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to reset password. Please try again.')),
+            const SnackBar(content: Text('Failed to reset password. Please try again.')),
           );
         }
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Network error. Please check your connection.')),
+          const SnackBar(content: Text('Network error. Please check your connection.')),
         );
       }
     }
@@ -66,11 +66,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Image.asset('assets/images/logo.png', height: 100),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
 
-                Text(
+                const Text(
                   'Reset Password',
                   style: TextStyle(
                     fontSize: 24,
@@ -78,7 +78,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   'Enter your new password',
                   style: TextStyle(
@@ -86,14 +86,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     color: Colors.grey[600],
                   ),
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
 
                 // New Password Field
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'New Password',
-                    prefixIcon: Icon(Icons.lock, color: Colors.green),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.green),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -106,14 +106,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 // Confirm Password Field
                 TextFormField(
                   controller: _confirmPasswordController,
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
-                    prefixIcon: Icon(Icons.lock_outline, color: Colors.green),
+                    prefixIcon: const Icon(Icons.lock_outline, color: Colors.green),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -126,7 +126,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
 
                 ElevatedButton(
                   onPressed: () => _resetPassword(context),
@@ -135,9 +135,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   ),
-                  child: Text('Reset Password'),
+                  child: const Text('Reset Password'),
                 ),
               ],
             ),

@@ -2,14 +2,11 @@ import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/leaf%20scan/leaf_diagnosis_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
-import 'package:agrifrontend/AI%20pages/vision/upload_image.dart';
 import 'package:agrifrontend/authentication/community_signin.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:agrifrontend/homepages/market/market_selection_page.dart';
 import 'package:agrifrontend/homepages/weather/ui/weather_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:agrifrontend/authentication/signin.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -78,14 +75,14 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              // Handle notifications
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: const Icon(Icons.notifications),
+        //     onPressed: () {
+        //       // Handle notifications
+        //     },
+        //   ),
+        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -103,7 +103,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
 appBar: AppBar(
   leading: IconButton(
-    icon: Icon(Icons.arrow_back_ios_rounded),
+    icon: const Icon(Icons.arrow_back_ios_rounded),
     onPressed: () {
       Navigator.pop(context);
     },

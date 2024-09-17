@@ -6,6 +6,8 @@ import 'otpverification.dart'; // Import the OTP verification screen
 class MobileNumberScreen extends StatelessWidget {
   final TextEditingController _phoneController = TextEditingController();
 
+  MobileNumberScreen({super.key});
+
   Future<void> _sendOtp(BuildContext context) async {
     final phone = _phoneController.text;
 
@@ -116,7 +118,7 @@ class MobileNumberScreen extends StatelessWidget {
                 ),
                 child: const Text(
                   'Send OTP',
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
             ],

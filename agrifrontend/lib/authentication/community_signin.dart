@@ -11,6 +11,8 @@ import 'package:agrifrontend/authentication/mobilenumber.dart';
 import '../personalization/preferences.dart';
 
 class CommunitySignIn extends StatefulWidget {
+  const CommunitySignIn({super.key});
+
   @override
   _CommunitySignInState createState() => _CommunitySignInState();
 }

@@ -7,14 +7,14 @@ class OtpVerification extends StatelessWidget {
   final TextEditingController _otpController = TextEditingController();
   final String phone;
 
-  OtpVerification({required this.phone});
+  OtpVerification({super.key, required this.phone});
 
   Future<void> _verifyOtp(BuildContext context) async {
     final otp = _otpController.text;
 
     if (otp.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter the OTP.')),
+        const SnackBar(content: Text('Please enter the OTP.')),
       );
       return;
     }
@@ -34,12 +34,12 @@ class OtpVerification extends StatelessWidget {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invalid OTP. Please try again.')),
+          const SnackBar(content: Text('Invalid OTP. Please try again.')),
         );
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Network error. Please check your connection.')),
+        const SnackBar(content: Text('Network error. Please check your connection.')),
       );
     }
   }
@@ -55,14 +55,14 @@ class OtpVerification extends StatelessWidget {
             children: [
               // Logo Section
               Image.asset('assets/images/logo.png', height: 100),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // OTP Sent Message
               Text(
                 'OTP sent to $phone',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // "Enter OTP" Field
               TextField(
@@ -75,7 +75,7 @@ class OtpVerification extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Verify Button
               ElevatedButton(
@@ -85,9 +85,9 @@ class OtpVerification extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 ),
-                child: Text('Verify'),
+                child: const Text('Verify'),
               ),
             ],
           ),

@@ -144,7 +144,7 @@ class _HistoryFullCourseState extends State<HistoryFullCourse> {
                     ],
                   ),
                 )
-              : Center(child: Text('No course data available.')),
+              : const Center(child: Text('No course data available.')),
       floatingActionButton: FloatingActionButton(
         onPressed: _scrollToTop,
         backgroundColor: Colors.green,

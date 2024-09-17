@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'CommunityPage.dart'; // Import CommunityPage
 
 class PreferencesScreen extends StatefulWidget {
+  const PreferencesScreen({super.key});
+
   @override
   _PreferencesScreenState createState() => _PreferencesScreenState();
 }
@@ -30,8 +32,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Personalize Your Experience',
                 style: TextStyle(
                   fontSize: 26,
@@ -39,7 +41,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 'Choose your farming type and interests to get customized content.',
                 style: TextStyle(
@@ -47,10 +49,10 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   color: Colors.grey[600],
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               // Type of Farming Section
-              Text(
+              const Text(
                 'Select Type of Farming',
                 style: TextStyle(
                   fontSize: 22,
@@ -58,7 +60,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Farming Type Buttons
               Wrap(
@@ -84,17 +86,17 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                     },
                     selectedColor: Colors.green,
                     backgroundColor: Colors.grey[200],
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                   );
                 }).toList(),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Preferences Section
-              Text(
+              const Text(
                 'Select Your Interests',
                 style: TextStyle(
                   fontSize: 22,
@@ -102,7 +104,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // Preferences Buttons
               Wrap(
@@ -132,14 +134,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                     },
                     selectedColor: Colors.green,
                     backgroundColor: Colors.grey[200],
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                   );
                 }).toList(),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Save Button
               Center(
@@ -158,9 +160,9 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Save Preferences',
                     style: TextStyle(
                       fontSize: 18,

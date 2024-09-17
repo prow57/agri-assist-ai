@@ -13,7 +13,7 @@ class MarketPlacePage extends StatefulWidget {
   final String marketName;
   final String marketLocation;
 
-  MarketPlacePage({
+  const MarketPlacePage({super.key, 
     required this.marketId,
     required this.marketName,
     required this.marketLocation,
@@ -174,13 +174,13 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AllCoursesPage()),
+          MaterialPageRoute(builder: (context) => const AllCoursesPage()),
         );
         break;
       case 2:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PersonalizedAdvicePage()),
+          MaterialPageRoute(builder: (context) => const PersonalizedAdvicePage()),
         );
         break;
       case 3:
@@ -291,17 +291,17 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
               ),
             ),
           ),
           _isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : _errorMessage.isNotEmpty
                   ? Center(child: Text(_errorMessage))
                   : Expanded(
                       child: _filteredCommodities.isEmpty
-                          ? Center(child: Text('No commodities found.'))
+                          ? const Center(child: Text('No commodities found.'))
                           : ListView.builder(
                               padding: const EdgeInsets.all(16.0),
                               itemCount: _filteredCommodities.length,

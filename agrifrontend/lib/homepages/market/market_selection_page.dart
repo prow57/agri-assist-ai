@@ -7,6 +7,8 @@ import 'market.dart'; // Import your Market model
 import 'market_place.dart'; // Import the MarketPlacePage
 
 class MarketSelectionPage extends StatefulWidget {
+  const MarketSelectionPage({super.key});
+
   @override
   _MarketSelectionPageState createState() => _MarketSelectionPageState();
 }
@@ -15,7 +17,7 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
   late Future<List<Market>> _futureMarkets;
   List<Market> _markets = [];
   List<Market> _filteredMarkets = [];
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   bool _isLoading = true;
 
   @override
@@ -107,7 +109,7 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
         ),
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -122,9 +124,9 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
               decoration: InputDecoration(
                 labelText: 'Search markets...',
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.clear),
+                  icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
                     _filterMarkets(); // Trigger filtering after clearing the text field
@@ -140,9 +142,9 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
           ),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : _filteredMarkets.isEmpty
-                    ? Center(child: Text('No markets found'))
+                    ? const Center(child: Text('No markets found'))
                     : ListView.builder(
                         itemCount: _filteredMarkets.length,
                         itemBuilder: (context, index) {
@@ -153,11 +155,11 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
                             elevation: 4,
                             child: ListTile(
                               contentPadding: const EdgeInsets.all(16),
-                              leading: Icon(Icons.store,
+                              leading: const Icon(Icons.store,
                                   size: 40, color: Colors.green),
                               title: Text(
                                 market.name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),

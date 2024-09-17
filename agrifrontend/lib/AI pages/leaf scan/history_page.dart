@@ -1,8 +1,5 @@
-import 'package:shared_preferences/shared_preferences.dart'; // For local storage
-import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For formatting dates
+// For local storage
+// For formatting dates
 
 class LeafAnalysisHistory {
   final String imagePath;

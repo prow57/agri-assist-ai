@@ -69,7 +69,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
       if (index == 0) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else if (index == 1) {
         _handlePremiumFeature(() {
@@ -345,7 +345,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             blurRadius: 8.0,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
