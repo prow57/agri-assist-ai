@@ -146,7 +146,7 @@ class _HistoryPageState extends State<HistoryPage> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.memory),
             label: 'Profile',
           ),
           BottomNavigationBarItem(

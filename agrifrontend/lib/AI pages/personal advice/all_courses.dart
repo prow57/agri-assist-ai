@@ -144,7 +144,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.memory),
             label: 'AI',
           ),
           BottomNavigationBarItem(

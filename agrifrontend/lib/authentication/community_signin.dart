@@ -45,7 +45,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PreferencesScreen()),
+          MaterialPageRoute(builder: (context) => PreferencesScreen(phone: phone,)),
         );
       } else {
         final data = jsonDecode(response.body);

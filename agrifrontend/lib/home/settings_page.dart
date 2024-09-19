@@ -117,7 +117,7 @@ class _SettingsPageState extends State<SettingsPage> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.memory),
             label: 'AI',
           ),
           BottomNavigationBarItem(

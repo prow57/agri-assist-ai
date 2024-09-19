@@ -255,7 +255,7 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.memory),
             label: 'AI',
           ),
           BottomNavigationBarItem(

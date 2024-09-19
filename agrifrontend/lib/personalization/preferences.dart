@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'CommunityPage.dart'; // Import CommunityPage
 
 class PreferencesScreen extends StatefulWidget {
-  const PreferencesScreen({super.key});
+  const PreferencesScreen({super.key, required phone});
 
   @override
   _PreferencesScreenState createState() => _PreferencesScreenState();

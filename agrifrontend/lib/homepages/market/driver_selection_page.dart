@@ -257,7 +257,7 @@ class _DriverListPageState extends State<DriverListPage> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.memory),
             label: 'Ai',
           ),
           BottomNavigationBarItem(

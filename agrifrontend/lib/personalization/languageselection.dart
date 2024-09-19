@@ -35,7 +35,7 @@ class SelectLanguageScreen extends StatelessWidget {
                   // Set language to English and navigate to the next screen
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const PreferencesScreen()),
+                    MaterialPageRoute(builder: (context) => const PreferencesScreen(phone: null,)),
                   );
                 },
                 style: ElevatedButton.styleFrom(

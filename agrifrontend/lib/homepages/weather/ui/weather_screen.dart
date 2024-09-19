@@ -575,7 +575,7 @@ Widget _buildFeatureButton(String title) {
           label: 'Courses',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
+          icon: Icon(Icons.memory),
           label: 'AI',
         ),
         BottomNavigationBarItem(

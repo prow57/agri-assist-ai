@@ -131,7 +131,7 @@ class _DetailPageState extends State<DetailPage> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.memory),
             label: 'AI',
           ),
           BottomNavigationBarItem(

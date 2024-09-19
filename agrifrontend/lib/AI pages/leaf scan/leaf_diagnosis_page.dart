@@ -158,7 +158,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       const AllCoursesPage(),
       const PersonalizedAdvicePage(),
       const ChatPage(),
-      SettingsPage(),
+      const SettingsPage(),
     ];
 
     Navigator.pushReplacement(
@@ -269,7 +269,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.memory),
             label: 'AI',
           ),
           BottomNavigationBarItem(
@@ -362,55 +362,138 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
 Widget _buildResultDisplay() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'Analysis Results:',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 10),
-      _result != null
-          ? MarkdownBody(
-              data: _result?['result'] ?? 'No results available',
-              styleSheet: MarkdownStyleSheet(
-                p: const TextStyle(fontSize: 16),
-                h1: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                h2: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                // Add more style customization if needed
+  return Card(
+    elevation: 5,
+    margin: const EdgeInsets.symmetric(vertical: 16),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.eco, color: Colors.green, size: 30),
+              SizedBox(width: 10),
+              Text(
+                'Leaf Analysis Results',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          if (_result != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Summary Section
+                Text(
+                  'Status: ${_result?['status'] ?? 'Unknown'}',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: _result?['status'] == 'Healthy'
+                        ? Colors.green
+                        : Colors.red,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Divider(thickness: 1, color: Colors.green[300]),
+
+                // Detailed Results (Expandable)
+                const Text(
+                  'Detailed Results:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                MarkdownBody(
+                  data: _result?['result'] ?? 'No detailed results available.',
+                  styleSheet: MarkdownStyleSheet(
+                    p: const TextStyle(fontSize: 16),
+                    h1: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                    h2: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Expandable View More Button
+                if (_result?['detailed_info'] != null)
+                  ExpansionTile(
+                    title: const Text('View More Detailed Analysis'),
+                    children: [
+                      Text(_result?['detailed_info'] ?? ''),
+                    ],
+                  ),
+              ],
             )
-          : const Text(
-              'No results available',
+          else
+            const Text(
+              'No analysis result available.',
               style: TextStyle(fontSize: 16),
             ),
-    ],
+        ],
+      ),
+    ),
   );
 }
 
+Widget _buildPremiumResultDisplay() {
+  return Card(
+    elevation: 5,
+    margin: const EdgeInsets.symmetric(vertical: 16),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.star, color: Colors.orange, size: 30),
+              SizedBox(width: 10),
+              Text(
+                'Premium Analysis Results',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
 
-  Widget _buildPremiumResultDisplay() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Premium Analysis Results:',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        Text(_result.toString(), style: const TextStyle(fontSize: 16)),
-        // Example: Adding an additional chart or detailed info here for premium users
-        const SizedBox(height: 20),
-        ElevatedButton.icon(
-          onPressed: () {
-            // Navigate to additional insights or advice page
-          },
-          icon: const Icon(Icons.insights),
-          label: const Text('View Additional Insights'),
-        ),
-      ],
-    );
-  }
+          // Premium-specific summary
+          const Text(
+            'Exclusive Plant Health Insights:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+
+          Text(_result.toString(), style: const TextStyle(fontSize: 16)),
+          const SizedBox(height: 20),
+
+          // Navigate to more insights
+          ElevatedButton.icon(
+            onPressed: () {
+              // Navigate to additional insights or advice page
+            },
+            icon: const Icon(Icons.insights),
+            label: const Text('View Additional Insights'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepPurple,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   Widget _buildErrorDisplay() {
     return Column(

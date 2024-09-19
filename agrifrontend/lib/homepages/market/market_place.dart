@@ -351,7 +351,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.memory),
             label: 'Ai',
           ),
           BottomNavigationBarItem(

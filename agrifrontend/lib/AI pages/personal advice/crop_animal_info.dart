@@ -45,7 +45,7 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SettingsPage(),
+            builder: (context) => const SettingsPage(),
           ),
         );
       }
@@ -74,12 +74,12 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
             ),
             iconTheme: const IconThemeData(color: Colors.white),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
+          body: const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TabBar(
+                TabBar(
                   tabs: [
                     Tab(text: "Animal"),
                     Tab(text: "Crop"),
@@ -112,7 +112,7 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
                 label: 'Courses',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
+                icon: Icon(Icons.memory),
                 label: 'AI',
               ),
               BottomNavigationBarItem(

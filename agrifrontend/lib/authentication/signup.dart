@@ -14,9 +14,22 @@ class _SignupState extends State<Signup> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-  TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  
+  // Helper function for password strength check
+  String _passwordStrength = '';
+  void _checkPasswordStrength(String password) {
+    setState(() {
+      if (password.length < 6) {
+        _passwordStrength = 'Weak';
+      } else if (password.length < 10) {
+        _passwordStrength = 'Medium';
+      } else {
+        _passwordStrength = 'Strong';
+      }
+    });
+  }
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
@@ -58,28 +71,10 @@ class _SignupState extends State<Signup> {
     }
   }
 
-  // In the _register method of Signup Page
-if (response.statusCode == 201) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(data['message'])),
-  );
-  
-  // Navigate to Preferences Screen and pass the phone number
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => PreferencesScreen(phone: phone),
-    ),
-  );
-} else {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(data['error'])),
-  );
-}
-  
-
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -113,6 +108,7 @@ if (response.statusCode == 201) {
                 key: _formKey,
                 child: Column(
                   children: [
+                    // Full Name Field
                     TextFormField(
                       controller: _fullNameController,
                       decoration: InputDecoration(
@@ -120,6 +116,9 @@ if (response.statusCode == 201) {
                         prefixIcon: const Icon(Icons.person),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
                         ),
                       ),
                       validator: (value) {
@@ -131,6 +130,7 @@ if (response.statusCode == 201) {
                     ),
                     const SizedBox(height: 20),
 
+                    // Phone Number Field
                     TextFormField(
                       controller: _phoneController,
                       decoration: InputDecoration(
@@ -138,6 +138,9 @@ if (response.statusCode == 201) {
                         prefixIcon: const Icon(Icons.phone),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
                         ),
                       ),
                       keyboardType: TextInputType.phone,
@@ -150,6 +153,7 @@ if (response.statusCode == 201) {
                     ),
                     const SizedBox(height: 20),
 
+                    // Password Field with Strength Indicator
                     TextFormField(
                       controller: _passwordController,
                       decoration: InputDecoration(
@@ -158,8 +162,25 @@ if (response.statusCode == 201) {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Text(
+                            _passwordStrength,
+                            style: TextStyle(
+                              color: _passwordStrength == 'Strong'
+                                  ? Colors.green
+                                  : _passwordStrength == 'Medium'
+                                      ? Colors.orange
+                                      : Colors.red,
+                            ),
+                          ),
+                        ),
                       ),
                       obscureText: true,
+                      onChanged: _checkPasswordStrength,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password.';
@@ -169,6 +190,7 @@ if (response.statusCode == 201) {
                     ),
                     const SizedBox(height: 20),
 
+                    // Confirm Password Field
                     TextFormField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
@@ -176,6 +198,9 @@ if (response.statusCode == 201) {
                         prefixIcon: const Icon(Icons.lock_outline),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.green),
                         ),
                       ),
                       obscureText: true,
@@ -188,6 +213,7 @@ if (response.statusCode == 201) {
                     ),
                     const SizedBox(height: 30),
 
+                    // Register Button
                     ElevatedButton(
                       onPressed: _register,
                       style: ElevatedButton.styleFrom(
@@ -196,7 +222,9 @@ if (response.statusCode == 201) {
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
+                        
+                          vertical: 15,
+                        ),
                       ),
                       child: const Text(
                         'Register',
@@ -205,6 +233,7 @@ if (response.statusCode == 201) {
                     ),
                     const SizedBox(height: 20),
 
+                    // Redirect to Login
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
