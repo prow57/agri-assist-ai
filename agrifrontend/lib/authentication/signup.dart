@@ -58,6 +58,26 @@ class _SignupState extends State<Signup> {
     }
   }
 
+  // In the _register method of Signup Page
+if (response.statusCode == 201) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(data['message'])),
+  );
+  
+  // Navigate to Preferences Screen and pass the phone number
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => PreferencesScreen(phone: phone),
+    ),
+  );
+} else {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(data['error'])),
+  );
+}
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

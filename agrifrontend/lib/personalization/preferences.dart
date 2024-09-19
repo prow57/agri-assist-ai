@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'CommunityPage.dart'; // Import CommunityPage
 
 class PreferencesScreen extends StatefulWidget {
@@ -11,6 +13,8 @@ class PreferencesScreen extends StatefulWidget {
 class _PreferencesScreenState extends State<PreferencesScreen> {
   String selectedFarmingType = '';
   List<String> selectedPreferences = [];
+  bool _isLoading = false;
+  String _errorMessage = '';
 
   List<String> farmingTypes = ['Crop Farming', 'Animal Farming', 'Both'];
   List<String> preferenceCategories = [
@@ -21,6 +25,47 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     'Marketing',
     'Agricultural Technology'
   ];
+
+  Future<void> _savePreferences() async {
+    if (selectedFarmingType.isEmpty || selectedPreferences.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please select a farming type and at least one interest.';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    final url = Uri.parse('https://agriback-plum.vercel.app/set-preferences');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'phone': 'userPhone', // You might need to get this from user data
+        'farming_type': selectedFarmingType,
+        'interests': selectedPreferences,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _isLoading = false;
+      });
+      // Navigate to Community Page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CommunityPage()),
+      );
+    } else {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Error saving preferences. Please try again.';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +131,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                     },
                     selectedColor: Colors.green,
                     backgroundColor: Colors.grey[200],
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -134,7 +180,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                     },
                     selectedColor: Colors.green,
                     backgroundColor: Colors.grey[200],
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -143,34 +190,42 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
               ),
               const SizedBox(height: 40),
 
-              // Save Button
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Community Page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CommunityPage(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-                  ),
-                  child: const Text(
-                    'Save Preferences',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+              // Error Message
+              if (_errorMessage.isNotEmpty)
+                Text(
+                  _errorMessage,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+
+              const SizedBox(height: 20),
+
+              // Save Button
+              Center(
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: _savePreferences,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 80, vertical: 15),
+                        ),
+                        child: const Text(
+                          'Save Preferences',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
               ),
             ],
           ),
