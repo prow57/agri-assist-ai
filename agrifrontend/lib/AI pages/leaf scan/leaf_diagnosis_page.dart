@@ -361,6 +361,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 
+
+
 Widget _buildResultDisplay() {
   return Card(
     elevation: 5,
@@ -382,68 +384,98 @@ Widget _buildResultDisplay() {
             ],
           ),
           const SizedBox(height: 20),
-          if (_result != null)
+
+          // Health Status
+          const Text(
+            'Health Status:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Is Plant: ${_result?['is_plant']['binary'] == true ? 'Yes' : 'No'}',
+            style: TextStyle(
+              color: _result?['is_plant']['binary'] == true ? Colors.green : Colors.red,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Text('Probability: ${_result?['is_plant']['probability']}%'),
+          const SizedBox(height: 10),
+          Text(
+            'Is Healthy: ${_result?['is_healthy']['binary'] == true ? 'Yes' : 'No'}',
+            style: TextStyle(
+              color: _result?['is_healthy']['binary'] == true ? Colors.green : Colors.red,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Text('Probability: ${_result?['is_healthy']['probability']}%'),
+          const SizedBox(height: 20),
+          Divider(thickness: 1, color: Colors.green[300]),
+
+          // Diseases
+          const Text(
+            'Diseases:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          for (var disease in _result?['diseases'] ?? [])
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Summary Section
                 Text(
-                  'Status: ${_result?['status'] ?? 'Unknown'}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: _result?['status'] == 'Healthy'
-                        ? Colors.green
-                        : Colors.red,
-                  ),
+                  'Disease: ${disease['name']}',
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 10),
-                Divider(thickness: 1, color: Colors.green[300]),
-
-                // Detailed Results (Expandable)
-                const Text(
-                  'Detailed Results:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                MarkdownBody(
-                  data: _result?['result'] ?? 'No detailed results available.',
-                  styleSheet: MarkdownStyleSheet(
-                    p: const TextStyle(fontSize: 16),
-                    h1: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                    h2: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                Text('Probability: ${disease['probability']}%'),
+                Text('Similar Images:'),
+                for (var image in disease['similar_images'])
+                  GestureDetector(
+                    onTap: () {
+                      // Handle image tap (e.g., show in full screen)
+                    },
+                    child: Text(
+                      image,
+                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-
-                // Expandable View More Button
-                if (_result?['detailed_info'] != null)
-                  ExpansionTile(
-                    title: const Text('View More Detailed Analysis'),
-                    children: [
-                      Text(_result?['detailed_info'] ?? ''),
-                    ],
-                  ),
+                const SizedBox(height: 10),
               ],
-            )
-          else
-            const Text(
-              'No analysis result available.',
-              style: TextStyle(fontSize: 16),
             ),
+          const SizedBox(height: 20),
+          Divider(thickness: 1, color: Colors.green[300]),
+
+          // Input Details
+          const Text(
+            'Input Details:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Text('Classification Level: ${_result?['classification_level']}'),
+          Text('Health Analysis Type: ${_result?['health_analysis_type']}'),
+          Text('Similar Images Requested: ${_result?['similar_images_requested'] ? 'Yes' : 'No'}'),
+          const SizedBox(height: 20),
+          Divider(thickness: 1, color: Colors.green[300]),
+
+          // Image for Analysis
+          const Text(
+            'Image for Analysis:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: () {
+              // Handle image tap (e.g., show in full screen)
+            },
+            child: Text(
+              _result?['input_image'] ?? 'No image available.',
+              style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+          ),
         ],
       ),
     ),
   );
 }
+  
 
 Widget _buildPremiumResultDisplay() {
   return Card(
