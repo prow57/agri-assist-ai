@@ -151,7 +151,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CommunityPage(),
+                        builder: (context) => const CommunityPage(),
                       ),
                     );
                   },

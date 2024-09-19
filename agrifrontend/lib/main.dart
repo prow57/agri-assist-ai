@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'OpenTechZ App',
           theme: themeNotifier.currentTheme,
-          home:  Signin(),
+          home:  const Signin(),
           debugShowCheckedModeBanner: false,
         );
       },

@@ -92,7 +92,7 @@ class _MarketSelectionPageState extends State<MarketSelectionPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SettingsPage(),
+            builder: (context) => const SettingsPage(),
           ),
         );
       }

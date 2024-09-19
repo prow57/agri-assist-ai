@@ -83,8 +83,9 @@ class _DriverListPageState extends State<DriverListPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (index == _selectedIndex)
+    if (index == _selectedIndex) {
       return; // Ignore tap if already on the selected tab
+    }
 
     setState(() {
       _selectedIndex = index;
@@ -114,7 +115,7 @@ class _DriverListPageState extends State<DriverListPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SettingsPage(),
+            builder: (context) => const SettingsPage(),
           ),
         );
       }
