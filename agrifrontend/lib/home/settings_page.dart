@@ -1,9 +1,8 @@
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
-import 'package:agrifrontend/theme_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -50,7 +49,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = Provider.of<ThemeNotifier>(context).isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
@@ -78,20 +76,6 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSettingItem(
-              context,
-              icon: Icons.dark_mode,
-              title: 'Dark Mode',
-              subtitle: 'Toggle between light and dark themes',
-              trailing: Switch(
-                value: isDarkMode,
-                onChanged: (value) {
-                  Provider.of<ThemeNotifier>(context, listen: false)
-                      .toggleTheme(value);
-                },
-              ),
-            ),
-            const Divider(),
             _buildSettingItem(
               context,
               icon: Icons.privacy_tip,
