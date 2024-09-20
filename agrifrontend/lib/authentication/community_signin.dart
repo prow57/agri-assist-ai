@@ -5,10 +5,11 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_pa
 import 'package:agrifrontend/authentication/community_signup.dart';
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
+import 'package:agrifrontend/personalization/CommunityPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:agrifrontend/authentication/mobilenumber.dart';
-import '../personalization/preferences.dart';
+  // Import the CommunityPage
 
 class CommunitySignIn extends StatefulWidget {
   const CommunitySignIn({super.key});
@@ -43,9 +44,10 @@ class _CommunitySignInState extends State<CommunitySignIn> {
           const SnackBar(content: Text('Login successful!')),
         );
 
+        // Navigate to the CommunityPage after login success
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PreferencesScreen(phone: phone,)),
+          MaterialPageRoute(builder: (context) => const CommunityPage()),
         );
       } else {
         final data = jsonDecode(response.body);
@@ -67,9 +69,9 @@ class _CommunitySignInState extends State<CommunitySignIn> {
 
     final pages = [
       const HomePage(),
+      const AllCoursesPage(),
       const PersonalizedAdvicePage(),
-      const ChatPage(),
-      SettingsPage(),   // Replace with actual page
+      const SettingsPage(),   // Replace with actual page
     ];
 
     Navigator.pushReplacement(
@@ -228,7 +230,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: 0,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(

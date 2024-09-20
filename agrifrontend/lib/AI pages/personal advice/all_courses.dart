@@ -101,7 +101,15 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
         title: const Text('All Courses', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          },
+        ),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())

@@ -2,6 +2,7 @@
 import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -156,9 +157,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     setState(() => _selectedIndex = index);
 
     final pages = [
+      const HomePage(),
       const AllCoursesPage(),
       const PersonalizedAdvicePage(),
-      const ChatPage(),
       const SettingsPage(),
     ];
 

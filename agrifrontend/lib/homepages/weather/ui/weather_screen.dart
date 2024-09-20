@@ -25,12 +25,12 @@ class _WeatherPageState extends State<WeatherPage> {
   final cacheManager = DefaultCacheManager();
   double _opacity = 1.0;
 
-  bool _isPremiumUser = true; // Tracks if the user is a premium user
+  bool _isPremiumUser = false; // Tracks if the user is a premium user
 
   @override
   void initState() {
     super.initState();
-    _checkUserPremiumStatus(); // Check if user is premium
+    _checkUserPremiumStatus();
     _fetchWeatherWithAnimation();
   }
 
@@ -66,31 +66,32 @@ class _WeatherPageState extends State<WeatherPage> {
       _isLoading = true;
     });
 
-    // Check if data is cached
-    final fileInfo = await cacheManager.getFileFromCache(_selectedCity);
+    try {
+      // Check if data is cached
+      final fileInfo = await cacheManager.getFileFromCache(_selectedCity);
 
-    if (fileInfo != null &&
-        DateTime.now().difference(fileInfo.validTill).inMinutes < 30) {
-      // Load cached data if it's not older than 30 minutes
-      final jsonString = await fileInfo.file.readAsString();
-      final json = jsonDecode(jsonString);
-      _updateWeatherData(json);
-    } else {
-      // Fetch data from the network
-      try {
+      if (fileInfo != null &&
+          DateTime.now().difference(fileInfo.validTill).inMinutes < 30) {
+        // Load cached data if it's not older than 30 minutes
+        final jsonString = await fileInfo.file.readAsString();
+        final json = jsonDecode(jsonString);
+        _updateWeatherData(json);
+      } else {
+        // Fetch data from the network
         final data = await _weatherService.fetchWeather(_selectedCity);
         await cacheManager.putFile(
-            _selectedCity, utf8.encode(jsonEncode(data)));
-        _updateWeatherData(data);
-      } catch (e) {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to load weather data: ${e.toString()}')),
+          _selectedCity,
+          utf8.encode(jsonEncode(data)),
         );
+        _updateWeatherData(data);
       }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load weather data: ${e.toString()}')),
+      );
     }
   }
 
@@ -184,11 +185,11 @@ class _WeatherPageState extends State<WeatherPage> {
             icon: const Icon(Icons.location_on, color: Colors.white),
             onPressed: _selectLocation,
           ),
-          // if (_isPremiumUser)
-          //   IconButton(
-          //     icon: const Icon(Icons.star, color: Colors.yellow),
-          //     onPressed: _onPremiumIconPressed,
-          //   ),
+          if (_isPremiumUser)
+            IconButton(
+              icon: const Icon(Icons.star, color: Colors.yellow),
+              onPressed: _onPremiumIconPressed,
+            ),
         ],
       ),
       body: _isLoading
@@ -208,7 +209,7 @@ class _WeatherPageState extends State<WeatherPage> {
                           const SizedBox(height: 20),
                           _buildWeatherDetails(),
                           const SizedBox(height: 20),
-                          _buildWeatherForecast(), // Shows full or limited forecast
+                          _buildWeatherForecast(),
                           if (_isPremiumUser) ...[
                             const SizedBox(height: 20),
                             _buildFeatureButton("Get Farm Recommendations"),
@@ -219,6 +220,36 @@ class _WeatherPageState extends State<WeatherPage> {
                   : const Center(child: Text('No weather data available')),
             ),
       bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.book),
+          label: 'Courses',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.memory),
+          label: 'Personalised AI',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: 'Settings',
+        ),
+      ],
+      selectedItemColor: Colors.green[800],
+      unselectedItemColor: Colors.green[300],
+      showUnselectedLabels: true, // Ensure labels are always shown
+      selectedLabelStyle:
+          const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     );
   }
 
@@ -274,34 +305,6 @@ class _WeatherPageState extends State<WeatherPage> {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildDetailBox(String label, String value) {
-    return Container(
-      padding: const EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: Colors.green[50],
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: Colors.green[700]!, width: 1.0),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
     );
   }
 
@@ -405,12 +408,9 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   Widget _buildWeatherForecast() {
-    // Show all forecast data if user is premium, otherwise show only today
     final forecastDays = _isPremiumUser
         ? _weatherData!['forecast']['forecastday'] as List<dynamic>
         : [_weatherData!['forecast']['forecastday'][0]];
-
-    final numberOfDays = forecastDays.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -485,7 +485,6 @@ class _WeatherPageState extends State<WeatherPage> {
                     child: Text(
                       '${dayForecast['day']['condition']['text']}',
                       style: const TextStyle(fontSize: 16),
-                      // overflow: TextOverflow.fade,
                       softWrap: true,
                     ),
                   ),
@@ -522,72 +521,40 @@ class _WeatherPageState extends State<WeatherPage> {
     ));
   }
 
-Widget _buildFeatureButton(String title) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FarmerRecommendationsPage(
-            city: _selectedCity,
+  Widget _buildFeatureButton(String title) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FarmerRecommendationsPage(
+              city: _selectedCity,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.green.shade50,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8.0,
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-      );
-    },
-    child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.green.shade50,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8.0,
-          ),
-        ],
       ),
-      child: Center(
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-
-
-  BottomNavigationBar _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.book),
-          label: 'Courses',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.memory),
-          label: 'AI',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Settings',
-        ),
-      ],
-      selectedItemColor: Colors.green[800],
-      unselectedItemColor: Colors.green[300],
-      showUnselectedLabels: false,
-      selectedLabelStyle:
-          const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     );
   }
 

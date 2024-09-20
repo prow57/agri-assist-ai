@@ -131,8 +131,8 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble),
-            label: 'chat AI',
+            icon: Icon(Icons.memory),
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
