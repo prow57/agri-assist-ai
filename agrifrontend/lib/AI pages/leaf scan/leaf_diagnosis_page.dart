@@ -1,4 +1,7 @@
-// import library
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -34,7 +37,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
+          await _analyzeImage(
+              _image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         _showError('No image selected');
@@ -105,7 +109,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   bool _isPremiumEndpoint(String endpoint) {
-    return endpoint.contains('identify') || endpoint.contains('health-analysis');
+    return endpoint.contains('identify') ||
+        endpoint.contains('health-analysis');
   }
 
   void _showError(String message) {
@@ -309,7 +314,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         ),
         const SizedBox(height: 10),
         // Guideline for capturing a proper image
-                // Guideline for capturing a proper image
+        // Guideline for capturing a proper image
         const Text(
           "Guidelines: Take a clear, focused photo. Ensure the leaf is centered and fully visible, with no parts cut off.",
           style: TextStyle(
@@ -365,7 +370,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
 
   Widget _buildIdentificationResultDisplay() {
     var suggestion = _result?['result']['classification']['suggestions']?.first;
-    if (suggestion == null) return const SizedBox.shrink(); // Return if no result
+    if (suggestion == null)
+      return const SizedBox.shrink(); // Return if no result
 
     return Card(
       elevation: 5,
@@ -400,11 +406,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               ),
             ),
             Tooltip(
-              message: 'The probability score indicates the confidence of the model',
+              message:
+                  'The probability score indicates the confidence of the model',
               child: Text(
                 'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
                 style: TextStyle(
-                  color: suggestion['probability'] > 0.5 ? Colors.green : Colors.red,
+                  color: suggestion['probability'] > 0.5
+                      ? Colors.green
+                      : Colors.red,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -460,11 +469,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             ),
             const SizedBox(height: 10),
             Tooltip(
-              message: 'Indicates whether the detected object is a plant or not',
+              message:
+                  'Indicates whether the detected object is a plant or not',
               child: Text(
                 'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}',
                 style: TextStyle(
-                  color: _result?['result']['is_plant']['binary'] ? Colors.green : Colors.red,
+                  color: _result?['result']['is_plant']['binary']
+                      ? Colors.green
+                      : Colors.red,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -474,7 +486,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               child: Text(
                 'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
                 style: TextStyle(
-                  color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
+                  color: _result?['result']['is_healthy']['binary']
+                      ? Colors.green
+                      : Colors.red,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -482,15 +496,18 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             Tooltip(
               message: 'Probability score of the plant being healthy',
               child: Text(
-                'Health Probability: ${( _result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
+                'Health Probability: ${(_result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
                 style: TextStyle(
-                  color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
+                  color: _result?['result']['is_healthy']['binary']
+                      ? Colors.green
+                      : Colors.red,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
             const SizedBox(height: 10),
-            const Text('Disease Detected:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Disease Detected:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             Tooltip(
               message: 'Name of the detected disease',
               child: Text(
@@ -503,7 +520,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               child: Text(
                 'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
                 style: TextStyle(
-                  color: disease['probability'] > 0.5 ? Colors.green : Colors.red,
+                  color:
+                      disease['probability'] > 0.5 ? Colors.green : Colors.red,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -565,4 +583,3 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 }
-
