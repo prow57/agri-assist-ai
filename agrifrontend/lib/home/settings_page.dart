@@ -60,6 +60,10 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         elevation: 0,
       ),
       body: Container(

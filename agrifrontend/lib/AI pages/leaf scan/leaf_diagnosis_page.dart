@@ -183,8 +183,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                 _isHealthAnalysis = false; 
                 _analyzeImage(_image!,
                     'https://agriback-plum.vercel.app/api/vision/identify');
-              },
-              ```dart
+              }),
             TextButton(
               child: const Text("Analyze Health"),
               onPressed: () {
@@ -333,7 +332,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           icon: const Icon(Icons.camera, color: Colors.white),
           label: const Text(
             'Camera',
-            style: Tex totStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,

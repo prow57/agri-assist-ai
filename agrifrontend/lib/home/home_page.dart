@@ -75,6 +75,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+        automaticallyImplyLeading: false,
         // actions: [
         //   IconButton(
         //     icon: const Icon(Icons.notifications),
