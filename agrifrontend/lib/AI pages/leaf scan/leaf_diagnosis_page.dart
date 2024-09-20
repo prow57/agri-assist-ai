@@ -1,3 +1,4 @@
+// import library
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -13,24 +14,28 @@ class LeafAnalysisScreen extends StatefulWidget {
 
 class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   File? _image;
-  final ImagePicker _picker = ImagePicker();
+  final ImagePicker picker = ImagePicker();
   Map<String, dynamic>? _result;
-  String _errorMessage = '';
   bool _isLoading = false;
+  String _errorMessage = '';
+  int _selectedIndex = 0;
+  bool _isPremiumUser = true;
   bool _isHealthAnalysis = false;
-  bool _isDeepAnalysisLoading = false;
-  Map<String, dynamic>? _deepAnalysisResult;
 
-  // Image Handling Logic
-  Future<void> _handleImageSelection(ImageSource source) async {
+  Future<void> _handleImage(ImageSource source) async {
     try {
-      final pickedFile = await _picker.pickImage(source: source);
+      final pickedFile = await picker.pickImage(source: source);
       if (pickedFile != null) {
         setState(() {
           _image = File(pickedFile.path);
-          _resetResults();
+          _result = null;
+          _errorMessage = '';
         });
-        _showAnalysisChoiceDialog();
+        if (_isPremiumUser) {
+          _showAnalysisChoiceDialog();
+        } else {
+          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
+        }
       } else {
         _showError('No image selected');
       }
@@ -39,25 +44,20 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     }
   }
 
-  // Analysis API call
   Future<void> _analyzeImage(File image, String endpoint) async {
     try {
-      _setLoadingState(true);
-      final response = await _uploadImage(image, endpoint);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body) as Map<String, dynamic>;
-        setState(() {
-          _result = data['data'];
-          _isHealthAnalysis = endpoint.contains('health-analysis');
-        });
-        _showSnackBar('Analysis completed successfully.');
+      setState(() => _isLoading = true);
+      http.Response response;
+
+      if (_isPremiumUser && _isPremiumEndpoint(endpoint)) {
+        response = await _uploadImage(image, endpoint);
       } else {
-        _showError('Failed to get analysis: ${response.statusCode}');
+        response = await _postBase64Image(image, endpoint);
       }
+
+      _handleResponse(response, endpoint);
     } catch (e, stackTrace) {
       _handleError('Error analyzing image: $e', stackTrace);
-    } finally {
-      _setLoadingState(false);
     }
   }
 
@@ -68,85 +68,124 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     return await http.Response.fromStream(streamedResponse);
   }
 
-  // Deep Health Analysis Logic
-  Future<void> _performDeepHealthAnalysis() async {
-    if (_image == null) return;
-    try {
-      _setDeepAnalysisLoadingState(true);
-      final response = await _uploadImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body) as Map<String, dynamic>;
-        setState(() {
-          _deepAnalysisResult = data['leaf_analysis'];
-        });
-      } else {
-        _showError('Failed to get deep health analysis: ${response.statusCode}');
-      }
-    } catch (e, stackTrace) {
-      _handleError('Error performing deep health analysis: $e', stackTrace);
-    } finally {
-      _setDeepAnalysisLoadingState(false);
+  Future<http.Response> _postBase64Image(File image, String endpoint) async {
+    final bytes = await image.readAsBytes();
+    final base64Image = base64Encode(bytes);
+
+    return await http.post(
+      Uri.parse(endpoint),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"image": base64Image}),
+    );
+  }
+
+  void _handleResponse(http.Response response, String endpoint) {
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+
+      setState(() {
+        _result = data['data'];
+        _isHealthAnalysis = endpoint.contains('health-analysis');
+        _isLoading = false;
+      });
+      _showSnackBar('Analysis completed successfully.');
+      if (!_isPremiumUser) _showUpgradePrompt();
+    } else {
+      _showError("Failed to get analysis: ${response.statusCode}");
     }
   }
 
-  // UI Feedback Handling
-  void _showError(String message) {
+  void _handleError(String message, StackTrace stackTrace) {
     setState(() {
+      _result = null;
+      _isLoading = false;
       _errorMessage = message;
     });
+    _showSnackBar('Error occurred.');
+  }
+
+  bool _isPremiumEndpoint(String endpoint) {
+    return endpoint.contains('identify') || endpoint.contains('health-analysis');
+  }
+
+  void _showError(String message) {
+    setState(() => _errorMessage = message);
     _showSnackBar(message);
   }
 
-  void _handleError(String message, StackTrace stackTrace) {
-    _showError(message);
+  void _showUpgradePrompt() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Upgrade to Premium'),
+        content: const Text(
+          'Upgrade to premium to access more detailed analysis features and exclusive content.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Go Premium'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  void _resetResults() {
-    _result = null;
-    _deepAnalysisResult = null;
-    _errorMessage = '';
-  }
-
-  // Loading State Management
-  void _setLoadingState(bool isLoading) {
+  void _resetImage() {
     setState(() {
-      _isLoading = isLoading;
+      _image = null;
+      _result = null;
+      _errorMessage = '';
     });
   }
 
-  void _setDeepAnalysisLoadingState(bool isLoading) {
-    setState(() {
-      _isDeepAnalysisLoading = isLoading;
-    });
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+
+    setState(() => _selectedIndex = index);
+
+    final pages = [
+      const AllCoursesPage(),
+      const PersonalizedAdvicePage(),
+      const ChatPage(),
+      const SettingsPage(),
+    ];
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => pages[index]),
+    );
   }
 
-  // Dialog to Choose Analysis Type
   void _showAnalysisChoiceDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Choose Analysis Type", style: TextStyle(color: Colors.green)),
-          content: const Text("Would you like to identify the plant or analyze its health?"),
+          title: const Text("Choose Analysis Type"),
+          content: const Text(
+              "Would you like to identify the plant or analyze its health?"),
           actions: <Widget>[
             TextButton(
-              child: const Text("Identify Plant", style: TextStyle(color: Colors.green)),
+              child: const Text("Identify Plant"),
               onPressed: () {
                 Navigator.of(context).pop();
                 _isHealthAnalysis = false;
-                _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/identify');
+                _analyzeImage(_image!,
+                    'https://agriback-plum.vercel.app/api/vision/identify');
               },
             ),
             TextButton(
-              child: const Text("Analyze Health", style: TextStyle(color: Colors.green)),
+              child: const Text("Analyze Health"),
               onPressed: () {
                 Navigator.of(context).pop();
                 _isHealthAnalysis = true;
-                _analyzeImage(_image!, 'https://agriback-plum.vercel.app/api/vision/health-analysis');
+                _analyzeImage(_image!,
+                    'https://agriback-plum.vercel.app/api/vision/health-analysis');
               },
             ),
           ],
@@ -155,36 +194,83 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 
-  // UI Widgets
+  void _togglePremiumStatus() {
+    setState(() => _isPremiumUser = true);
+    _showSnackBar('You are now a premium user!');
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Leaf Diagnosis"),
         backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              "Capture or Select a Leaf Image",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            _buildImageSection(),
-            const SizedBox(height: 20),
-            if (_isLoading) const Center(child: CircularProgressIndicator()) else if (_result != null) _buildResultDisplay(),
-            if (_errorMessage.isNotEmpty) _buildErrorDisplay(),
-            const SizedBox(height: 20),
-            _buildActionButtons(),
-            const SizedBox(height: 20),
-            if (_isHealthAnalysis && _result != null) _buildDeepHealthAnalysisButton(),
-            if (_deepAnalysisResult != null) _buildDeepAnalysisCard(),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                "Capture or Select a Leaf Image",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              _buildImageSection(),
+              const SizedBox(height: 20),
+              if (_isLoading)
+                const Center(child: CircularProgressIndicator())
+              else if (_result != null)
+                _isHealthAnalysis
+                    ? _buildHealthResultDisplay()
+                    : _buildIdentificationResultDisplay()
+              else if (_errorMessage.isNotEmpty)
+                _buildErrorDisplay(),
+              const SizedBox(height: 20),
+              _buildActionButtons(),
+            ],
+          ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Courses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.memory),
+            label: 'AI',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Colors.green[800],
+        unselectedItemColor: Colors.green[300],
+        showUnselectedLabels: false,
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -196,6 +282,13 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           decoration: BoxDecoration(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(12.0),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 8,
+                offset: Offset(2, 4),
+              ),
+            ],
             border: Border.all(color: Colors.green, width: 2),
           ),
           height: 250,
@@ -203,139 +296,40 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           child: _image != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: Image.file(_image!, fit: BoxFit.cover),
+                  child: Image.file(
+                    _image!,
+                    fit: BoxFit.cover,
+                  ),
                 )
-              : const Icon(Icons.image, color: Colors.grey, size: 100),
+              : const Icon(
+                  Icons.image,
+                  color: Colors.grey,
+                  size: 100,
+                ),
         ),
+        const SizedBox(height: 10),
+        // Guideline for capturing a proper image
+                // Guideline for capturing a proper image
+        const Text(
+          "Guidelines: Take a clear, focused photo. Ensure the leaf is centered and fully visible, with no parts cut off.",
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
         if (_image != null)
           TextButton.icon(
             icon: const Icon(Icons.clear, color: Colors.red),
-            label: const Text('Clear Image', style: TextStyle(color: Colors.red)),
-            onPressed: _resetResults,
+            label: const Text(
+              'Clear Image',
+              style: TextStyle(color: Colors.red),
+            ),
+            onPressed: _resetImage,
           ),
       ],
-    );
-  }
-
-  Widget _buildResultDisplay() {
-    if (_isHealthAnalysis) {
-      return _buildHealthResultDisplay();
-    } else {
-      return _buildIdentificationResultDisplay();
-    }
-  }
-
-  Widget _buildIdentificationResultDisplay() {
-    var suggestions = _result?['result']['classification']['suggestions'] ?? [];
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Identification Results', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            for (var suggestion in suggestions)
-              ListTile(
-                title: Text(suggestion['plant_name'] ?? 'Unknown'),
-                subtitle: Text('Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%'),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHealthResultDisplay() {
-    var healthStatus = _result?['health_status'] ?? {};
-    var diseases = _result?['diseases'] ?? [];
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Health Analysis Results', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ListTile(
-              title: Text('Plant Status: ${healthStatus['is_plant'] ? "Yes" : "No"}'),
-              subtitle: Text('Health Probability: ${(healthStatus['healthy_probability'] * 100).toStringAsFixed(2)}%'),
-            ),
-            const SizedBox(height: 10),
-            const Text('Diseases:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            for (var disease in diseases)
-              ListTile(
-                title: Text(disease['name'] ?? 'Unknown Disease'),
-                subtitle: Text('Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%\nView similar images: ${disease['similar_images'][0]['url']}'),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDeepHealthAnalysisButton() {
-    return ElevatedButton.icon(
-      onPressed: _performDeepHealthAnalysis,
-      icon: _isDeepAnalysisLoading ? const CircularProgressIndicator() : const Icon(Icons.medical_services_outlined, color: Colors.white),
-      label: const Text('Do Deep Health Analysis', style: TextStyle(color: Colors.white)),
-      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-    );
-  }
-
-  Widget _buildDeepAnalysisCard() {
-    var deepAnalysis = _deepAnalysisResult ?? {};
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Deep Health Analysis Results', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ListTile(
-              title: Text('Crop Type: ${deepAnalysis['crop_type']}'),
-              subtitle: Text('Disease: ${deepAnalysis['disease_name'] ?? 'N/A'}\nRisk Level: ${deepAnalysis['level_of_risk'] ?? 'N/A'}'),
-            ),
-            const SizedBox(height: 10),
-            const Text('Additional Details:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            ListTile(
-              title: Text('Stage: ${deepAnalysis['stage'] ?? 'N/A'}'),
-              subtitle: Text('Estimated Size: ${deepAnalysis['estimated_size'] ?? 'N/A'}\nSymptoms: ${deepAnalysis['symptoms'] ?? 'N/A'}'),
-            ),
-            const SizedBox(height: 10),
-            if (deepAnalysis['image_feedback'] != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Image Feedback:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  ListTile(
-                    title: Text('Focus: ${deepAnalysis['image_feedback']['focus']}'),
-                    subtitle: Text('Distance: ${deepAnalysis['image_feedback']['distance']}'),
-                  ),
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorDisplay() {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text('Error: $_errorMessage', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-      ),
     );
   }
 
@@ -344,18 +338,231 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton.icon(
-          onPressed: () => _handleImageSelection(ImageSource.camera),
+          onPressed: () => _handleImage(ImageSource.camera),
           icon: const Icon(Icons.camera, color: Colors.white),
-          label: const Text('Camera', style: TextStyle(color: Colors.white)),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+          label: const Text(
+            'Camera',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+          ),
         ),
         ElevatedButton.icon(
-          onPressed: () => _handleImageSelection(ImageSource.gallery),
+          onPressed: () => _handleImage(ImageSource.gallery),
           icon: const Icon(Icons.photo, color: Colors.white),
-          label: const Text('Gallery', style: TextStyle(color: Colors.white)),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+          label: const Text(
+            'Gallery',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+          ),
         ),
       ],
     );
   }
+
+  Widget _buildIdentificationResultDisplay() {
+    var suggestion = _result?['result']['classification']['suggestions']?.first;
+    if (suggestion == null) return const SizedBox.shrink(); // Return if no result
+
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.eco, color: Colors.green, size: 30),
+                SizedBox(width: 10),
+                Text(
+                  'Identification Result',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Tooltip(
+              message: 'This is the overall message from the results',
+              child: Text('Message: ${_result?['message'] ?? 'No message'}'),
+            ),
+            const SizedBox(height: 10),
+            Tooltip(
+              message: 'Name of the plant identified by the model',
+              child: Text(
+                'Plant Name: ${suggestion['name'] ?? 'Unknown'}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Tooltip(
+              message: 'The probability score indicates the confidence of the model',
+              child: Text(
+                'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
+                style: TextStyle(
+                  color: suggestion['probability'] > 0.5 ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            const Text('Similar Image:'),
+            // Show the actual image
+            if (suggestion['similar_images']?.first['url'] != null)
+              GestureDetector(
+                onTap: () {
+                  _showImageDialog(suggestion['similar_images'].first['url']);
+                },
+                child: Image.network(
+                  suggestion['similar_images'].first['url'],
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.cover,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHealthResultDisplay() {
+    var disease = _result?['result']['disease']['suggestions']?.first;
+    if (disease == null) return const SizedBox.shrink(); // Return if no result
+
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.health_and_safety, color: Colors.red, size: 30),
+                SizedBox(width: 10),
+                Text(
+                  'Health Analysis Result',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Tooltip(
+              message: 'This is the overall message from the results',
+              child: Text('Message: ${_result?['message'] ?? 'No message'}'),
+            ),
+            const SizedBox(height: 10),
+            Tooltip(
+              message: 'Indicates whether the detected object is a plant or not',
+              child: Text(
+                'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}',
+                style: TextStyle(
+                  color: _result?['result']['is_plant']['binary'] ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Tooltip(
+              message: 'Indicates whether the plant is healthy or not',
+              child: Text(
+                'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
+                style: TextStyle(
+                  color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Tooltip(
+              message: 'Probability score of the plant being healthy',
+              child: Text(
+                'Health Probability: ${( _result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
+                style: TextStyle(
+                  color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text('Disease Detected:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Tooltip(
+              message: 'Name of the detected disease',
+              child: Text(
+                'Disease Name: ${disease['name'] ?? 'Unknown'}',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+            Tooltip(
+              message: 'Probability score of the disease detected',
+              child: Text(
+                'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
+                style: TextStyle(
+                  color: disease['probability'] > 0.5 ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            const Text('Similar Image:'),
+            // Show the actual image
+            if (disease['similar_images']?.first['url'] != null)
+              GestureDetector(
+                onTap: () {
+                  _showImageDialog(disease['similar_images'].first['url']);
+                },
+                child: Image.network(
+                  disease['similar_images'].first['url'],
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.cover,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showImageDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Image.network(imageUrl, fit: BoxFit.cover),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Close"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorDisplay() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Error:',
+          style: TextStyle(
+              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+        ),
+        const SizedBox(height: 10),
+        Text(_errorMessage,
+            style: const TextStyle(fontSize: 16, color: Colors.red)),
+      ],
+    );
+  }
 }
+
