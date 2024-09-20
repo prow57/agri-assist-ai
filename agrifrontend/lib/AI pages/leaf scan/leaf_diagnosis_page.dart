@@ -1,4 +1,8 @@
 // import library
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:image_picker/image_picker.dart';
@@ -154,7 +158,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     final pages = [
       const AllCoursesPage(),
       const PersonalizedAdvicePage(),
-      const ChatPage(),
+      const PersonalizedAdvicePage(),
       const SettingsPage(),
     ];
 

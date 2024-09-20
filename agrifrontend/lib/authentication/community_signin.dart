@@ -67,9 +67,9 @@ class _CommunitySignInState extends State<CommunitySignIn> {
 
     final pages = [
       const HomePage(),
+      const AllCoursesPage(),
       const PersonalizedAdvicePage(),
-      const ChatPage(),
-      SettingsPage(),   // Replace with actual page
+      const SettingsPage(),   // Replace with actual page
     ];
 
     Navigator.pushReplacement(
@@ -228,7 +228,7 @@ class _CommunitySignInState extends State<CommunitySignIn> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: 0,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(

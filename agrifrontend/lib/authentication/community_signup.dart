@@ -72,7 +72,7 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
     final pages = [
       const HomePage(),
       const PersonalizedAdvicePage(),
-      const ChatPage(),
+      const AllCoursesPage(),
       SettingsPage(),
     ];
 
@@ -279,7 +279,7 @@ class _CommunitySignUpState extends State<CommunitySignUp> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex: 0,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
