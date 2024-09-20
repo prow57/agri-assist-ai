@@ -1,8 +1,4 @@
 // import library
-import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
-import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
-import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
-import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:image_picker/image_picker.dart';
@@ -299,7 +295,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
           height: 250,
           width: double.infinity,
-          child: _image != null
+                    child: _image != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.file(
@@ -389,13 +385,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                      'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
-                      style: TextStyle(
-                        color: suggestion['probability'] > 0.5
-                            ? Colors.green
-                            : Colors.red,
-                        fontWeight: FontWeight.w600,
-                      )),
+                    'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
+                    style: TextStyle(
+                      color: suggestion['probability'] > 0.5
+                          ? Colors.green
+                          : Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 5),
                   const Text('Similar Images:'),
                   for (var image in suggestion['similar_images'])
@@ -453,21 +450,23 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               ),
             ),
             Text(
-                'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
-                style: TextStyle(
-                  color: _result?['result']['is_healthy']['binary']
-                      ? Colors.green
-                      : Colors.red,
-                  fontWeight: FontWeight.w600,
-                )),
+              'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
+              style: TextStyle(
+                color: _result?['result']['is_healthy']['binary']
+                    ? Colors.green
+                    : Colors.red,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             Text(
-                'Health Probability: ${(_result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color: _result?['result']['is_healthy']['binary']
-                      ? Colors.green
-                      : Colors.red,
-                  fontWeight: FontWeight.w600,
-                )),
+              'Health Probability: ${(_result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
+              style: TextStyle(
+                color: _result?['result']['is_healthy']['binary']
+                    ? Colors.green
+                    : Colors.red,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             const SizedBox(height: 10),
             const Text('Diseases Detected:',
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -480,13 +479,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                   Text(
-                      'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
-                      style: TextStyle(
-                        color: disease['probability'] > 0.5
-                            ? Colors.green
-                            : Colors.red,
-                        fontWeight: FontWeight.w600,
-                      )),
+                    'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
+                    style: TextStyle(
+                      color: disease['probability'] > 0.5
+                          ? Colors.green
+                          : Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 5),
                   const Text('Similar Images:'),
                   for (var image in disease['similar_images'])

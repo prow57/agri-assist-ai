@@ -24,11 +24,11 @@ class _PersonalizedAdvicePageState extends State<PersonalizedAdvicePage> {
   bool isPremiumUser = true;
 
   final List<String> _imagePaths = [
-    '../../assets/pic1.jpg',
-    '../../assets/pic2.jpg',
-    '../../assets/pic3.jpg',
-    '../../assets/pic4.jpg',
-    '../../assets/pic5.jpg',
+    'assets/pic1.jpg',
+    'assets/pic2.jpg',
+    'assets/pic3.jpg',
+    'assets/pic4.jpg',
+    'assets/pic5.jpg',
   ];
 
   @override
