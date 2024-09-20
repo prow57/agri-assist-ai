@@ -1,5 +1,10 @@
 // import library
+import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -34,7 +39,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
+          await _analyzeImage(
+              _image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         _showError('No image selected');
@@ -105,7 +111,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   bool _isPremiumEndpoint(String endpoint) {
-    return endpoint.contains('identify') || endpoint.contains('health-analysis');
+    return endpoint.contains('identify') ||
+        endpoint.contains('health-analysis');
   }
 
   void _showError(String message) {
@@ -171,14 +178,13 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               "Would you like to identify the plant or analyze its health?"),
           actions: <Widget>[
             TextButton(
-              child: const Text("Identify Plant"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _isHealthAnalysis = false;
-                _analyzeImage(_image!,
-                    'https://agriback-plum.vercel.app/api/vision/identify');
-              },
-            ),
+                child: const Text("Identify Plant"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _isHealthAnalysis = false;
+                  _analyzeImage(_image!,
+                      'https://agriback-plum.vercel.app/api/vision/identify');
+                }),
             TextButton(
               child: const Text("Analyze Health"),
               onPressed: () {
@@ -259,7 +265,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.memory),
-            label: 'AI',
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -268,7 +274,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
+        showUnselectedLabels: true, // Ensure labels are always shown
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
@@ -293,7 +299,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
           height: 250,
           width: double.infinity,
-          child: _image != null
+                    child: _image != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.file(
@@ -307,19 +313,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                   size: 100,
                 ),
         ),
-        const SizedBox(height: 10),
-        // Guideline for capturing a proper image
-                // Guideline for capturing a proper image
-        const Text(
-          "Guidelines: Take a clear, focused photo. Ensure the leaf is centered and fully visible, with no parts cut off.",
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 10),
         if (_image != null)
           TextButton.icon(
             icon: const Icon(Icons.clear, color: Colors.red),
@@ -364,9 +357,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   Widget _buildIdentificationResultDisplay() {
-    var suggestion = _result?['result']['classification']['suggestions']?.first;
-    if (suggestion == null) return const SizedBox.shrink(); // Return if no result
-
+    var suggestions = _result?['result']['classification']['suggestions'] ?? [];
     return Card(
       elevation: 5,
       margin: const EdgeInsets.symmetric(vertical: 16),
@@ -381,48 +372,47 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                 Icon(Icons.eco, color: Colors.green, size: 30),
                 SizedBox(width: 10),
                 Text(
-                  'Identification Result',
+                  'Identification Results',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            Tooltip(
-              message: 'This is the overall message from the API',
-              child: Text('Message: ${_result?['message'] ?? 'No message'}'),
-            ),
+            Text('Message: ${_result?['message'] ?? 'No message'}'),
             const SizedBox(height: 10),
-            Tooltip(
-              message: 'Name of the plant identified by the model',
-              child: Text(
-                'Plant Name: ${suggestion['name'] ?? 'Unknown'}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Tooltip(
-              message: 'The probability score indicates the confidence of the model',
-              child: Text(
-                'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color: suggestion['probability'] > 0.5 ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Text('Similar Image:'),
-            // Show the actual image
-            if (suggestion['similar_images']?.first['url'] != null)
-              GestureDetector(
-                onTap: () {
-                  _showImageDialog(suggestion['similar_images'].first['url']);
-                },
-                child: Image.network(
-                  suggestion['similar_images'].first['url'],
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
+            for (var suggestion in suggestions)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Plant Name: ${suggestion['name'] ?? 'Unknown'}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
+                    style: TextStyle(
+                      color: suggestion['probability'] > 0.5
+                          ? Colors.green
+                          : Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  const Text('Similar Images:'),
+                  for (var image in suggestion['similar_images'])
+                    GestureDetector(
+                      onTap: () {
+                        _showImageDialog(image['url']);
+                      },
+                      child: Text(
+                        image['url'] ?? 'No image available',
+                        style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline),
+                      ),
+                    ),
+                  const Divider(thickness: 1, color: Colors.grey),
+                ],
               ),
           ],
         ),
@@ -431,9 +421,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   Widget _buildHealthResultDisplay() {
-    var disease = _result?['result']['disease']['suggestions']?.first;
-    if (disease == null) return const SizedBox.shrink(); // Return if no result
-
+    var diseases = _result?['result']['disease']['suggestions'] ?? [];
     return Card(
       elevation: 5,
       margin: const EdgeInsets.symmetric(vertical: 16),
@@ -448,80 +436,77 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                 Icon(Icons.health_and_safety, color: Colors.red, size: 30),
                 SizedBox(width: 10),
                 Text(
-                  'Health Analysis Result',
+                  'Health Analysis Results',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            Tooltip(
-              message: 'This is the overall message from the API',
-              child: Text('Message: ${_result?['message'] ?? 'No message'}'),
-            ),
+            Text('Message: ${_result?['message'] ?? 'No message'}'),
             const SizedBox(height: 10),
-            Tooltip(
-              message: 'Indicates whether the detected object is a plant or not',
-              child: Text(
-                'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}',
-                style: TextStyle(
-                  color: _result?['result']['is_plant']['binary'] ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
+            Text(
+              'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}',
+              style: TextStyle(
+                color: _result?['result']['is_plant']['binary']
+                    ? Colors.green
+                    : Colors.red,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            Tooltip(
-              message: 'Indicates whether the plant is healthy or not',
-              child: Text(
-                'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
-                style: TextStyle(
-                  color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
+            Text(
+              'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
+              style: TextStyle(
+                color: _result?['result']['is_healthy']['binary']
+                    ? Colors.green
+                    : Colors.red,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            Tooltip(
-              message: 'Probability score of the plant being healthy',
-              child: Text(
-                'Health Probability: ${( _result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
+            Text(
+              'Health Probability: ${(_result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
+              style: TextStyle(
+                color: _result?['result']['is_healthy']['binary']
+                    ? Colors.green
+                    : Colors.red,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 10),
-            const Text('Disease Detected:', style: TextStyle(fontWeight: FontWeight.bold)),
-            Tooltip(
-              message: 'Name of the detected disease',
-              child: Text(
-                'Disease Name: ${disease['name'] ?? 'Unknown'}',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-            Tooltip(
-              message: 'Probability score of the disease detected',
-              child: Text(
-                'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color: disease['probability'] > 0.5 ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Text('Similar Image:'),
-            // Show the actual image
-            if (disease['similar_images']?.first['url'] != null)
-              GestureDetector(
-                onTap: () {
-                  _showImageDialog(disease['similar_images'].first['url']);
-                },
-                child: Image.network(
-                  disease['similar_images'].first['url'],
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
+            const Text('Diseases Detected:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            for (var disease in diseases)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Disease Name: ${disease['name'] ?? 'Unknown'}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
+                    style: TextStyle(
+                      color: disease['probability'] > 0.5
+                          ? Colors.green
+                          : Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  const Text('Similar Images:'),
+                  for (var image in disease['similar_images'])
+                    GestureDetector(
+                      onTap: () {
+                        _showImageDialog(image['url']);
+                      },
+                      child: Text(
+                        image['url'] ?? 'No image available',
+                        style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline),
+                      ),
+                    ),
+                  const Divider(thickness: 1, color: Colors.grey),
+                ],
               ),
           ],
         ),
