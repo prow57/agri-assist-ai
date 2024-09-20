@@ -1,7 +1,3 @@
-import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
-import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
-import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
-import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +15,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   File? _image;
   final ImagePicker picker = ImagePicker();
   Map<String, dynamic>? _result;
+  Map<String, dynamic>? _deepAnalysisResult; // To hold the deep analysis data
   bool _isLoading = false;
   String _errorMessage = '';
   int _selectedIndex = 0;
@@ -37,8 +34,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(
-              _image!, 'http://37.187.29.19:6932/analyze-leaf/');
+          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         _showError('No image selected');
@@ -109,8 +105,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   bool _isPremiumEndpoint(String endpoint) {
-    return endpoint.contains('identify') ||
-        endpoint.contains('health-analysis');
+    return endpoint.contains('identify') || endpoint.contains('health-analysis');
   }
 
   void _showError(String message) {
@@ -154,10 +149,10 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     setState(() => _selectedIndex = index);
 
     final pages = [
-      const AllCoursesPage(),
-      const PersonalizedAdvicePage(),
-      const ChatPage(),
-      const SettingsPage(),
+      const Placeholder(), // Placeholder widgets for demo purposes
+      const Placeholder(),
+      const Placeholder(),
+      const Placeholder(),
     ];
 
     Navigator.pushReplacement(
@@ -207,6 +202,306 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
+    );
+  }
+
+  // Method for deep health analysis
+  Future<void> _performDeepAnalysis() async {
+    if (_image == null) return;
+    
+    try {
+      setState(() => _isLoading = true);
+
+      // Post the image to the deep analysis endpoint
+      final response = await _postBase64Image(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
+      if (response.statusCode == 200) {
+        setState(() {
+          _deepAnalysisResult = json.decode(response.body)['leaf_analysis'];
+          _isLoading = false;
+        });
+      } else {
+        _showError("Failed to get deep analysis: ${response.statusCode}");
+      }
+    } catch (e, stackTrace) {
+      _handleError('Error performing deep analysis: $e', stackTrace);
+    }
+  }
+
+  // Building the health result card, now with a button for deep analysis
+  Widget _buildHealthResultDisplay() {
+    var disease = _result?['result']['disease']['suggestions']?.first;
+    if (disease == null) return const SizedBox.shrink(); // Return if no result
+
+    return Column(
+      children: [
+        Card(
+          elevation: 5,
+          margin: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.health_and_safety, color: Colors.red, size: 30),
+                    SizedBox(width: 10),
+                    Text(
+                      'Health Analysis Result',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Text('Message: ${_result?['message'] ?? 'No message'}'),
+                const SizedBox(height: 10),
+                Text('Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}'),
+                Text('Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}'),
+                Text('Health Probability: ${( _result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%'),
+                const SizedBox(height: 10),
+                const Text('Disease Detected:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('Disease Name: ${disease['name'] ?? 'Unknown'}'),
+                Text('Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%'),
+                const SizedBox(height: 5),
+                const Text('Similar Image:'),
+                if (disease['similar_images']?.first['url'] != null)
+                  Image.network(disease['similar_images'].first['url'], height: 100, width: 100, fit: BoxFit.cover),
+              ],
+            ),
+          ),
+        ),
+                ElevatedButton(
+          onPressed: _performDeepAnalysis, // Perform the deep analysis when pressed
+          child: const Text("Get More Details"),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+        ),
+        if (_deepAnalysisResult != null) _buildDeepAnalysisCard(),
+      ],
+    );
+  }
+
+  // Function to build the deep analysis card
+  Widget _buildDeepAnalysisCard() {
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Deep Health Analysis', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            Text('Crop Type: ${_deepAnalysisResult?['crop_type'] ?? 'Unknown'}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 5),
+            Text('Disease Name: ${_deepAnalysisResult?['disease_name'] ?? 'Unknown'}'),
+            const SizedBox(height: 5),
+            Text('Description: ${_deepAnalysisResult?['description'] ?? 'N/A'}'),
+            const SizedBox(height: 5),
+            Text('Risk Level: ${_deepAnalysisResult?['level_of_risk'] ?? 'Unknown'}'),
+            const SizedBox(height: 5),
+            Text('Affected Area Size: ${_deepAnalysisResult?['estimated_size'] ?? 'Unknown'}'),
+            const SizedBox(height: 5),
+            Text('Stage: ${_deepAnalysisResult?['stage'] ?? 'Unknown'}'),
+            const SizedBox(height: 5),
+            Text('Symptoms: ${(_deepAnalysisResult?['symptoms'] as List<dynamic>).join(", ")}'),
+            const SizedBox(height: 10),
+            const Text('Image Feedback:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('Focus: ${_deepAnalysisResult?['image_feedback']['focus'] ?? 'Unknown'}'),
+            Text('Distance: ${_deepAnalysisResult?['image_feedback']['distance'] ?? 'Unknown'}'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageSection() {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 8,
+                offset: Offset(2, 4),
+              ),
+            ],
+            border: Border.all(color: Colors.green, width: 2),
+          ),
+          height: 250,
+          width: double.infinity,
+          child: _image != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.file(
+                    _image!,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : const Icon(
+                  Icons.image,
+                  color: Colors.grey,
+                  size: 100,
+                ),
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          "Take a clear, focused photo. Ensure the leaf is centered and fully visible, with no parts cut off.",
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        if (_image != null)
+          TextButton.icon(
+            icon: const Icon(Icons.clear, color: Colors.red),
+            label: const Text(
+              'Clear Image',
+              style: TextStyle(color: Colors.red),
+            ),
+            onPressed: _resetImage,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () => _handleImage(ImageSource.camera),
+          icon: const Icon(Icons.camera, color: Colors.white),
+          label: const Text(
+            'Camera',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () => _handleImage(ImageSource.gallery),
+          icon: const Icon(Icons.photo, color: Colors.white),
+          label: const Text(
+            'Gallery',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildErrorDisplay() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Error:',
+          style: TextStyle(
+              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+        ),
+        const SizedBox(height: 10),
+        Text(_errorMessage,
+            style: const TextStyle(fontSize: 16, color: Colors.red)),
+      ],
+    );
+  }
+
+  Widget _buildIdentificationResultDisplay() {
+    var suggestion = _result?['result']['classification']['suggestions']?.first;
+    if (suggestion == null) return const SizedBox.shrink(); // Return if no result
+
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.eco, color: Colors.green, size: 30),
+                SizedBox(width: 10),
+                Text(
+                  'Identification Result',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Tooltip(
+              message: 'This is the overall message from the results',
+              child: Text('Message: ${_result?['message'] ?? 'No message'}'),
+            ),
+            const SizedBox(height: 10),
+            Tooltip(
+              message: 'Name of the plant identified by the model',
+              child: Text(
+                'Plant Name: ${suggestion['name'] ?? 'Unknown'}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Tooltip(
+              message: 'The probability score indicates the confidence of the model',
+              child: Text(
+                'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
+                style: TextStyle(
+                  color: suggestion['probability'] > 0.5 ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 5),
+            const Text('Similar Image:'),
+            if (suggestion['similar_images']?.first['url'] != null)
+              GestureDetector(
+                onTap: () {
+                  _showImageDialog(suggestion['similar_images'].first['url']);
+                },
+                child: Image.network(
+                  suggestion['similar_images'].first['url'],
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.cover,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showImageDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Image.network(imageUrl, fit: BoxFit.cover),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Close"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -264,7 +559,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.memory),
-            label: 'AI',
+            label: 'Personalized AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -279,307 +574,5 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       ),
     );
   }
-
-  Widget _buildImageSection() {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 8,
-                offset: Offset(2, 4),
-              ),
-            ],
-            border: Border.all(color: Colors.green, width: 2),
-          ),
-          height: 250,
-          width: double.infinity,
-          child: _image != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.file(
-                    _image!,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : const Icon(
-                  Icons.image,
-                  color: Colors.grey,
-                  size: 100,
-                ),
-        ),
-        const SizedBox(height: 10),
-        // Guideline for capturing a proper image
-        // Guideline for capturing a proper image
-        const Text(
-          "Guidelines: Take a clear, focused photo. Ensure the leaf is centered and fully visible, with no parts cut off.",
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 10),
-        if (_image != null)
-          TextButton.icon(
-            icon: const Icon(Icons.clear, color: Colors.red),
-            label: const Text(
-              'Clear Image',
-              style: TextStyle(color: Colors.red),
-            ),
-            onPressed: _resetImage,
-          ),
-      ],
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton.icon(
-          onPressed: () => _handleImage(ImageSource.camera),
-          icon: const Icon(Icons.camera, color: Colors.white),
-          label: const Text(
-            'Camera',
-            style: TextStyle(color: Colors.white),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-          ),
-        ),
-        ElevatedButton.icon(
-          onPressed: () => _handleImage(ImageSource.gallery),
-          icon: const Icon(Icons.photo, color: Colors.white),
-          label: const Text(
-            'Gallery',
-            style: TextStyle(color: Colors.white),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildIdentificationResultDisplay() {
-    var suggestion = _result?['result']['classification']['suggestions']?.first;
-    if (suggestion == null)
-      return const SizedBox.shrink(); // Return if no result
-
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.eco, color: Colors.green, size: 30),
-                SizedBox(width: 10),
-                Text(
-                  'Identification Result',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Tooltip(
-              message: 'This is the overall message from the results',
-              child: Text('Message: ${_result?['message'] ?? 'No message'}'),
-            ),
-            const SizedBox(height: 10),
-            Tooltip(
-              message: 'Name of the plant identified by the model',
-              child: Text(
-                'Plant Name: ${suggestion['name'] ?? 'Unknown'}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Tooltip(
-              message:
-                  'The probability score indicates the confidence of the model',
-              child: Text(
-                'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color: suggestion['probability'] > 0.5
-                      ? Colors.green
-                      : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Text('Similar Image:'),
-            // Show the actual image
-            if (suggestion['similar_images']?.first['url'] != null)
-              GestureDetector(
-                onTap: () {
-                  _showImageDialog(suggestion['similar_images'].first['url']);
-                },
-                child: Image.network(
-                  suggestion['similar_images'].first['url'],
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHealthResultDisplay() {
-    var disease = _result?['result']['disease']['suggestions']?.first;
-    if (disease == null) return const SizedBox.shrink(); // Return if no result
-
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              children: [
-                Icon(Icons.health_and_safety, color: Colors.red, size: 30),
-                SizedBox(width: 10),
-                Text(
-                  'Health Analysis Result',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Tooltip(
-              message: 'This is the overall message from the results',
-              child: Text('Message: ${_result?['message'] ?? 'No message'}'),
-            ),
-            const SizedBox(height: 10),
-            Tooltip(
-              message:
-                  'Indicates whether the detected object is a plant or not',
-              child: Text(
-                'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}',
-                style: TextStyle(
-                  color: _result?['result']['is_plant']['binary']
-                      ? Colors.green
-                      : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Tooltip(
-              message: 'Indicates whether the plant is healthy or not',
-              child: Text(
-                'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
-                style: TextStyle(
-                  color: _result?['result']['is_healthy']['binary']
-                      ? Colors.green
-                      : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Tooltip(
-              message: 'Probability score of the plant being healthy',
-              child: Text(
-                'Health Probability: ${(_result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color: _result?['result']['is_healthy']['binary']
-                      ? Colors.green
-                      : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Text('Disease Detected:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Tooltip(
-              message: 'Name of the detected disease',
-              child: Text(
-                'Disease Name: ${disease['name'] ?? 'Unknown'}',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-            Tooltip(
-              message: 'Probability score of the disease detected',
-              child: Text(
-                'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color:
-                      disease['probability'] > 0.5 ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            const Text('Similar Image:'),
-            // Show the actual image
-            if (disease['similar_images']?.first['url'] != null)
-              GestureDetector(
-                onTap: () {
-                  _showImageDialog(disease['similar_images'].first['url']);
-                },
-                child: Image.network(
-                  disease['similar_images'].first['url'],
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showImageDialog(String imageUrl) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: SizedBox(
-            width: double.maxFinite,
-            child: Image.network(imageUrl, fit: BoxFit.cover),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("Close"),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildErrorDisplay() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Error:',
-          style: TextStyle(
-              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
-        ),
-        const SizedBox(height: 10),
-        Text(_errorMessage,
-            style: const TextStyle(fontSize: 16, color: Colors.red)),
-      ],
-    );
-  }
 }
+        
