@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_markdown/flutter_markdown.dart'; // Import markdown package
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_tts/flutter_tts.dart'; // For TTS
 import 'message_model.dart';
 
 class ChatPage extends StatefulWidget {
@@ -16,11 +17,14 @@ class _ChatPageState extends State<ChatPage> {
   final List<Message> _messages = [];
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
+  late FlutterTts _flutterTts; // TTS instance
+  final _quickSuggestions = ['What crops should I plant?', 'Tell me about soil health', 'How to prevent pests?'];
 
   @override
   void initState() {
     super.initState();
-    _loadSavedMessages(); // Load saved messages when the page initializes
+    _loadSavedMessages();
+    _flutterTts = FlutterTts(); // Initialize TTS
   }
 
   Future<void> _saveMessages() async {
@@ -58,8 +62,7 @@ class _ChatPageState extends State<ChatPage> {
       _isLoading = true;
     });
 
-    _saveMessages(); // Save messages to SharedPreferences after sending
-
+    _saveMessages();
     _fetchAPIResponse(text);
   }
 
@@ -86,7 +89,10 @@ class _ChatPageState extends State<ChatPage> {
           _isLoading = false;
         });
 
-        _saveMessages(); // Save messages to SharedPreferences after receiving the AI response
+        _saveMessages();
+
+        // Auto-play the AI response using TTS
+        _speak(aiResponse);
       } else {
         throw Exception('Failed to load API response');
       }
@@ -96,6 +102,14 @@ class _ChatPageState extends State<ChatPage> {
       });
       print('Error: $e');
     }
+  }
+
+  Future<void> _speak(String text) async {
+    await _flutterTts.speak(text); // Use TTS to speak the message
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    return '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -124,12 +138,12 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
-        backgroundColor: Colors.green[700], // Improved color for the AppBar
+        backgroundColor: Colors.green[700],
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFE8F5E9), Color(0xFFC8E6C9)], // Subtle background gradient
+            colors: [Color(0xFFE8F5E9), Color(0xFFC8E6C9)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -147,49 +161,84 @@ class _ChatPageState extends State<ChatPage> {
                     alignment: message.isUser
                         ? Alignment.centerRight
                         : Alignment.centerLeft,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: message.isUser ? Colors.green[400] : Colors.blueGrey[200],
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(16.0),
-                          topRight: const Radius.circular(16.0),
-                          bottomLeft: message.isUser
-                              ? const Radius.circular(16.0)
-                              : const Radius.circular(0),
-                          bottomRight: message.isUser
-                              ? const Radius.circular(0)
-                              : const Radius.circular(16.0),
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 5.0,
-                            offset: Offset(0, 2),
+                    child: Column(
+                      crossAxisAlignment: message.isUser
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          message.isUser ? 'You' : 'AI',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
                           ),
-                        ],
-                      ),
-                      child: message.isUser
-                          ? Text(
-                              message.text,
-                              style: const TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                height: 1.5,
-                              ),
-                            )
-                          : MarkdownBody(
-                              data: message.text,
-                              styleSheet: MarkdownStyleSheet(
-                                p: const TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: message.isUser
+                                ? Colors.green[400]
+                                : Colors.blueGrey[200],
+                            borderRadius: BorderRadius.only(
+                              topLeft: const Radius.circular(16.0),
+                              topRight: const Radius.circular(16.0),
+                              bottomLeft: message.isUser
+                                  ? const Radius.circular(16.0)
+                                  : const Radius.circular(0),
+                              bottomRight: message.isUser
+                                  ? const Radius.circular(0)
+                                  : const Radius.circular(16.0),
                             ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 5.0,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                child: message.isUser
+                                    ? Text(
+                                        message.text,
+                                        style: const TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                          height: 1.5,
+                                        ),
+                                      )
+                                    : MarkdownBody(
+                                        data: message.text,
+                                        styleSheet: MarkdownStyleSheet(
+                                          p: const TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ),
+                              ),
+                              if (!message.isUser)
+                                IconButton(
+                                  icon: Icon(Icons.volume_up),
+                                  onPressed: () => _speak(message.text), // Play TTS manually
+                                ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          _formatTimestamp(DateTime.now()), // Display current timestamp
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -198,8 +247,24 @@ class _ChatPageState extends State<ChatPage> {
             if (_isLoading)
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(),
+                child: Text(
+                  'AI is typing...',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
               ),
+            // Quick suggestions
+            Wrap(
+              spacing: 8.0,
+              children: _quickSuggestions.map<Widget>((suggestion) {
+                return ActionChip(
+                  label: Text(suggestion),
+                  onPressed: () => _sendMessage(suggestion),
+                );
+              }).toList(),
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -207,7 +272,15 @@ class _ChatPageState extends State<ChatPage> {
                   Expanded(
                     child: TextField(
                       controller: _controller,
+                      maxLines: null, // Adaptive height for input field
+                      textInputAction: TextInputAction.newline,
                       decoration: InputDecoration(
+                        prefixIcon: IconButton(
+                          icon: const Icon(Icons.mic),
+                          onPressed: () {
+                            // Handle voice input
+                          },
+                        ),
                         hintText: 'Type a message...',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30.0),
@@ -216,7 +289,9 @@ class _ChatPageState extends State<ChatPage> {
                         filled: true,
                         fillColor: Colors.white,
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 20.0),
+                          vertical: 10.0,
+                          horizontal: 20.0,
+                        ),
                       ),
                       style: const TextStyle(
                         fontSize: 16.0,
