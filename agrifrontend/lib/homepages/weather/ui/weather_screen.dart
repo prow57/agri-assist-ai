@@ -185,11 +185,11 @@ class _WeatherPageState extends State<WeatherPage> {
             icon: const Icon(Icons.location_on, color: Colors.white),
             onPressed: _selectLocation,
           ),
-          if (_isPremiumUser)
-            IconButton(
-              icon: const Icon(Icons.star, color: Colors.yellow),
-              onPressed: _onPremiumIconPressed,
-            ),
+          // if (_isPremiumUser)
+          //   IconButton(
+          //     icon: const Icon(Icons.star, color: Colors.yellow),
+          //     onPressed: _onPremiumIconPressed,
+          //   ),
         ],
       ),
       body: _isLoading
