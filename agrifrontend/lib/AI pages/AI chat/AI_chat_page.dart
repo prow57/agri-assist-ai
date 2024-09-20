@@ -192,11 +192,11 @@ class _ChatPageState extends State<ChatPage> {
                 style: TextStyle(fontSize: 24),
               ),
             ),
-            Image.asset(
-              'assets/logo.png',
-              height: 40,
-              fit: BoxFit.contain,
-            ),
+            // Image.asset(
+            //   'assets/logo.png',
+            //   height: 40,
+            //   fit: BoxFit.contain,
+            // ),
           ],
         ),
         backgroundColor: Colors.green[700], // Improved color for the AppBar
