@@ -5,10 +5,11 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_pa
 import 'package:agrifrontend/authentication/community_signup.dart';
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
+import 'package:agrifrontend/personalization/CommunityPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:agrifrontend/authentication/mobilenumber.dart';
-import '../personalization/community_page.dart';  // Import the CommunityPage
+  // Import the CommunityPage
 
 class CommunitySignIn extends StatefulWidget {
   const CommunitySignIn({super.key});
