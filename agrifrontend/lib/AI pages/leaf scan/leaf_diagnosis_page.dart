@@ -1,3 +1,5 @@
+
+// import library
 import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
@@ -19,16 +21,16 @@ class LeafAnalysisScreen extends StatefulWidget {
 class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   File? _image;
   final ImagePicker picker = ImagePicker();
-  Map<String, dynamic>? _result; // Stores the result as a Map
+  Map<String, dynamic>? _result; 
   bool _isLoading = false;
   String _errorMessage = '';
   int _selectedIndex = 0;
   bool _isPremiumUser = true;
+  bool _isHealthAnalysis = false;
 
   Future<void> _handleImage(ImageSource source) async {
     try {
       final pickedFile = await picker.pickImage(source: source);
-
       if (pickedFile != null) {
         setState(() {
           _image = File(pickedFile.path);
@@ -38,8 +40,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(
-              _image!, 'http://37.187.29.19:6932/analyze-leaf/');
+          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         _showError('No image selected');
@@ -52,7 +53,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   Future<void> _analyzeImage(File image, String endpoint) async {
     try {
       setState(() => _isLoading = true);
-
       http.Response response;
 
       if (_isPremiumUser && _isPremiumEndpoint(endpoint)) {
@@ -90,7 +90,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       final data = json.decode(response.body) as Map<String, dynamic>;
 
       setState(() {
-        _result = data;
+        _result = data['data'];
+        _isHealthAnalysis = endpoint.contains('health-analysis');
         _isLoading = false;
       });
       _showSnackBar('Analysis completed successfully.');
@@ -110,8 +111,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   bool _isPremiumEndpoint(String endpoint) {
-    return endpoint.contains('identify') ||
-        endpoint.contains('health-analysis');
+    return endpoint.contains('identify') || endpoint.contains('health-analysis');
   }
 
   void _showError(String message) {
@@ -180,14 +180,16 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               child: const Text("Identify Plant"),
               onPressed: () {
                 Navigator.of(context).pop();
+                _isHealthAnalysis = false; 
                 _analyzeImage(_image!,
                     'https://agriback-plum.vercel.app/api/vision/identify');
               },
-            ),
+              ```dart
             TextButton(
               child: const Text("Analyze Health"),
               onPressed: () {
                 Navigator.of(context).pop();
+                _isHealthAnalysis = true; 
                 _analyzeImage(_image!,
                     'https://agriback-plum.vercel.app/api/vision/health-analysis');
               },
@@ -211,7 +213,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Leaf Diagnosis"),
@@ -221,12 +222,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.star, color: Colors.yellow),
-        //     onPressed: _togglePremiumStatus,
-        //   ),
-        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -245,9 +240,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               if (_isLoading)
                 const Center(child: CircularProgressIndicator())
               else if (_result != null)
-                _isPremiumUser
-                    ? _buildPremiumResultDisplay()
-                    : _buildResultDisplay()
+                _isHealthAnalysis ? _buildHealthResultDisplay() : _buildIdentificationResultDisplay()
               else if (_errorMessage.isNotEmpty)
                 _buildErrorDisplay(),
               const SizedBox(height: 20),
@@ -256,7 +249,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
         ),
       ),
-     bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
@@ -340,7 +333,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           icon: const Icon(Icons.camera, color: Colors.white),
           label: const Text(
             'Camera',
-            style: TextStyle(color: Colors.white),
+            style: Tex totStyle(color: Colors.white),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
@@ -361,178 +354,167 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 
-
-
-Widget _buildResultDisplay() {
-  return Card(
-    elevation: 5,
-    margin: const EdgeInsets.symmetric(vertical: 16),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.eco, color: Colors.green, size: 30),
-              SizedBox(width: 10),
-              Text(
-                'Leaf Analysis Results',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Health Status
-          const Text(
-            'Health Status:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Is Plant: ${_result?['is_plant']['binary'] == true ? 'Yes' : 'No'}',
-            style: TextStyle(
-              color: _result?['is_plant']['binary'] == true ? Colors.green : Colors.red,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Text('Probability: ${_result?['is_plant']['probability']}%'),
-          const SizedBox(height: 10),
-          Text(
-            'Is Healthy: ${_result?['is_healthy']['binary'] == true ? 'Yes' : 'No'}',
-            style: TextStyle(
-              color: _result?['is_healthy']['binary'] == true ? Colors.green : Colors.red,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Text('Probability: ${_result?['is_healthy']['probability']}%'),
-          const SizedBox(height: 20),
-          Divider(thickness: 1, color: Colors.green[300]),
-
-          // Diseases
-          const Text(
-            'Diseases:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          for (var disease in _result?['diseases'] ?? [])
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildIdentificationResultDisplay() {
+    var suggestions = _result?['result']['classification']['suggestions'] ?? [];
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
               children: [
+                Icon(Icons.eco, color: Colors.green, size: 30),
+                SizedBox(width: 10),
                 Text(
-                  'Disease: ${disease['name']}',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  'Identification Results',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                Text('Probability: ${disease['probability']}%'),
-                Text('Similar Images:'),
-                for (var image in disease['similar_images'])
-                  GestureDetector(
-                    onTap: () {
-                      // Handle image tap (e.g., show in full screen)
-                    },
-                    child: Text(
-                      image,
-                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                    ),
-                  ),
-                const SizedBox(height: 10),
               ],
             ),
-          const SizedBox(height: 20),
-          Divider(thickness: 1, color: Colors.green[300]),
-
-          // Input Details
-          const Text(
-            'Input Details:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Text('Classification Level: ${_result?['classification_level']}'),
-          Text('Health Analysis Type: ${_result?['health_analysis_type']}'),
-          Text('Similar Images Requested: ${_result?['similar_images_requested'] ? 'Yes' : 'No'}'),
-          const SizedBox(height: 20),
-          Divider(thickness: 1, color: Colors.green[300]),
-
-          // Image for Analysis
-          const Text(
-            'Image for Analysis:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () {
-              // Handle image tap (e.g., show in full screen)
-            },
-            child: Text(
-              _result?['input_image'] ?? 'No image available.',
-              style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-  
-
-Widget _buildPremiumResultDisplay() {
-  return Card(
-    elevation: 5,
-    margin: const EdgeInsets.symmetric(vertical: 16),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.star, color: Colors.orange, size: 30),
-              SizedBox(width: 10),
-              Text(
-                'Premium Analysis Results',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            const SizedBox(height: 20),
+            Text('Message: ${_result?['message'] ?? 'No message'}'),
+            const SizedBox(height: 10),
+            for (var suggestion in suggestions)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Plant Name: ${suggestion['name'] ?? 'Unknown'}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text('Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%', 
+                      style: TextStyle(
+                        color: suggestion['probability'] > 0.5 ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.w600,
+                      )),
+                  const SizedBox(height: 5),
+                  const Text('Similar Images:'),
+                  for (var image in suggestion['similar_images'])
+                    GestureDetector(
+                      onTap: () {
+                        _showImageDialog(image['url']);
+                      },
+                      child: Text(
+                        image['url'] ?? 'No image available',
+                        style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                      ),
+                    ),
+                  const Divider(thickness: 1, color: Colors.grey),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Premium-specific summary
-          const Text(
-            'Exclusive Plant Health Insights:',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-
-          Text(_result.toString(), style: const TextStyle(fontSize: 16)),
-          const SizedBox(height: 20),
-
-          // Navigate to more insights
-          ElevatedButton.icon(
-            onPressed: () {
-              // Navigate to additional insights or advice page
-            },
-            icon: const Icon(Icons.insights),
-            label: const Text('View Additional Insights'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepPurple,
-              foregroundColor: Colors.white,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
+
+  Widget _buildHealthResultDisplay() {
+    var diseases = _result?['result']['disease']['suggestions'] ?? [];
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.health_and_safety, color: Colors.red, size: 30),
+                SizedBox(width: 10),
+                Text(
+                  'Health Analysis Results',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Text('Message: ${_result?['message'] ?? 'No message'}'),
+            const SizedBox(height: 10),
+            Text(
+              'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}',
+              style: TextStyle(
+                color: _result?['result']['is_plant']['binary'] ? Colors.green : Colors.red,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text('Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
+              style: TextStyle(
+                color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
+                fontWeight: FontWeight.w600,
+              )),
+            Text('Health Probability: ${( _result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
+              style: TextStyle(
+                color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
+                fontWeight: FontWeight.w600,
+              )),
+            const SizedBox(height: 10),
+            const Text('Diseases Detected:', style: TextStyle(fontWeight: FontWeight.bold)),
+            for (var disease in diseases)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Disease Name: ${disease['name'] ?? 'Unknown'}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  Text('Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
+                      style: TextStyle(
+                        color: disease['probability'] > 0.5 ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.w600,
+                      )),
+                  const SizedBox(height: 5),
+                  const Text('Similar Images:'),
+                  for (var image in disease['similar_images'])
+                    GestureDetector(
+                      onTap: () {
+                        _showImageDialog(image['url']);
+                      },
+                      child: Text(
+                        image['url'] ?? 'No image available',
+                        style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                      ),
+                    ),
+                  const Divider(thickness: 1, color: Colors.grey),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showImageDialog(String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Image.network(imageUrl, fit: BoxFit.cover),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Close"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _buildErrorDisplay() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '',
+          'Error:',
           style: TextStyle(
               fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
         ),
@@ -542,5 +524,5 @@ Widget _buildPremiumResultDisplay() {
       ],
     );
   }
-
 }
+           
