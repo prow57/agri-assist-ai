@@ -339,7 +339,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Set the current index
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -352,7 +352,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.memory),
-            label: 'Ai',
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -361,7 +361,7 @@ class _MarketPlacePageState extends State<MarketPlacePage> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
+        showUnselectedLabels: true, // Ensure labels are always shown
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),

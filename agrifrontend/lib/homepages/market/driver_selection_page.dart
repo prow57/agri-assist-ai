@@ -245,7 +245,7 @@ class _DriverListPageState extends State<DriverListPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex, // Set the current index
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
@@ -258,7 +258,7 @@ class _DriverListPageState extends State<DriverListPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.memory),
-            label: 'Ai',
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -267,7 +267,7 @@ class _DriverListPageState extends State<DriverListPage> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
+        showUnselectedLabels: true, // Ensure labels are always shown
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),

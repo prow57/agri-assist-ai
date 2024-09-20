@@ -1,4 +1,3 @@
-
 // import library
 import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
@@ -21,7 +20,7 @@ class LeafAnalysisScreen extends StatefulWidget {
 class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   File? _image;
   final ImagePicker picker = ImagePicker();
-  Map<String, dynamic>? _result; 
+  Map<String, dynamic>? _result;
   bool _isLoading = false;
   String _errorMessage = '';
   int _selectedIndex = 0;
@@ -40,7 +39,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
+          await _analyzeImage(
+              _image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         _showError('No image selected');
@@ -111,7 +111,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   bool _isPremiumEndpoint(String endpoint) {
-    return endpoint.contains('identify') || endpoint.contains('health-analysis');
+    return endpoint.contains('identify') ||
+        endpoint.contains('health-analysis');
   }
 
   void _showError(String message) {
@@ -177,18 +178,18 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               "Would you like to identify the plant or analyze its health?"),
           actions: <Widget>[
             TextButton(
-              child: const Text("Identify Plant"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _isHealthAnalysis = false; 
-                _analyzeImage(_image!,
-                    'https://agriback-plum.vercel.app/api/vision/identify');
-              }),
+                child: const Text("Identify Plant"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _isHealthAnalysis = false;
+                  _analyzeImage(_image!,
+                      'https://agriback-plum.vercel.app/api/vision/identify');
+                }),
             TextButton(
               child: const Text("Analyze Health"),
               onPressed: () {
                 Navigator.of(context).pop();
-                _isHealthAnalysis = true; 
+                _isHealthAnalysis = true;
                 _analyzeImage(_image!,
                     'https://agriback-plum.vercel.app/api/vision/health-analysis');
               },
@@ -239,7 +240,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               if (_isLoading)
                 const Center(child: CircularProgressIndicator())
               else if (_result != null)
-                _isHealthAnalysis ? _buildHealthResultDisplay() : _buildIdentificationResultDisplay()
+                _isHealthAnalysis
+                    ? _buildHealthResultDisplay()
+                    : _buildIdentificationResultDisplay()
               else if (_errorMessage.isNotEmpty)
                 _buildErrorDisplay(),
               const SizedBox(height: 20),
@@ -262,7 +265,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.memory),
-            label: 'AI',
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -271,7 +274,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
+        showUnselectedLabels: true, // Ensure labels are always shown
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
@@ -385,9 +388,12 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                     'Plant Name: ${suggestion['name'] ?? 'Unknown'}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text('Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%', 
+                  Text(
+                      'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
                       style: TextStyle(
-                        color: suggestion['probability'] > 0.5 ? Colors.green : Colors.red,
+                        color: suggestion['probability'] > 0.5
+                            ? Colors.green
+                            : Colors.red,
                         fontWeight: FontWeight.w600,
                       )),
                   const SizedBox(height: 5),
@@ -399,7 +405,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                       },
                       child: Text(
                         image['url'] ?? 'No image available',
-                        style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                        style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline),
                       ),
                     ),
                   const Divider(thickness: 1, color: Colors.grey),
@@ -438,22 +446,31 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
             Text(
               'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}',
               style: TextStyle(
-                color: _result?['result']['is_plant']['binary'] ? Colors.green : Colors.red,
+                color: _result?['result']['is_plant']['binary']
+                    ? Colors.green
+                    : Colors.red,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text('Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
-              style: TextStyle(
-                color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
-                fontWeight: FontWeight.w600,
-              )),
-            Text('Health Probability: ${( _result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
-              style: TextStyle(
-                color: _result?['result']['is_healthy']['binary'] ? Colors.green : Colors.red,
-                fontWeight: FontWeight.w600,
-              )),
+            Text(
+                'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
+                style: TextStyle(
+                  color: _result?['result']['is_healthy']['binary']
+                      ? Colors.green
+                      : Colors.red,
+                  fontWeight: FontWeight.w600,
+                )),
+            Text(
+                'Health Probability: ${(_result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
+                style: TextStyle(
+                  color: _result?['result']['is_healthy']['binary']
+                      ? Colors.green
+                      : Colors.red,
+                  fontWeight: FontWeight.w600,
+                )),
             const SizedBox(height: 10),
-            const Text('Diseases Detected:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Diseases Detected:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             for (var disease in diseases)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,9 +479,12 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                     'Disease Name: ${disease['name'] ?? 'Unknown'}',
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  Text('Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
+                  Text(
+                      'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
                       style: TextStyle(
-                        color: disease['probability'] > 0.5 ? Colors.green : Colors.red,
+                        color: disease['probability'] > 0.5
+                            ? Colors.green
+                            : Colors.red,
                         fontWeight: FontWeight.w600,
                       )),
                   const SizedBox(height: 5),
@@ -476,7 +496,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                       },
                       child: Text(
                         image['url'] ?? 'No image available',
-                        style: const TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                        style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline),
                       ),
                     ),
                   const Divider(thickness: 1, color: Colors.grey),
@@ -524,4 +546,3 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 }
-           

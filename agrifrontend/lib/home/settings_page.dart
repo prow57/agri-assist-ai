@@ -106,7 +106,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.memory),
-            label: 'AI',
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -115,7 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
+        showUnselectedLabels: true, // Ensure labels are always shown
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),

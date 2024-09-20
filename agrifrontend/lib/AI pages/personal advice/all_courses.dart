@@ -121,7 +121,8 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
                             context,
                             course['title'] ?? 'No title available',
                             _assetImages[imageIndex], // Use asset image
-                            course['id'], // Assuming 'id' is the identifier for the course
+                            course[
+                                'id'], // Assuming 'id' is the identifier for the course
                           );
                         },
                       ),
@@ -142,7 +143,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.memory),
-            label: 'AI',
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -151,7 +152,7 @@ class _AllCoursesPageState extends State<AllCoursesPage> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
+        showUnselectedLabels: true, // Ensure labels are always shown
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),

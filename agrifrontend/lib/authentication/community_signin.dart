@@ -236,12 +236,12 @@ class _CommunitySignInState extends State<CommunitySignIn> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.book),
+            label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble),
-            label: 'Chat',
+            icon: Icon(Icons.memory),
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -250,8 +250,9 @@ class _CommunitySignInState extends State<CommunitySignIn> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
-        selectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        showUnselectedLabels: true, // Ensure labels are always shown
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }

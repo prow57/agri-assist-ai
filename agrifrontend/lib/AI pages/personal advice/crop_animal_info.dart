@@ -100,32 +100,32 @@ class _CropAnimalInfoState extends State<CropAnimalInfo> {
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.book),
-                label: 'Courses',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.memory),
-                label: 'AI',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Settings',
-              ),
-            ],
-            selectedItemColor: Colors.green[800],
-            unselectedItemColor: Colors.green[300],
-            showUnselectedLabels: false,
-            selectedLabelStyle:
-                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Courses',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.memory),
+            label: 'Personalised AI',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        selectedItemColor: Colors.green[800],
+        unselectedItemColor: Colors.green[300],
+        showUnselectedLabels: true, // Ensure labels are always shown
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
         ),
       ),
     );

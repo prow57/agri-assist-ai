@@ -119,20 +119,20 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Update this as needed
+        currentIndex: 0,
         onTap: _onItemTapped,
         items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book),
             label: 'Courses',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble),
-            label: 'Chat',
+            label: 'chat AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -141,8 +141,9 @@ class _CommunityChatPageState extends State<CommunityChatPage> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
-        selectedLabelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        showUnselectedLabels: true, // Ensure labels are always shown
+        selectedLabelStyle:
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
