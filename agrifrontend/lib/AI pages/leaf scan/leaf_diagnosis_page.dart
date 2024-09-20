@@ -1,3 +1,4 @@
+
 // import library
 import 'package:agrifrontend/AI%20pages/AI%20chat/AI_chat_page.dart';
 import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
@@ -40,8 +41,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(
-              _image!, 'http://37.187.29.19:6932/analyze-leaf/');
+          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         _showError('No image selected');
@@ -112,8 +112,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   bool _isPremiumEndpoint(String endpoint) {
-    return endpoint.contains('identify') ||
-        endpoint.contains('health-analysis');
+    return endpoint.contains('identify') || endpoint.contains('health-analysis');
   }
 
   void _showError(String message) {
@@ -125,18 +124,18 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Upgrade to Premium'),
+        title: const Text('Upgrade to Premium', style: TextStyle(color: Colors.green)),
         content: const Text(
           'Upgrade to premium to access more detailed analysis features and exclusive content.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Go Premium'),
+            child: const Text('Go Premium', style: TextStyle(color: Colors.green)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -174,12 +173,12 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Choose Analysis Type"),
+          title: const Text("Choose Analysis Type", style: TextStyle(color: Colors.green)),
           content: const Text(
               "Would you like to identify the plant or analyze its health?"),
           actions: <Widget>[
             TextButton(
-                child: const Text("Identify Plant"),
+                child: const Text("Identify Plant", style: TextStyle(color: Colors.green)),
                 onPressed: () {
                   Navigator.of(context).pop();
                   _isHealthAnalysis = false;
@@ -187,7 +186,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                       'https://agriback-plum.vercel.app/api/vision/identify');
                 }),
             TextButton(
-              child: const Text("Analyze Health"),
+              child: const Text("Analyze Health", style: TextStyle(color: Colors.green)),
               onPressed: () {
                 Navigator.of(context).pop();
                 _isHealthAnalysis = true;
@@ -275,7 +274,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: true, // Ensure labels are always shown
+        showUnselectedLabels: true,
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
@@ -300,7 +299,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
           height: 250,
           width: double.infinity,
-                    child: _image != null
+          child: _image != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.file(
@@ -499,6 +498,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                       onTap: () {
                         _showImageDialog(image['url']);
                       },
+    
                       child: Text(
                         image['url'] ?? 'No image available',
                         style: const TextStyle(
@@ -520,13 +520,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          title: const Text("Image Preview", style: TextStyle(color: Colors.green)),
           content: SizedBox(
             width: double.maxFinite,
             child: Image.network(imageUrl, fit: BoxFit.cover),
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text("Close"),
+              child: const Text("Close", style: TextStyle(color: Colors.red)),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -551,3 +552,4 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 }
+    
