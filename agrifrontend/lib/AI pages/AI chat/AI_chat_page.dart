@@ -125,6 +125,7 @@ class _ChatPageState extends State<ChatPage> {
           ],
         ),
         backgroundColor: Colors.green[700], // Improved color for the AppBar
+        foregroundColor: Colors.white,
       ),
       body: Container(
         decoration: const BoxDecoration(
