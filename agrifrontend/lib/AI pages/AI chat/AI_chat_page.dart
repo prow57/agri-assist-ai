@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_tts/flutter_tts.dart'; // For TTS
+import 'package:speech_to_text/speech_to_text.dart' as stt; // For Speech-to-Text
 import 'message_model.dart';
 
 class ChatPage extends StatefulWidget {
@@ -17,7 +18,10 @@ class _ChatPageState extends State<ChatPage> {
   final List<Message> _messages = [];
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
+  bool _isMuted = false; // For mute/unmute functionality
   late FlutterTts _flutterTts; // TTS instance
+  late stt.SpeechToText _speech; // Speech-to-Text instance
+  bool _isListening = false; // Track whether the mic is listening
   final _quickSuggestions = ['What crops should I plant?', 'Tell me about soil health', 'How to prevent pests?'];
 
   @override
@@ -25,6 +29,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     _loadSavedMessages();
     _flutterTts = FlutterTts(); // Initialize TTS
+    _speech = stt.SpeechToText(); // Initialize Speech-to-Text
   }
 
   Future<void> _saveMessages() async {
@@ -91,8 +96,9 @@ class _ChatPageState extends State<ChatPage> {
 
         _saveMessages();
 
-        // Auto-play the AI response using TTS
-        _speak(aiResponse);
+        if (!_isMuted) {
+          _speak(aiResponse); // Speak the AI response if not muted
+        }
       } else {
         throw Exception('Failed to load API response');
       }
@@ -106,6 +112,33 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> _speak(String text) async {
     await _flutterTts.speak(text); // Use TTS to speak the message
+  }
+
+  void _toggleMute() {
+    setState(() {
+      _isMuted = !_isMuted;
+    });
+  }
+
+  // Speech-to-Text functionality
+  void _listen() async {
+    if (!_isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus: $val'),
+        onError: (val) => print('onError: $val'),
+      );
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+          onResult: (val) => setState(() {
+            _controller.text = val.recognizedWords; // Populate the input field with recognized speech
+          }),
+        );
+      }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
+    }
   }
 
   String _formatTimestamp(DateTime timestamp) {
@@ -138,6 +171,12 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: Icon(_isMuted ? Icons.volume_off : Icons.volume_up), // Mute/Unmute icon
+            onPressed: _toggleMute, // Toggle mute/unmute
+          ),
+        ],
         backgroundColor: Colors.green[700],
       ),
       body: Container(
@@ -276,10 +315,8 @@ class _ChatPageState extends State<ChatPage> {
                       textInputAction: TextInputAction.newline,
                       decoration: InputDecoration(
                         prefixIcon: IconButton(
-                          icon: const Icon(Icons.mic),
-                          onPressed: () {
-                            // Handle voice input
-                          },
+                          icon: Icon(_isListening ? Icons.mic_off : Icons.mic),
+                          onPressed: _listen, // Handle speech-to-text
                         ),
                         hintText: 'Type a message...',
                         border: OutlineInputBorder(

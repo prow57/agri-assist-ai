@@ -5,7 +5,6 @@ import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_pa
 import 'package:agrifrontend/home/home_page.dart';
 import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -24,9 +23,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   Map<String, dynamic>? _result;
   bool _isLoading = false;
   String _errorMessage = '';
-  int _selectedIndex = 0;
-  bool _isPremiumUser = true;
   bool _isHealthAnalysis = false;
+  Map<String, dynamic>? _deepAnalysisResult;
+  bool _isDeepAnalysisLoading = false;
 
   Future<void> _handleImage(ImageSource source) async {
     try {
@@ -37,12 +36,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           _result = null;
           _errorMessage = '';
         });
-        if (_isPremiumUser) {
-          _showAnalysisChoiceDialog();
-        } else {
-          await _analyzeImage(
-              _image!, 'http://37.187.29.19:6932/analyze-leaf/');
-        }
+        _showAnalysisChoiceDialog();
       } else {
         _showError('No image selected');
       }
@@ -54,15 +48,19 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   Future<void> _analyzeImage(File image, String endpoint) async {
     try {
       setState(() => _isLoading = true);
-      http.Response response;
+      final response = await _uploadImage(image, endpoint);
 
-      if (_isPremiumUser && _isPremiumEndpoint(endpoint)) {
-        response = await _uploadImage(image, endpoint);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        setState(() {
+          _result = data['data'];
+          _isHealthAnalysis = endpoint.contains('health-analysis');
+          _isLoading = false;
+        });
+        _showSnackBar('Analysis completed successfully.');
       } else {
-        response = await _postBase64Image(image, endpoint);
+        _showError("Failed to get analysis: ${response.statusCode}");
       }
-
-      _handleResponse(response, endpoint);
     } catch (e, stackTrace) {
       _handleError('Error analyzing image: $e', stackTrace);
     }
@@ -75,30 +73,22 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     return await http.Response.fromStream(streamedResponse);
   }
 
-  Future<http.Response> _postBase64Image(File image, String endpoint) async {
-    final bytes = await image.readAsBytes();
-    final base64Image = base64Encode(bytes);
+  Future<void> _doDeepHealthAnalysis() async {
+    try {
+      setState(() => _isDeepAnalysisLoading = true);
+      final response = await _uploadImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
 
-    return await http.post(
-      Uri.parse(endpoint),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"image": base64Image}),
-    );
-  }
-
-  void _handleResponse(http.Response response, String endpoint) {
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body) as Map<String, dynamic>;
-
-      setState(() {
-        _result = data['data'];
-        _isHealthAnalysis = endpoint.contains('health-analysis');
-        _isLoading = false;
-      });
-      _showSnackBar('Analysis completed successfully.');
-      if (!_isPremiumUser) _showUpgradePrompt();
-    } else {
-      _showError("Failed to get analysis: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        setState(() {
+          _deepAnalysisResult = data['leaf_analysis'];
+          _isDeepAnalysisLoading = false;
+        });
+      } else {
+        _showError("Failed to get deep health analysis: ${response.statusCode}");
+      }
+    } catch (e, stackTrace) {
+      _handleError('Error performing deep health analysis: $e', stackTrace);
     }
   }
 
@@ -106,67 +96,10 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     setState(() {
       _result = null;
       _isLoading = false;
+      _isDeepAnalysisLoading = false;
       _errorMessage = message;
     });
     _showSnackBar('Error occurred.');
-  }
-
-  bool _isPremiumEndpoint(String endpoint) {
-    return endpoint.contains('identify') ||
-        endpoint.contains('health-analysis');
-  }
-
-  void _showError(String message) {
-    setState(() => _errorMessage = message);
-    _showSnackBar(message);
-  }
-
-  void _showUpgradePrompt() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Upgrade to Premium'),
-        content: const Text(
-          'Upgrade to premium to access more detailed analysis features and exclusive content.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Go Premium'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _resetImage() {
-    setState(() {
-      _image = null;
-      _result = null;
-      _errorMessage = '';
-    });
-  }
-
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
-
-    setState(() => _selectedIndex = index);
-
-    final pages = [
-      const HomePage(),
-      const AllCoursesPage(),
-      const PersonalizedAdvicePage(),
-      const SettingsPage(),
-    ];
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => pages[index]),
-    );
   }
 
   void _showAnalysisChoiceDialog() {
@@ -174,20 +107,21 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Choose Analysis Type"),
+          title: const Text("Choose Analysis Type", style: TextStyle(color: Colors.green)),
           content: const Text(
               "Would you like to identify the plant or analyze its health?"),
           actions: <Widget>[
             TextButton(
-                child: const Text("Identify Plant"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _isHealthAnalysis = false;
-                  _analyzeImage(_image!,
-                      'https://agriback-plum.vercel.app/api/vision/identify');
-                }),
+              child: const Text("Identify Plant", style: TextStyle(color: Colors.green)),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _isHealthAnalysis = false;
+                _analyzeImage(_image!,
+                    'https://agriback-plum.vercel.app/api/vision/identify');
+              },
+            ),
             TextButton(
-              child: const Text("Analyze Health"),
+              child: const Text("Analyze Health", style: TextStyle(color: Colors.green)),
               onPressed: () {
                 Navigator.of(context).pop();
                 _isHealthAnalysis = true;
@@ -199,11 +133,6 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         );
       },
     );
-  }
-
-  void _togglePremiumStatus() {
-    setState(() => _isPremiumUser = true);
-    _showSnackBar('You are now a premium user!');
   }
 
   void _showSnackBar(String message) {
@@ -248,36 +177,13 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                 _buildErrorDisplay(),
               const SizedBox(height: 20),
               _buildActionButtons(),
+              const SizedBox(height: 20),
+              if (_isHealthAnalysis && _result != null)
+                _buildDeepHealthAnalysisButton(),
+              if (_deepAnalysisResult != null) _buildDeepAnalysisCard(),
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Courses',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.memory),
-            label: 'Personalised AI',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        selectedItemColor: Colors.green[800],
-        unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: true, // Ensure labels are always shown
-        selectedLabelStyle:
-            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -300,7 +206,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
           height: 250,
           width: double.infinity,
-                    child: _image != null
+          child: _image != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.file(
@@ -368,52 +274,15 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
-              children: [
-                Icon(Icons.eco, color: Colors.green, size: 30),
-                SizedBox(width: 10),
-                Text(
-                  'Identification Results',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-              ],
+            const Text(
+              'Identification Results',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            Text('Message: ${_result?['message'] ?? 'No message'}'),
-            const SizedBox(height: 10),
-            for (var suggestion in suggestions)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Plant Name: ${suggestion['name'] ?? 'Unknown'}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
-                    style: TextStyle(
-                      color: suggestion['probability'] > 0.5
-                          ? Colors.green
-                          : Colors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  const Text('Similar Images:'),
-                  for (var image in suggestion['similar_images'])
-                    GestureDetector(
-                      onTap: () {
-                        _showImageDialog(image['url']);
-                      },
-                      child: Text(
-                        image['url'] ?? 'No image available',
-                        style: const TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline),
-                      ),
-                    ),
-                  const Divider(thickness: 1, color: Colors.grey),
-                ],
+                        for (var suggestion in suggestions)
+              ListTile(
+                title: Text(suggestion['plant_name'] ?? 'Unknown'),
+                subtitle: Text(
+                    'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%'),
               ),
           ],
         ),
@@ -422,7 +291,9 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   Widget _buildHealthResultDisplay() {
-    var diseases = _result?['result']['disease']['suggestions'] ?? [];
+    var healthStatus = _result?['health_status'] ?? {};
+    var diseases = _result?['diseases'] ?? [];
+
     return Card(
       elevation: 5,
       margin: const EdgeInsets.symmetric(vertical: 16),
@@ -432,81 +303,89 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
-              children: [
-                Icon(Icons.health_and_safety, color: Colors.red, size: 30),
-                SizedBox(width: 10),
-                Text(
-                  'Health Analysis Results',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-              ],
+            const Text(
+              'Health Analysis Results',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            Text('Message: ${_result?['message'] ?? 'No message'}'),
-            const SizedBox(height: 10),
-            Text(
-              'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}',
-              style: TextStyle(
-                color: _result?['result']['is_plant']['binary']
-                    ? Colors.green
-                    : Colors.red,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}',
-              style: TextStyle(
-                color: _result?['result']['is_healthy']['binary']
-                    ? Colors.green
-                    : Colors.red,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Text(
-              'Health Probability: ${(_result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%',
-              style: TextStyle(
-                color: _result?['result']['is_healthy']['binary']
-                    ? Colors.green
-                    : Colors.red,
-                fontWeight: FontWeight.w600,
-              ),
+            ListTile(
+              title: Text('Plant Status: ${healthStatus['is_plant'] ? "Yes" : "No"}'),
+              subtitle: Text(
+                  'Health Probability: ${(healthStatus['healthy_probability'] * 100).toStringAsFixed(2)}%'),
             ),
             const SizedBox(height: 10),
-            const Text('Diseases Detected:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Diseases:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             for (var disease in diseases)
+              ListTile(
+                title: Text(disease['name'] ?? 'Unknown Disease'),
+                subtitle: Text(
+                    'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%\nView similar images: ${disease['similar_images'][0]['url']}'),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeepHealthAnalysisButton() {
+    return ElevatedButton.icon(
+      onPressed: _doDeepHealthAnalysis,
+      icon: _isDeepAnalysisLoading
+          ? const CircularProgressIndicator()
+          : const Icon(Icons.medical_services_outlined, color: Colors.white),
+      label: const Text(
+        'Do Deep Health Analysis',
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+    );
+  }
+
+  Widget _buildDeepAnalysisCard() {
+    var deepAnalysis = _deepAnalysisResult ?? {};
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Deep Health Analysis Results',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            ListTile(
+              title: Text('Crop Type: ${deepAnalysis['crop_type']}'),
+              subtitle: Text(
+                  'Disease: ${deepAnalysis['disease_name'] ?? 'N/A'}\nRisk Level: ${deepAnalysis['level_of_risk'] ?? 'N/A'}'),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Additional Details:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            ListTile(
+              title: Text('Stage: ${deepAnalysis['stage'] ?? 'N/A'}'),
+              subtitle: Text(
+                  'Estimated Size: ${deepAnalysis['estimated_size'] ?? 'N/A'}\nSymptoms: ${deepAnalysis['symptoms'] ?? 'N/A'}'),
+            ),
+            const SizedBox(height: 10),
+            if (deepAnalysis['image_feedback'] != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Disease Name: ${disease['name'] ?? 'Unknown'}',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  const Text(
+                    'Image Feedback:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%',
-                    style: TextStyle(
-                      color: disease['probability'] > 0.5
-                          ? Colors.green
-                          : Colors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  ListTile(
+                    title: Text('Focus: ${deepAnalysis['image_feedback']['focus']}'),
+                    subtitle: Text('Distance: ${deepAnalysis['image_feedback']['distance']}'),
                   ),
-                  const SizedBox(height: 5),
-                  const Text('Similar Images:'),
-                  for (var image in disease['similar_images'])
-                    GestureDetector(
-                      onTap: () {
-                        _showImageDialog(image['url']);
-                      },
-                      child: Text(
-                        image['url'] ?? 'No image available',
-                        style: const TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline),
-                      ),
-                    ),
-                  const Divider(thickness: 1, color: Colors.grey),
                 ],
               ),
           ],
@@ -515,39 +394,28 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     );
   }
 
-  void _showImageDialog(String imageUrl) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: SizedBox(
-            width: double.maxFinite,
-            child: Image.network(imageUrl, fit: BoxFit.cover),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("Close"),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
+  Widget _buildErrorDisplay() {
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(
+          'Error: $_errorMessage',
+          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 
-  Widget _buildErrorDisplay() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Error:',
-          style: TextStyle(
-              fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
-        ),
-        const SizedBox(height: 10),
-        Text(_errorMessage,
-            style: const TextStyle(fontSize: 16, color: Colors.red)),
-      ],
-    );
+  void _resetImage() {
+    setState(() {
+      _image = null;
+      _result = null;
+      _deepAnalysisResult = null;
+    });
   }
 }
+
+              
