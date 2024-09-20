@@ -8,7 +8,7 @@ import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:agrifrontend/authentication/mobilenumber.dart';
-import '../personalization/preferences.dart';
+import '../personalization/community_page.dart';  // Import the CommunityPage
 
 class CommunitySignIn extends StatefulWidget {
   const CommunitySignIn({super.key});
@@ -43,9 +43,10 @@ class _CommunitySignInState extends State<CommunitySignIn> {
           const SnackBar(content: Text('Login successful!')),
         );
 
+        // Navigate to the CommunityPage after login success
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PreferencesScreen(phone: phone,)),
+          MaterialPageRoute(builder: (context) => const CommunityPage()),
         );
       } else {
         final data = jsonDecode(response.body);
