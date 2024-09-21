@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -62,7 +63,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       }
     }
   }
-  
+
   Future<void> _saveMessages() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> savedMessages = _messages
@@ -182,6 +183,18 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     await _flutterTts.speak(_voiceInput); // Resume speaking
   }
 
+
+Future<void> _requestMicPermission() async {
+  var status = await Permission.microphone.status;
+  if (!status.isGranted) {
+    status = await Permission.microphone.request();
+    if (!status.isGranted) {
+      print("Microphone permission not granted");
+    }
+  }
+}
+
+
   Future<void> _stopTTS() async {
     await _flutterTts.stop(); // Stop the TTS
     setState(() {
@@ -232,6 +245,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       }
     }
   }
+
 
   // Message bubble widget with TTS controls under the message
   Widget _buildMessageBubble(Message message) {

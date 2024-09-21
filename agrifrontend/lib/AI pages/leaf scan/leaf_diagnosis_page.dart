@@ -1,3 +1,7 @@
+import 'package:agrifrontend/AI%20pages/personal%20advice/all_courses.dart';
+import 'package:agrifrontend/AI%20pages/personal%20advice/personalized_advice_page.dart';
+import 'package:agrifrontend/home/home_page.dart';
+import 'package:agrifrontend/home/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -153,10 +157,10 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
     setState(() => _selectedIndex = index);
 
     final pages = [
-      const Placeholder(), // Placeholder widgets for demo purposes
-      const Placeholder(),
-      const Placeholder(),
-      const Placeholder(),
+      const HomePage(), // Placeholder widgets for demo purposes
+      const AllCoursesPage(),
+      const PersonalizedAdvicePage(),
+      const SettingsPage(),
     ];
 
     Navigator.pushReplacement(
@@ -599,7 +603,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.memory),
-            label: 'Personalized AI',
+            label: 'Personalised AI',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
@@ -608,7 +612,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         ],
         selectedItemColor: Colors.green[800],
         unselectedItemColor: Colors.green[300],
-        showUnselectedLabels: false,
+        showUnselectedLabels: true, // Ensure labels are always shown
         selectedLabelStyle:
             const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
