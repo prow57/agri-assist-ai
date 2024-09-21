@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_markdown/flutter_markdown.dart'; // Import the markdown package
 
 class AiAdvice extends StatefulWidget {
   const AiAdvice({super.key});
@@ -40,7 +41,7 @@ class _AiAdviceState extends State<AiAdvice> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        _advice = data['advice'];
+        _advice = data['advice']; // Markdown formatted advice from the API
       });
     } else {
       setState(() {
@@ -193,12 +194,14 @@ class _AiAdviceState extends State<AiAdvice> {
                 ),
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : Text(
-                        _advice.isNotEmpty
-                            ? _advice
-                            : 'Enter details to get advice',
-                        style: const TextStyle(fontSize: 16.0),
-                      ),
+                    : _advice.isNotEmpty
+                        ? Markdown(
+                            data: _advice, // Display the advice as markdown
+                            styleSheet: MarkdownStyleSheet(
+                              p: const TextStyle(fontSize: 16.0),
+                            ),
+                          )
+                        : const Text('Enter details to get advice'),
               ),
               const SizedBox(height: 20.0),
               Row(
