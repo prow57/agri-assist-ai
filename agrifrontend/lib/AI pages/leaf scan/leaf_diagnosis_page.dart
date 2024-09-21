@@ -96,13 +96,14 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   void _handleError(String message, StackTrace stackTrace) {
-    setState(() {
-      _result = null;
-      _isLoading = false;
-      _errorMessage = message;
-    });
-    _showSnackBar('Error occurred.');
-  }
+  setState(() {
+    _result = null;
+    _isLoading = false;
+    _errorMessage = message;
+  });
+  _showSnackBar(message.contains('Timeout') ? 'Network issue. Please try again later.' : 'Error occurred.');
+}
+
 
   bool _isPremiumEndpoint(String endpoint) {
     return endpoint.contains('identify') || endpoint.contains('health-analysis');
@@ -283,39 +284,46 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
 
   // Function to build the deep analysis card
   Widget _buildDeepAnalysisCard() {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Deep Health Analysis', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Text('Crop Type: ${_deepAnalysisResult?['crop_type'] ?? 'Unknown'}', style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 5),
-            Text('Disease Name: ${_deepAnalysisResult?['disease_name'] ?? 'Unknown'}'),
-            const SizedBox(height: 5),
-            Text('Description: ${_deepAnalysisResult?['description'] ?? 'N/A'}'),
-            const SizedBox(height: 5),
-            Text('Risk Level: ${_deepAnalysisResult?['level_of_risk'] ?? 'Unknown'}'),
-            const SizedBox(height: 5),
-            Text('Affected Area Size: ${_deepAnalysisResult?['estimated_size'] ?? 'Unknown'}'),
-            const SizedBox(height: 5),
-            Text('Stage: ${_deepAnalysisResult?['stage'] ?? 'Unknown'}'),
-            const SizedBox(height: 5),
-            Text('Symptoms: ${(_deepAnalysisResult?['symptoms'] as List<dynamic>).join(", ")}'),
-            const SizedBox(height: 10),
-            const Text('Image Feedback:', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('Focus: ${_deepAnalysisResult?['image_feedback']['focus'] ?? 'Unknown'}'),
-            Text('Distance: ${_deepAnalysisResult?['image_feedback']['distance'] ?? 'Unknown'}'),
-          ],
-        ),
+  return Card(
+    elevation: 5,
+    margin: const EdgeInsets.symmetric(vertical: 16),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Deep Health Analysis', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          const Divider(),
+          _buildAnalysisRow('Crop Type', _deepAnalysisResult?['crop_type']),
+          _buildAnalysisRow('Disease Name', _deepAnalysisResult?['disease_name']),
+          _buildAnalysisRow('Risk Level', _deepAnalysisResult?['level_of_risk']),
+          _buildAnalysisRow('Stage', _deepAnalysisResult?['stage']),
+          const SizedBox(height: 10),
+          const Text('Symptoms:', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text((_deepAnalysisResult?['symptoms'] as List<dynamic>).join(", ")),
+          const SizedBox(height: 10),
+          const Text('Image Feedback:', style: TextStyle(fontWeight: FontWeight.bold)),
+          _buildAnalysisRow('Focus', _deepAnalysisResult?['image_feedback']['focus']),
+          _buildAnalysisRow('Distance', _deepAnalysisResult?['image_feedback']['distance']),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
+Widget _buildAnalysisRow(String label, String? value) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: Row(
+      children: [
+        Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+        Expanded(child: Text(value ?? 'Unknown')),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildImageSection() {
     return Column(
@@ -533,6 +541,17 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
               const SizedBox(height: 20),
               if (_isLoading)
                 const Center(child: CircularProgressIndicator())
+              if (_isLoading) {
+                return const Center(
+                  child: Column(
+                    children: [
+                     CircularProgressIndicator(),
+                     SizedBox(height: 10),
+                     Text('Analyzing the image, please wait...'),
+                    ],
+                  ),
+                );
+              }
               else if (_result != null)
                 _isHealthAnalysis
                     ? _buildHealthResultDisplay()
