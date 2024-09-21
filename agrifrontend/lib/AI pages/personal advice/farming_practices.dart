@@ -218,7 +218,7 @@ class _FarmingPracticesPageState extends State<FarmingPracticesPage> {
                 child: ElevatedButton.icon(
                   onPressed: _fetchCourse,
                   icon: const Icon(Icons.download, color: Colors.white,),
-                  label: const Text('Fetch Course', style: TextStyle(color: Colors.white)),
+                  label: const Text('Get Lesson', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[700],
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
