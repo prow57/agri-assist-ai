@@ -34,7 +34,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         if (_isPremiumUser) {
           _showAnalysisChoiceDialog();
         } else {
-          await _analyzeImage(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
+          await _analyzeImage(
+              _image!, 'http://37.187.29.19:6932/analyze-leaf/');
         }
       } else {
         _showError('No image selected');
@@ -96,17 +97,19 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   }
 
   void _handleError(String message, StackTrace stackTrace) {
-  setState(() {
-    _result = null;
-    _isLoading = false;
-    _errorMessage = message;
-  });
-  _showSnackBar(message.contains('Timeout') ? 'Network issue. Please try again later.' : 'Error occurred.');
-}
-
+    setState(() {
+      _result = null;
+      _isLoading = false;
+      _errorMessage = message;
+    });
+    _showSnackBar(message.contains('Timeout')
+        ? 'Network issue. Please try again later.'
+        : 'Error occurred.');
+  }
 
   bool _isPremiumEndpoint(String endpoint) {
-    return endpoint.contains('identify') || endpoint.contains('health-analysis');
+    return endpoint.contains('identify') ||
+        endpoint.contains('health-analysis');
   }
 
   void _showError(String message) {
@@ -209,12 +212,13 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
   // Method for deep health analysis
   Future<void> _performDeepAnalysis() async {
     if (_image == null) return;
-    
+
     try {
       setState(() => _isLoading = true);
 
       // Post the image to the deep analysis endpoint
-      final response = await _postBase64Image(_image!, 'http://37.187.29.19:6932/analyze-leaf/');
+      final response = await _postBase64Image(
+          _image!, 'http://37.187.29.19:6932/analyze-leaf/');
       if (response.statusCode == 200) {
         setState(() {
           _deepAnalysisResult = json.decode(response.body)['leaf_analysis'];
@@ -238,7 +242,8 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
         Card(
           elevation: 5,
           margin: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -250,30 +255,38 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
                     SizedBox(width: 10),
                     Text(
                       'Health Analysis Result',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Text('Message: ${_result?['message'] ?? 'No message'}'),
                 const SizedBox(height: 10),
-                Text('Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}'),
-                Text('Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}'),
-                Text('Health Probability: ${( _result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%'),
+                Text(
+                    'Is Plant: ${_result?['result']['is_plant']['binary'] ? 'Yes' : 'No'}'),
+                Text(
+                    'Is Healthy: ${_result?['result']['is_healthy']['binary'] ? 'Yes' : 'No'}'),
+                Text(
+                    'Health Probability: ${(_result?['result']['is_healthy']['probability'] * 100).toStringAsFixed(2)}%'),
                 const SizedBox(height: 10),
-                const Text('Disease Detected:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('Disease Detected:',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Text('Disease Name: ${disease['name'] ?? 'Unknown'}'),
-                Text('Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%'),
+                Text(
+                    'Probability: ${(disease['probability'] * 100).toStringAsFixed(2)}%'),
                 const SizedBox(height: 5),
                 const Text('Similar Image:'),
                 if (disease['similar_images']?.first['url'] != null)
-                  Image.network(disease['similar_images'].first['url'], height: 100, width: 100, fit: BoxFit.cover),
+                  Image.network(disease['similar_images'].first['url'],
+                      height: 100, width: 100, fit: BoxFit.cover),
               ],
             ),
           ),
         ),
-                ElevatedButton(
-          onPressed: _performDeepAnalysis, // Perform the deep analysis when pressed
+        ElevatedButton(
+          onPressed:
+              _performDeepAnalysis, // Perform the deep analysis when pressed
           child: const Text("Get More Details"),
           style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
         ),
@@ -284,46 +297,53 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
 
   // Function to build the deep analysis card
   Widget _buildDeepAnalysisCard() {
-  return Card(
-    elevation: 5,
-    margin: const EdgeInsets.symmetric(vertical: 16),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Deep Health Analysis',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Divider(),
+            _buildAnalysisRow('Crop Type', _deepAnalysisResult?['crop_type']),
+            _buildAnalysisRow(
+                'Disease Name', _deepAnalysisResult?['disease_name']),
+            _buildAnalysisRow(
+                'Risk Level', _deepAnalysisResult?['level_of_risk']),
+            _buildAnalysisRow('Stage', _deepAnalysisResult?['stage']),
+            const SizedBox(height: 10),
+            const Text('Symptoms:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+                (_deepAnalysisResult?['symptoms'] as List<dynamic>).join(", ")),
+            const SizedBox(height: 10),
+            const Text('Image Feedback:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            _buildAnalysisRow(
+                'Focus', _deepAnalysisResult?['image_feedback']['focus']),
+            _buildAnalysisRow(
+                'Distance', _deepAnalysisResult?['image_feedback']['distance']),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAnalysisRow(String label, String? value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
         children: [
-          const Text('Deep Health Analysis', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          const Divider(),
-          _buildAnalysisRow('Crop Type', _deepAnalysisResult?['crop_type']),
-          _buildAnalysisRow('Disease Name', _deepAnalysisResult?['disease_name']),
-          _buildAnalysisRow('Risk Level', _deepAnalysisResult?['level_of_risk']),
-          _buildAnalysisRow('Stage', _deepAnalysisResult?['stage']),
-          const SizedBox(height: 10),
-          const Text('Symptoms:', style: TextStyle(fontWeight: FontWeight.bold)),
-          Text((_deepAnalysisResult?['symptoms'] as List<dynamic>).join(", ")),
-          const SizedBox(height: 10),
-          const Text('Image Feedback:', style: TextStyle(fontWeight: FontWeight.bold)),
-          _buildAnalysisRow('Focus', _deepAnalysisResult?['image_feedback']['focus']),
-          _buildAnalysisRow('Distance', _deepAnalysisResult?['image_feedback']['distance']),
+          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+          Expanded(child: Text(value ?? 'Unknown')),
         ],
       ),
-    ),
-  );
-}
-
-Widget _buildAnalysisRow(String label, String? value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4.0),
-    child: Row(
-      children: [
-        Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
-        Expanded(child: Text(value ?? 'Unknown')),
-      ],
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildImageSection() {
     return Column(
@@ -429,7 +449,8 @@ Widget _buildAnalysisRow(String label, String? value) {
 
   Widget _buildIdentificationResultDisplay() {
     var suggestion = _result?['result']['classification']['suggestions']?.first;
-    if (suggestion == null) return const SizedBox.shrink(); // Return if no result
+    if (suggestion == null)
+      return const SizedBox.shrink(); // Return if no result
 
     return Card(
       elevation: 5,
@@ -464,11 +485,14 @@ Widget _buildAnalysisRow(String label, String? value) {
               ),
             ),
             Tooltip(
-              message: 'The probability score indicates the confidence of the model',
+              message:
+                  'The probability score indicates the confidence of the model',
               child: Text(
                 'Probability: ${(suggestion['probability'] * 100).toStringAsFixed(2)}%',
                 style: TextStyle(
-                  color: suggestion['probability'] > 0.5 ? Colors.green : Colors.red,
+                  color: suggestion['probability'] > 0.5
+                      ? Colors.green
+                      : Colors.red,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -540,18 +564,15 @@ Widget _buildAnalysisRow(String label, String? value) {
               _buildImageSection(),
               const SizedBox(height: 20),
               if (_isLoading)
-                const Center(child: CircularProgressIndicator())
-              if (_isLoading) {
-                return const Center(
+                const Center(
                   child: Column(
                     children: [
-                     CircularProgressIndicator(),
-                     SizedBox(height: 10),
-                     Text('Analyzing the image, please wait...'),
+                      CircularProgressIndicator(),
+                      SizedBox(height: 10),
+                      Text('Analyzing the image, please wait...'),
                     ],
                   ),
-                );
-              }
+                )
               else if (_result != null)
                 _isHealthAnalysis
                     ? _buildHealthResultDisplay()
@@ -594,4 +615,3 @@ Widget _buildAnalysisRow(String label, String? value) {
     );
   }
 }
-        
