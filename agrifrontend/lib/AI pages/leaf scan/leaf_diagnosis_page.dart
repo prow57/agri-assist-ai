@@ -292,7 +292,7 @@ class _LeafAnalysisScreenState extends State<LeafAnalysisScreen> {
           onPressed:
               _performDeepAnalysis, // Perform the deep analysis when pressed
           child: const Text("Get More Details"),
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
         ),
         if (_deepAnalysisResult != null) _buildDeepAnalysisCard(),
       ],
