@@ -52,4 +52,18 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
   }
 });
 
+router.delete('/delete/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const isDeleted = await deleteCrop(id);
+    if (isDeleted) {
+      res.status(204).end(); // No content
+    } else {
+      res.status(404).json({ error: 'Crop not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
